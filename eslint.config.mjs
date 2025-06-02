@@ -35,6 +35,7 @@ export default defineConfig([
   { ignores: ['node_modules', 'dist', '*.d.td', '*.json'] },
   {
     rules: {
+      '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -296,6 +297,7 @@ export default defineConfig([
         'alignAttributesVertically': false,
         'ignores': []
       }],
+      'vue/multi-word-component-names': ['off', 'never'],
       'vue/no-v-html': ['off', 'never'],
       'vue/html-quotes': ['error', 'double'],
       'vue/html-self-closing': ['warn', {

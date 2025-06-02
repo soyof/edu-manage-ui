@@ -1,24 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import layout from './layout'
+import pinia from '@/stores'
+import { useTabsStore } from '@/stores/menuTabs'
+
+const store = useTabsStore(pinia)
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('../views/Home.vue')
+    redirect: '/homePage'
+  },
+  {
+    path: '/',
+    name: 'Layout',
+    component: () => import(/* webpackChunkName: "Layout" */ '../views/layout.vue'),
+    children: layout
   },
   {
     path: '/login',
     name: 'Login',
-    // 尝试使用相对路径引入组件，解决找不到模块的问题
-    component: () => import('../views/LoginPage.vue')
+    title: '登录',
+    component: () => import(/* webpackChunkName: "login" */ '../views/loginPage.vue')
   },
   {
-    path: '/register',
-    name: 'Register',
-    // 尝试使用相对路径引入组件，解决找不到模块的问题
-    component: () => import('../views/RegisterPage.vue')
-  }
+    path: '/notFound',
+    name: 'NotFound',
+    component: () => import(/* webpackChunkName: "notFound" */ '../views/notFound.vue')
+  },
+  { path: '/:pathMatch(.*)*', redirect: '/notFound' }
 ]
 
 const router = createRouter({
@@ -37,4 +47,9 @@ router.beforeEach((to, from, next) => {
   //   next()
   // }
   next()
+})
+
+router.afterEach((to, from) => {
+  store.addTabList(to)
+  store.changeCurTabInfo(to.path)
 })
