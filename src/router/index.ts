@@ -50,6 +50,9 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  store.addTabList(to)
-  store.changeCurTabInfo(to.path)
+  const isExist = layout.findIndex((item) => item.path === to.path) > -1
+  if (isExist) {
+    store.addTabList(to)
+    store.changeCurTabInfo(to.path)
+  }
 })
