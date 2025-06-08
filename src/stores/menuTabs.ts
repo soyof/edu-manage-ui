@@ -1,11 +1,24 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
+export interface TabItem {
+  path: string
+  name: string
+  meta: {
+    title: string
+    tabClosable: boolean
+  }
+}
 
-export const useTabsStore = defineStore('counter', {
-  state: () => {
+export interface TabsState {
+  curTabInfo: Partial<TabItem>
+  tabsList: TabItem[]
+}
+
+export const useTabsStore = defineStore('menuTabInfos', {
+  state: (): TabsState => {
     return {
       curTabInfo: {},
-      tabsList: ref([
+      tabsList: [
         {
           path: '/homePage',
           name: 'homePage',
@@ -14,7 +27,7 @@ export const useTabsStore = defineStore('counter', {
             tabClosable: false
           }
         }
-      ])
+      ]
     }
   },
   getters: {
@@ -25,11 +38,11 @@ export const useTabsStore = defineStore('counter', {
     getCurTabPath: (state) => state.curTabInfo.path
   },
   actions: {
-    addTabList(tab) {
+    addTabList(tab: TabItem) {
       const isExist = this.tabsList.find((item) => item.path === tab.path)
       !isExist && this.tabsList.push(tab)
     },
-    delTabList(path, router) {
+    delTabList(path: string, router: any) {
       const ids = this.tabsList.findIndex((item) => item.path === path)
       if (ids !== -1) {
         this.tabsList = this.tabsList.filter((item) => item.path !== path)
@@ -49,8 +62,16 @@ export const useTabsStore = defineStore('counter', {
         this.changeCurTabInfo('')
       }
     },
-    changeCurTabInfo(path) {
+    changeCurTabInfo(path: string) {
       this.curTabInfo = this.tabsList.find((item) => item.path === path) || {}
+    }
+  },
+  persist: {
+    storage: localStorage,
+    key: 'menuTabInfos',
+    serializer: {
+      serialize: (value) => JSON.stringify(value),
+      deserialize: (value) => JSON.parse(value)
     }
   }
 })

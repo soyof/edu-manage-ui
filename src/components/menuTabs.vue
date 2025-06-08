@@ -69,7 +69,7 @@ const handleTabRemove = (path: string) => {
 }
 
 const handleShowContextMenu = (ids: number) => {
-  tabItemRefs.value.forEach((item, index) => {
+  tabItemRefs.value?.forEach((item: any, index: number) => {
     if (index !== ids) {
       item.hide()
     }

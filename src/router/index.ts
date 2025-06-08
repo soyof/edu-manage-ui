@@ -3,8 +3,10 @@ import type { RouteRecordRaw } from 'vue-router'
 import layout from './layout'
 import pinia from '@/stores'
 import { useTabsStore } from '@/stores/menuTabs'
+import { useUserInfoStore } from '@/stores/userInfo'
+import { routerBeforeEach } from '@/utils/permission'
 
-const store = useTabsStore(pinia)
+let store: any = null
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'Login',
-    title: '登录',
+    meta: { title: '登录' },
     component: () => import(/* webpackChunkName: "login" */ '../views/loginPage.vue')
   },
   {
@@ -39,20 +41,16 @@ const router = createRouter({
 export default router
 
 // 添加路由守卫
-router.beforeEach((to, from, next) => {
-  // const isLoggedIn = localStorage.getItem('token') // 假设使用 localStorage 存储 token
-  // if (to.name !== 'Login' && !isLoggedIn) {
-  //   next({ name: 'Login' })
-  // } else {
-  //   next()
-  // }
-  next()
+router.beforeEach(async(to, from, next) => {
+  // 获取store
+  store = useTabsStore(pinia)
+  routerBeforeEach(to, from, next)
 })
 
 router.afterEach((to, from) => {
   const isExist = layout.findIndex((item) => item.path === to.path) > -1
   if (isExist) {
-    store.addTabList(to)
-    store.changeCurTabInfo(to.path)
+    store?.addTabList(to)
+    store?.changeCurTabInfo(to.path)
   }
 })

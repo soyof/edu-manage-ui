@@ -19,7 +19,13 @@
       <div class="layout-bottom-right">
         <MenuTabs />
         <el-scrollbar class="content-wrap">
-          <router-view />
+          <router-view v-slot="{ Component }">
+            <transition name="fade-transform" mode="out-in">
+              <KeepAlive>
+                <component :is="Component" />
+              </KeepAlive>
+            </transition>
+          </router-view>
         </el-scrollbar>
       </div>
     </div>
@@ -46,6 +52,7 @@ import MenuTabs from '@/components/menuTabs.vue'
     height: @layoutTopHeight;
     background: linear-gradient(to right, @menuBgColor, @menuBgColorS);
     box-sizing: border-box;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     z-index: 1;
 
     .logo-wrap {
@@ -85,13 +92,37 @@ import MenuTabs from '@/components/menuTabs.vue'
     .layout-bottom-right {
       display: flex;
       flex-direction: column;
-      width: 100%;
+      width: calc(100% - @menuWidth);
+      min-width: calc(100% - @menuWidth);
+      max-width: calc(100% - @menuWidth);
       height: 100%;
       flex: 1;
+      overflow: hidden;
       .content-wrap {
+        width: 100%;
+        height: @layoutContentHeight;
+        min-height: @layoutContentHeight;
+        max-height: @layoutContentHeight;
+        padding: 12px;
         flex: 1;
       }
     }
   }
+}
+
+// 路由过渡动画
+.fade-transform-enter-active,
+.fade-transform-leave-active {
+  transition: all 0.5s;
+}
+
+.fade-transform-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
 }
 </style>

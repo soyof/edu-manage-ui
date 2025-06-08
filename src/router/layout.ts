@@ -10,5 +10,11 @@ export default [
     name: 'userManage',
     meta: { title: '用户管理', tabClosable: true },
     component: () => import(/* webpackChunkName: "userManage" */ '../views/userManage.vue')
+  },
+  {
+    path: '/noticeManage',
+    name: 'noticeManage',
+    meta: { title: '通知管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "noticeManage" */ '../views/noticeManage.vue')
   }
 ]

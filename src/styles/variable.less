@@ -5,11 +5,16 @@
 @menuActiveTextColor: #1890ff;
 @logoTextColor: #4f3189;
 @bgColor: #f7f7f7;
+@pageBgColor: #fff;
 @textActiveColor: @menuBgColorS;
 @borderColor: #d9d9d9;
 @borderActiveColor: @menuBgColorS;
 
 @layoutTopHeight: 60px;
 @layoutBottomHeight: calc(100vh - @layoutTopHeight);
+// layout内容区高度 = @layoutBottomHeight - 菜单栏高度35 - 菜单栏margin-top 5
+@layoutContentHeight: calc(@layoutBottomHeight - 40px);
+// 内容区高度 = @layoutContentHeight - 内容区padding-top + padding-bottom 24px
+@contentHeight: calc(@layoutContentHeight - 24px);
 @menuWidth: 220px;
 @menuItemHeight: 50px;
