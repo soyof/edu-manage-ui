@@ -4,6 +4,7 @@ import type { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig, Axi
 import { ElMessage as Message } from 'element-plus'
 import { getNewUrl } from '@/utils/utils'
 import router from '@/router'
+import { useUserInfoStore } from '@/stores/userInfo'
 
 /**
  * 添加时间戳参数，避免缓存
@@ -188,7 +189,8 @@ class Services {
           const status = error.response.status
           switch (status) {
             case 401:
-              // router.push('/login?redirect=' + window.location.pathname)
+              useUserInfoStore().logout()
+              router.push('/login?redirect=' + window.location.pathname)
               errorFn('登录已过期，请重新登录')
               break
             case 403:
