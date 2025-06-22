@@ -9,13 +9,17 @@
         size="default"
         inline
       >
-        <slot name="search-form" :form="searchForm"></slot>
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">
-            查询
-          </el-button>
-          <el-button @click="resetForm">重置</el-button>
-        </el-form-item>
+        <el-row :gutter="24">
+          <slot name="search-form" :form="searchForm"></slot>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" @click="handleSearch">
+                查询
+              </el-button>
+              <el-button @click="resetForm">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </div>
     <div v-if="showOperation" ref="operaRef" class="table-page-opera">
@@ -107,10 +111,10 @@ const handleSearch = () => {
   getList()
 }
 
-const getList = () => {
+const getList = (pageNo?: any) => {
   loading.value = true
   props.fetchData({
-    pageNo: pager.value.pageNo,
+    pageNo: pageNo || pager.value.pageNo,
     pageSize: pager.value.pageSize,
     ...searchForm.value
   }).then((res: any) => {
@@ -151,11 +155,15 @@ getList()
     width: 100%;
     :deep(.el-form) {
       .el-form-item {
+        width: 100%;
         margin-right: 12px;
         margin-bottom: 8px;
+        .el-form-item__content {
+          width: 100%;
+        }
         .el-input,
         .el-select {
-          width: 180px;
+          width: 100%;
         }
       }
     }

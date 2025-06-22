@@ -37,7 +37,7 @@ export const useUserInfoStore = defineStore('userInfo', {
     // 获取用户信息
     async getUserInfoAction() {
       try {
-        const res: any = await services.get('/api/getCurUserInfo')
+        const res: any = await services.get('/api/getCurrentUser')
         if (res) {
           this.updateUserInfo(res)
           return res
@@ -50,9 +50,18 @@ export const useUserInfoStore = defineStore('userInfo', {
     },
     // 退出登录
     logout() {
-      this.token = ''
-      this.userInfo = {}
-      localStorage.removeItem('token')
+      return new Promise((resolve, reject) => {
+        // 调用系统退出接口
+        services.post('/api/logout').then(res => {
+          // 退出成功后，清除本地用户信息和token
+          this.token = ''
+          this.userInfo = {}
+          localStorage.removeItem('token')
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
     }
   },
   persist: {

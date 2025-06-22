@@ -5,8 +5,7 @@
       <div class="logo-wrap">合成生物研究所</div>
       <div class="other-info-wrap">
         <div class="user-info">
-          <span class="user-name">张三</span>
-          <span class="user-role">管理员</span>
+          <UserDropdown />
         </div>
       </div>
     </div>
@@ -35,6 +34,8 @@
 <script setup lang="ts">
 import MenuInfo from '@/components/menuInfo.vue'
 import MenuTabs from '@/components/menuTabs.vue'
+import UserDropdown from '@/components/userDropdown.vue'
+
 </script>
 
 <style lang="less" scoped>
@@ -50,7 +51,7 @@ import MenuTabs from '@/components/menuTabs.vue'
     justify-content: space-between;
     width: 100%;
     height: @layoutTopHeight;
-    background: linear-gradient(to right, @menuBgColor, @menuBgColorS);
+    background: linear-gradient(to right, @menuBgColorS, @headerBgColor, @menuBgColorS);
     box-sizing: border-box;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     z-index: 1;
@@ -71,6 +72,12 @@ import MenuTabs from '@/components/menuTabs.vue'
       display: flex;
       align-items: center;
       justify-content: center;
+      padding-right: 20px;
+
+      .user-info {
+        display: flex;
+        align-items: center;
+      }
     }
   }
   .layout-bottom {

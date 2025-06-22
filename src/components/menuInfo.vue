@@ -21,7 +21,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import layoutRouter from '@/router/layout.ts'
 
-const menuInfos = ref<any>(layoutRouter)
+const menuInfos = ref<any>(layoutRouter.filter(item => !item.meta.isHidden))
 
 const routeInfo = useRoute()
 

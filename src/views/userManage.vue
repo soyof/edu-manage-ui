@@ -1,38 +1,65 @@
 <template>
   <div class="user-manage">
     <TablePage
+      ref="tablePageRef"
       :initialSearchForm="searchForm"
       :fetchData="fetchUserList"
     >
       <template #search-form="{ form }">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input
-            v-model="form.email"
-            autocomplete="off"
-          />
-        </el-form-item>
-        <el-form-item label="职称" prop="title">
-          <el-input
-            v-model="form.title"
-            autocomplete="off"
-          />
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="form.phone" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择状态">
-            <el-option label="启用" value="1" />
-            <el-option label="禁用" value="0" />
-          </el-select>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="form.username" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="邮箱" prop="email">
+            <el-input
+              v-model="form.email"
+              autocomplete="off"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="职称" prop="title">
+            <el-input
+              v-model="form.title"
+              autocomplete="off"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="手机号" prop="phone">
+            <el-input v-model="form.phone" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="角色" prop="role">
+            <el-select
+              v-model="form.role"
+              filterable
+              clearable
+              placeholder="请选择角色"
+            >
+              <el-option
+                v-for="item in ROLE_LIST"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="状态" prop="status">
+            <el-select v-model="form.status" clearable placeholder="请选择状态">
+              <el-option label="启用" value="1" />
+              <el-option label="禁用" value="0" />
+            </el-select>
+          </el-form-item>
+        </el-col>
       </template>
-
       <template #operation>
-        <el-button @click="handleAdd">新增</el-button>
+        <el-button type="primary" @click="handleAdd">新增</el-button>
       </template>
 
       <el-table-column
@@ -72,6 +99,16 @@
         showOverflowTooltip
       />
       <el-table-column
+        prop="role"
+        label="角色"
+        minWidth="120"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          {{ scope.row.role === 'admin' ? '管理员' : '普通用户' }}
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="labHomepage"
         label="实验室主页"
         minWidth="120"
@@ -86,35 +123,42 @@
       <el-table-column
         prop="createdTimes"
         label="创建时间"
-        minWidth="150"
+        minWidth="180"
         showOverflowTooltip
       />
       <el-table-column
         prop="updatedTimes"
         label="更新时间"
-        minWidth="150"
+        minWidth="180"
         showOverflowTooltip
       />
       <el-table-column
-        prop="isActive"
+        prop="status"
         label="状态"
         width="80"
         showOverflowTooltip
       >
         <template #default="scope">
-          <el-tag :type="scope.row.isActive ? 'success' : 'danger'">
-            {{ scope.row.isActive ? '启用' : '禁用' }}
+          <el-tag :type="scope.row.status ? 'success' : 'danger'">
+            {{ scope.row.status ? '启用' : '禁用' }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column
         prop="opera"
         label="操作"
-        width="120"
+        width="140"
         fixed="right"
         showOverflowTooltip
       >
         <template #default="scope">
+          <a
+            href="javascript:void(0)"
+            class="user-manage-opera-view"
+            @click="handleView(scope.row)"
+          >
+            查看
+          </a>
           <a
             href="javascript:void(0)"
             class="user-manage-opera-edit"
@@ -134,8 +178,9 @@
     </TablePage>
 
     <!-- 新增用户弹窗 -->
-    <UserDialog
+    <ModifyUserDialog
       v-model:visible="dialogVisible"
+      :config="modifyUserConfig"
       @success="handleSuccess"
     />
   </div>
@@ -143,9 +188,11 @@
 
 <script setup lang="ts">
 import TablePage from '@/components/global/TablePage.vue'
-import UserDialog from '@/components/user/UserDialog.vue'
+import ModifyUserDialog from '@/components/user/modifyUserDialog.vue'
 import { ref } from 'vue'
 import service from '@/utils/services'
+import { ROLE_LIST } from '@/dic/dic'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 const searchForm = {
   username: '',
@@ -156,6 +203,13 @@ const searchForm = {
 }
 
 const dialogVisible = ref(false)
+const modifyUserConfig = ref({
+  type: 'A',
+  info: {}
+})
+
+// 表格组件引用
+const tablePageRef = ref()
 
 const fetchUserList = (params: any) => {
   return service.post('/api/getAllUsersInfos', params)
@@ -163,25 +217,75 @@ const fetchUserList = (params: any) => {
 
 const handleAdd = () => {
   dialogVisible.value = true
+  modifyUserConfig.value = {
+    type: 'A',
+    info: {}
+  }
+}
+
+// 处理用户数据，确保标签格式正确
+const processUserData = (userData: any) => {
+  const processedData = { ...userData }
+
+  // 处理标签数据
+  if (typeof processedData.tags === 'string' && processedData.tags) {
+    // 如果标签是字符串格式，转换为数组
+    processedData.tags = processedData.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean)
+  } else if (!Array.isArray(processedData.tags)) {
+    // 如果标签不是数组，设为空数组
+    processedData.tags = []
+  }
+
+  return processedData
 }
 
 const handleEdit = (row: any) => {
-  console.log(row)
+  dialogVisible.value = true
+  modifyUserConfig.value = {
+    type: 'E',
+    info: processUserData(row)
+  }
 }
 
 const handleDelete = (row: any) => {
-  console.log(row)
+  ElMessageBox.confirm(
+    `确认删除【${row.username}_${row.userId}】用户吗？`,
+    '删除确认',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
+    service.post('/api/deleteUser', {
+      userId: row.userId
+    }).then(() => {
+      ElMessage.success('删除成功')
+      tablePageRef.value?.getList()
+    })
+  })
+}
+
+const handleView = (row: any) => {
+  dialogVisible.value = true
+  modifyUserConfig.value = {
+    type: 'V',
+    info: processUserData(row)
+  }
 }
 
 const handleSuccess = () => {
   // 刷新列表
-  const tablePageRef = ref()
   tablePageRef.value?.getList()
 }
 </script>
 
 <style lang="less" scoped>
 .user-manage {
+  .user-manage-opera-view {
+    margin-right: 8px;
+    color: @primaryColor;
+  }
   .user-manage-opera-edit {
     margin-right: 8px;
     color: @primaryColor;
