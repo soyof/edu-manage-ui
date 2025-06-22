@@ -44,14 +44,13 @@
 import { ref, reactive } from 'vue'
 import { ElMessage, type FormInstance } from 'element-plus'
 import { User, Lock, View } from '@element-plus/icons-vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import services from '@/utils/services'
 import { encodePwByMd5 } from '@/utils/pwdUtils'
 import { useUserInfoStore } from '@/stores/userInfo'
 import pinia from '@/stores'
 
 const router = useRouter()
-const route = useRoute()
 const userStore = useUserInfoStore(pinia)
 const loginFormRef = ref<FormInstance | null>(null) // 修改类
 const loginForm = reactive({

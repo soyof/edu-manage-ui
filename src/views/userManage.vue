@@ -21,10 +21,19 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="职称" prop="title">
-            <el-input
+            <el-select
               v-model="form.title"
-              autocomplete="off"
-            />
+              filterable
+              clearable
+              placeholder="请选择职称"
+            >
+              <el-option
+                v-for="item in userTitleList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -79,7 +88,11 @@
         label="职称"
         width="120"
         showOverflowTooltip
-      />
+      >
+        <template #default="scope">
+          {{ translateTitle(scope.row.title) || scope.row.title }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="email"
         label="邮箱"
@@ -193,6 +206,10 @@ import { ref } from 'vue'
 import service from '@/utils/services'
 import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useUserTitleDict } from '@/hooks/useDictionary'
+
+// 获取职称字典
+const { dictList: userTitleList, getDictLabel: translateTitle } = useUserTitleDict()
 
 const searchForm = {
   username: '',

@@ -85,7 +85,7 @@ const avatarBgColor = computed(() => {
 // 用户头像
 const userAvatar = computed(() => {
   // 如果用户信息中有头像则使用，否则返回空字符串使用占位符
-  return userInfo.value.avatar || ''
+  return userInfo.value.avatar ? `/api/previewAvatar?filename=${userInfo.value.avatar}&userId=${userInfo.value.userId}` : ''
 })
 
 // 用户信息

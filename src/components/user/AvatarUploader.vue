@@ -5,13 +5,13 @@
       <el-avatar
         :size="size"
         :src="currentAvatar"
+        fit="cover"
         class="profile-avatar"
         @click="handleAvatarClick"
       >
         {{ avatarFallback }}
       </el-avatar>
       <div
-        v-if="editable"
         class="avatar-edit-mask"
         @click="handleAvatarClick"
       >
@@ -28,6 +28,7 @@
       :closeOnClickModal="false"
       :closeOnPressEscape="false"
       :destroyOnClose="true"
+      @close="handleDialogClose"
     >
       <div class="avatar-upload-container">
         <div v-if="!imageUrl" class="upload-box">
@@ -37,7 +38,7 @@
             :autoUpload="false"
             :showFileList="false"
             :onChange="handleAvatarChange"
-            accept="image/jpeg,image/png,image/gif"
+            accept="image/*"
           >
             <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
             <div class="upload-text">点击上传头像</div>
@@ -48,13 +49,15 @@
           <VueCropper
             ref="cropperRef"
             :img="imageUrl"
-            :outputSize="1"
-            :outputType="'png'"
+            :outputSize="0.8"
+            :outputType="outputType"
             :info="true"
-            :full="false"
-            :canMove="false"
+            :full="true"
+            :canScale="true"
+            :canMove="true"
+            :fixed="false"
             :canMoveBox="true"
-            :fixedBox="true"
+            :fixedBox="false"
             :autoCrop="true"
             :autoCropWidth="cropWidth"
             :autoCropHeight="cropHeight"
@@ -93,7 +96,9 @@ import { ref, computed, defineProps, defineEmits } from 'vue'
 import { ElMessage } from 'element-plus'
 import { EditPen, Plus } from '@element-plus/icons-vue'
 import { VueCropper } from 'vue-cropper'
+import service from '@/utils/services'
 import 'vue-cropper/dist/index.css'
+import { useUserInfoStore } from '@/stores/userInfo'
 
 // 定义属性
 const props = defineProps({
@@ -120,17 +125,12 @@ const props = defineProps({
   // 裁剪宽度
   cropWidth: {
     type: Number,
-    default: 200
+    default: 400
   },
   // 裁剪高度
   cropHeight: {
     type: Number,
-    default: 200
-  },
-  // 是否可编辑
-  editable: {
-    type: Boolean,
-    default: false
+    default: 400
   },
   // 头像背景色
   bgColor: {
@@ -142,13 +142,16 @@ const props = defineProps({
 // 定义事件
 const emit = defineEmits(['update:avatar', 'uploadSuccess'])
 
+const userInfoStore = useUserInfoStore()
+
 // 头像上传相关
+const outputType = ref('jpeg')
 const showUploadDialog = ref(false)
 const imageUrl = ref('')
 const previewUrl = ref('')
 const cropperRef = ref<any>(null)
 const uploading = ref(false)
-const currentAvatar = computed(() => props.avatar || '')
+const currentAvatar = computed(() => props.avatar ? `/api/previewAvatar?filename=${props.avatar}&userId=${props.userId}` : '')
 
 // 用户头像相关
 const avatarFallback = computed(() => {
@@ -157,7 +160,6 @@ const avatarFallback = computed(() => {
 
 // 处理头像点击
 const handleAvatarClick = () => {
-  if (!props.editable) return
   showUploadDialog.value = true
 }
 
@@ -191,64 +193,59 @@ const realTime = (data: any) => {
   previewUrl.value = data.url
 }
 
-// 取消裁剪
-const cancelCrop = () => {
-  showUploadDialog.value = false
+// 清除上传图片和初始化数据
+const resetUploadData = () => {
   imageUrl.value = ''
   previewUrl.value = ''
 }
 
+// 处理对话框关闭
+const handleDialogClose = () => {
+  resetUploadData()
+}
+
+// 取消裁剪
+const cancelCrop = () => {
+  showUploadDialog.value = false
+  resetUploadData()
+}
+
 // 重新上传
 const uploadAgain = () => {
-  imageUrl.value = ''
-  previewUrl.value = ''
+  resetUploadData()
 }
 
 // 确认裁剪并上传
 const confirmCrop = async() => {
   if (!cropperRef.value) return
-
   uploading.value = true
-
   try {
     // 获取裁剪后的图片数据
-    const canvas = cropperRef.value.getCanvas()
-    const base64 = canvas.toDataURL('image/png')
-
+    const base64 = await new Promise<string>((resolve) => {
+      cropperRef.value.getCropData((data: string) => {
+        resolve(data)
+      })
+    })
     // 将 base64 转换为文件对象
     const blob = dataURLtoBlob(base64)
-    const file = new File([blob], 'avatar.png', { type: 'image/png' })
-
+    const file = new File([blob], `avatar.${outputType.value}`, { type: `image/${outputType.value}` })
     // 创建表单数据
     const formData = new FormData()
     formData.append('userId', props.userId)
     formData.append('avatar', file)
-
     // 调用上传API
-    const res = await fetch('/api/uploadAvatar', {
-      method: 'POST',
-      body: formData
-    })
-
-    if (res.ok) {
-      const data = await res.json()
+    const res: any = await service.upload('/api/uploadAvatar', formData)
+    if (res) {
       ElMessage.success('头像上传成功')
-
       // 向父组件通知上传成功，传递新头像URL
-      const avatarUrl = data.avatarUrl || base64
+      const avatarUrl = res.avatarUrl || base64
+      userInfoStore.updateAvatar(avatarUrl)
       emit('update:avatar', avatarUrl)
       emit('uploadSuccess', avatarUrl)
-
       // 关闭对话框
       showUploadDialog.value = false
-      imageUrl.value = ''
-      previewUrl.value = ''
-    } else {
-      ElMessage.error('头像上传失败')
+      resetUploadData()
     }
-  } catch (error) {
-    console.error('上传头像失败', error)
-    ElMessage.error('头像上传失败，请稍后重试')
   } finally {
     uploading.value = false
   }
@@ -341,13 +338,13 @@ const dataURLtoBlob = (dataurl: string) => {
       }
 
       .avatar-uploader-icon {
-        font-size: 28px;
+        font-size: 24px;
         color: #8c939d;
       }
 
       .upload-text {
         color: #8c939d;
-        margin-top: 10px;
+        margin-left: 8px;
       }
     }
   }
@@ -384,6 +381,14 @@ const dataURLtoBlob = (dataurl: string) => {
         height: 100%;
         object-fit: cover;
       }
+    }
+  }
+}
+.dialog-footer {
+  .el-button {
+    margin-right: 8px;
+    &:last-child {
+      margin-right: 0;
     }
   }
 }

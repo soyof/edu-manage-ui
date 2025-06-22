@@ -34,6 +34,9 @@ export const useUserInfoStore = defineStore('userInfo', {
       this.token = ''
       localStorage.removeItem('token')
     },
+    updateAvatar(avatar: string) {
+      this.userInfo.avatar = avatar
+    },
     // 获取用户信息
     async getUserInfoAction() {
       try {
@@ -51,15 +54,18 @@ export const useUserInfoStore = defineStore('userInfo', {
     // 退出登录
     logout() {
       return new Promise((resolve, reject) => {
+        // 先清除本地数据，确保即使接口调用失败也会清理本地状态
+        this.token = ''
+        this.userInfo = {}
+        localStorage.removeItem('token')
+
         // 调用系统退出接口
         services.post('/api/logout').then(res => {
-          // 退出成功后，清除本地用户信息和token
-          this.token = ''
-          this.userInfo = {}
-          localStorage.removeItem('token')
           resolve(res)
         }).catch(error => {
-          reject(error)
+          console.warn('退出接口调用失败，但已清理本地登录状态', error)
+          // 即使接口失败也视为登出成功
+          resolve(null)
         })
       })
     }

@@ -6,6 +6,9 @@ import { getNewUrl } from '@/utils/utils'
 import router from '@/router'
 import { useUserInfoStore } from '@/stores/userInfo'
 
+// 用于防止重复调用退出登录接口
+let isLogoutProcessing = false
+
 /**
  * 添加时间戳参数，避免缓存
  */
@@ -189,9 +192,25 @@ class Services {
           const status = error.response.status
           switch (status) {
             case 401:
-              useUserInfoStore().logout()
-              router.push('/login?redirect=' + window.location.pathname)
-              errorFn('登录已过期，请重新登录')
+              // 避免重复调用退出接口
+              if (!isLogoutProcessing) {
+                isLogoutProcessing = true
+                try {
+                  await useUserInfoStore().logout()
+                  router.push('/login?redirect=' + window.location.pathname)
+                  errorFn('登录已过期，请重新登录')
+                } catch (logoutError) {
+                  console.error('登出失败:', logoutError)
+                  // 即使登出失败也清除本地token
+                  useUserInfoStore().removeToken()
+                  router.push('/login')
+                } finally {
+                  // 延迟重置标志位，防止快速连续请求
+                  setTimeout(() => {
+                    isLogoutProcessing = false
+                  }, 1500)
+                }
+              }
               break
             case 403:
               errorFn('没有权限访问该资源')

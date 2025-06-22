@@ -7,7 +7,6 @@
             :avatar="userInfo.avatar"
             :userId="userInfo.userId"
             :username="userInfo.username"
-            :editable="!isViewMode"
             :bgColor="avatarBgColor"
             @uploadSuccess="handleAvatarUploadSuccess"
           />
@@ -56,7 +55,20 @@
         <el-input v-model="userInfoForm.phone" placeholder="请输入手机号码" :disabled="isViewMode" />
       </el-form-item>
       <el-form-item label="职称" prop="title">
-        <el-input v-model="userInfoForm.title" placeholder="请输入职称" :disabled="isViewMode" />
+        <el-select
+          v-model="userInfoForm.title"
+          filterable
+          clearable
+          placeholder="请选择职称"
+          :disabled="isViewMode"
+        >
+          <el-option
+            v-for="item in userTitleList"
+            :key="item.dictId"
+            :label="item.dictValue"
+            :value="item.dictId"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="实验室主页" prop="labHomepage">
         <el-input v-model="userInfoForm.labHomepage" placeholder="请输入实验室主页URL" :disabled="isViewMode" />
@@ -130,46 +142,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, defineProps, defineEmits, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useUserInfoStore } from '@/stores/userInfo'
 import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
-import { EditPen, Plus } from '@element-plus/icons-vue'
+import { EditPen } from '@element-plus/icons-vue'
 import AvatarUploader from './AvatarUploader.vue'
 import service from '@/utils/services'
-
-// 定义属性
-const props = defineProps({
-  isViewMode: {
-    type: Boolean,
-    default: true
-  }
-})
-
-// 定义事件
-const emit = defineEmits(['save', 'cancel', 'edit'])
+import { useUserTitleDict } from '@/hooks/useDictionary'
 
 const userInfoStore = useUserInfoStore()
-
-// 标签选项
-const tagOptions = ref<string[]>([])
-
+const { dictList: userTitleList } = useUserTitleDict()
 // 是否处于编辑模式
 const isEditing = ref(false)
-
 // 是否处于只读模式
-const isViewMode = ref(props.isViewMode)
-
-// 监听属性变化
-watch(() => props.isViewMode, (newVal) => {
-  isViewMode.value = newVal
-  // 如果切换到编辑模式，设置isEditing为true
-  if (!newVal) {
-    isEditing.value = true
-  } else {
-    isEditing.value = false
-  }
-})
+const isViewMode = ref(true)
 
 // 提交状态
 const infoSubmitting = ref(false)
@@ -299,8 +286,7 @@ const userInfoForm = reactive({
 
 // 处理头像上传成功
 const handleAvatarUploadSuccess = (avatarUrl: string) => {
-  // 这里可以不用做任何事情，因为会自动通过getUserInfoAction更新用户信息
-  console.log('头像上传成功:', avatarUrl)
+  // userInfoForm.avatar = avatarUrl
 }
 
 // 用户信息表单验证规则
@@ -333,24 +319,7 @@ const infoRules = {
 onMounted(() => {
   // 初始化用户信息表单
   initUserInfoForm()
-  // 获取标签选项
-  fetchTagOptions()
 })
-
-// 获取标签选项
-const fetchTagOptions = async() => {
-  try {
-    // 这里可以调用API获取标签选项
-    // const res = await fetch('/api/getAllTags')
-    // const data = await res.json()
-    // tagOptions.value = data || []
-
-    // 暂时使用模拟数据
-    tagOptions.value = ['研究员', '教授', '讲师', '博士生', '前端开发', '后端开发']
-  } catch (error) {
-    console.error('获取标签选项失败', error)
-  }
-}
 
 // 初始化用户信息表单
 const initUserInfoForm = () => {
@@ -359,6 +328,7 @@ const initUserInfoForm = () => {
   userInfoForm.email = userInfo.value.email
   userInfoForm.phone = userInfo.value.phone
   userInfoForm.title = userInfo.value.title
+  // userInfoForm.avatar = userInfo.value.avatar
   userInfoForm.labHomepage = userInfo.value.labHomepage
   userInfoForm.personalHomepage = userInfo.value.personalHomepage
 
@@ -380,8 +350,8 @@ const startEditing = () => {
 
 // 内部开始编辑方法
 const startEditingInternal = () => {
-  startEditing()
-  emit('edit')
+  isEditing.value = true
+  isViewMode.value = false
 }
 
 // 取消编辑
@@ -395,7 +365,6 @@ const cancelEditing = () => {
 // 内部取消编辑方法
 const cancelEditingInternal = () => {
   cancelEditing()
-  emit('cancel')
 }
 
 // 保存用户信息
@@ -415,8 +384,6 @@ const saveUserInfo = async() => {
           // 退出编辑模式
           isEditing.value = false
           isViewMode.value = true
-          // 发出保存成功事件
-          emit('save')
         })
       } finally {
         infoSubmitting.value = false
@@ -506,7 +473,8 @@ defineExpose({
       .tag-input {
         width: 100px;
         margin-right: 10px;
-        margin-bottom: 10px;
+        margin-top: 2px;
+        margin-bottom: 2px;
         vertical-align: bottom;
       }
 

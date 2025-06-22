@@ -28,7 +28,20 @@
           <el-input v-model="form.phone" placeholder="请输入手机号码" :disabled="isViewMode" />
         </el-form-item>
         <el-form-item label="职称" prop="title">
-          <el-input v-model="form.title" placeholder="请输入职称" :disabled="isViewMode" />
+          <el-select
+            v-model="form.title"
+            filterable
+            clearable
+            placeholder="请选择职称"
+            :disabled="isViewMode"
+          >
+            <el-option
+              v-for="item in userTitleList"
+              :key="item.dictId"
+              :label="item.dictValue"
+              :value="item.dictId"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="角色" prop="role">
           <el-select
@@ -100,6 +113,9 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ROLE_LIST } from '@/dic/dic'
 import { ElMessage } from 'element-plus'
 import service from '@/utils/services'
+import { useUserTitleDict } from '@/hooks/useDictionary'
+
+const { dictList: userTitleList } = useUserTitleDict()
 
 const props = defineProps({
   visible: {
