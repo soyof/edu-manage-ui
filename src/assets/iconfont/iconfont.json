@@ -1,0 +1,16 @@
+{
+  "id": "4961634",
+  "name": "edu-manage",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "3978412",
+      "name": "清空",
+      "font_class": "qingkong",
+      "unicode": "e678",
+      "unicode_decimal": 59000
+    }
+  ]
+}

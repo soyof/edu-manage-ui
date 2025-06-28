@@ -37,6 +37,10 @@ export const useUserInfoStore = defineStore('userInfo', {
     updateAvatar(avatar: string) {
       this.userInfo.avatar = avatar
     },
+    // 更新用户其他信息
+    updateUserOtherInfo(otherInfo: any) {
+      this.userInfo.otherInfo = otherInfo
+    },
     // 获取用户信息
     async getUserInfoAction() {
       try {

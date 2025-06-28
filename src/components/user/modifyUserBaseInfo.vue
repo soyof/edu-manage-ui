@@ -8,7 +8,6 @@
             :userId="userInfo.userId"
             :username="userInfo.username"
             :bgColor="avatarBgColor"
-            @uploadSuccess="handleAvatarUploadSuccess"
           />
         </div>
         <div class="profile-info">
@@ -133,7 +132,7 @@
       <!-- 按钮区域 -->
       <el-form-item v-if="!isViewMode">
         <div class="form-buttons">
-          <el-button type="primary" :loading="infoSubmitting" @click="saveUserInfo">保存</el-button>
+          <el-button type="primary" :loading="loading" @click="saveUserInfo">保存</el-button>
           <el-button @click="cancelEditingInternal">取消</el-button>
         </div>
       </el-form-item>
@@ -147,9 +146,14 @@ import { useUserInfoStore } from '@/stores/userInfo'
 import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
 import { EditPen } from '@element-plus/icons-vue'
-import AvatarUploader from './AvatarUploader.vue'
+import AvatarUploader from './avatarUploader.vue'
 import service from '@/utils/services'
 import { useUserTitleDict } from '@/hooks/useDictionary'
+import useLoading from '@/hooks/useLoading'
+
+const { loading, changeLoading, closeLoading } = useLoading({
+  target: '.user-info-card'
+})
 
 const userInfoStore = useUserInfoStore()
 const { dictList: userTitleList } = useUserTitleDict()
@@ -157,9 +161,6 @@ const { dictList: userTitleList } = useUserTitleDict()
 const isEditing = ref(false)
 // 是否处于只读模式
 const isViewMode = ref(true)
-
-// 提交状态
-const infoSubmitting = ref(false)
 
 // 表单引用
 const formRef = ref<FormInstance>()
@@ -284,11 +285,6 @@ const userInfoForm = reactive({
   tags: [] as string[]
 })
 
-// 处理头像上传成功
-const handleAvatarUploadSuccess = (avatarUrl: string) => {
-  // userInfoForm.avatar = avatarUrl
-}
-
 // 用户信息表单验证规则
 const infoRules = {
   userId: [
@@ -368,26 +364,22 @@ const cancelEditingInternal = () => {
 }
 
 // 保存用户信息
-const saveUserInfo = async() => {
+const saveUserInfo = () => {
   if (!formRef.value) return
-
-  await formRef.value.validate(async(valid) => {
+  formRef.value.validate((valid) => {
     if (valid) {
-      try {
-        infoSubmitting.value = true
-
-        // 调用更新API
-        service.post('/api/updateProfile', {
-          ...userInfoForm
-        }).then(async() => {
-          await userInfoStore.getUserInfoAction()
-          // 退出编辑模式
-          isEditing.value = false
-          isViewMode.value = true
-        })
-      } finally {
-        infoSubmitting.value = false
-      }
+      changeLoading(true, { text: '保存中...' })
+      service.post('/api/updateProfile', {
+        ...userInfoForm
+      }).then(async() => {
+        ElMessage.success('更新成功')
+        await userInfoStore.getUserInfoAction()
+        // 退出编辑模式
+        isEditing.value = false
+        isViewMode.value = true
+      }).finally(() => {
+        changeLoading(false)
+      })
     }
   })
 }

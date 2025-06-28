@@ -8,6 +8,7 @@ import router from '@/router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import '@/styles/el-cover.less'
+import './assets/iconfont/iconfont.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 // 创建应用实例

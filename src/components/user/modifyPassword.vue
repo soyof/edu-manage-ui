@@ -63,7 +63,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="pwdSubmitting" @click="changePassword">修改密码</el-button>
+        <el-button type="primary" :loading="loading" @click="changePassword">修改密码</el-button>
         <el-button @click="resetPasswordForm">重置</el-button>
       </el-form-item>
     </el-form>
@@ -77,11 +77,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance } from 'element-plus'
 import service from '@/utils/services'
 import { encodePwByMd5 } from '@/utils/pwdUtils'
+import useLoading from '@/hooks/useLoading'
 
 const userInfoStore = useUserInfoStore()
-
-// 提交状态
-const pwdSubmitting = ref(false)
+const { loading, changeLoading } = useLoading({
+  target: '.password-change'
+})
 
 // 表单引用
 const pwdFormRef = ref<FormInstance>()
@@ -228,47 +229,43 @@ const changePassword = async() => {
 
   await pwdFormRef.value.validate(async(valid) => {
     if (valid) {
-      try {
-        pwdSubmitting.value = true
+      changeLoading(true, { text: '修改中...' })
 
-        // 获取用户ID
-        const userId = userInfoStore.userInfo?.userId
+      // 获取用户ID
+      const userId = userInfoStore.userInfo?.userId
 
-        if (!userId) {
-          ElMessage.error('获取用户信息失败')
-          return
-        }
+      if (!userId) {
+        ElMessage.error('获取用户信息失败')
+        return
+      }
 
-        // 调用修改密码API
-        const res: any = await service.post('/api/changePassword', {
-          userId,
-          oldPassword: encodePwByMd5(passwordForm.oldPassword),
-          newPassword: encodePwByMd5(passwordForm.newPassword)
-        })
+      // 调用修改密码API
+      const res: any = await service.post('/api/changePassword', {
+        userId,
+        oldPassword: encodePwByMd5(passwordForm.oldPassword),
+        newPassword: encodePwByMd5(passwordForm.newPassword)
+      })
 
-        if (res) {
-          ElMessage.success('密码修改成功')
-          resetPasswordForm()
+      if (res) {
+        ElMessage.success('密码修改成功')
+        resetPasswordForm()
 
-          // 询问是否要重新登录
-          ElMessageBox.confirm(
-            '密码已修改成功，是否立即退出并重新登录？',
-            '提示',
-            {
-              confirmButtonText: '是',
-              cancelButtonText: '否',
-              type: 'info'
-            }
-          ).then(() => {
-            userInfoStore.logout().then(() => {
-              window.location.href = '/login'
-            })
-          }).catch(() => {
-            // 用户选择不退出
+        // 询问是否要重新登录
+        ElMessageBox.confirm(
+          '密码已修改成功，是否立即退出并重新登录？',
+          '提示',
+          {
+            confirmButtonText: '是',
+            cancelButtonText: '否',
+            type: 'info'
+          }
+        ).then(() => {
+          userInfoStore.logout().then(() => {
+            window.location.href = '/login'
           })
-        }
-      } finally {
-        pwdSubmitting.value = false
+        }).finally(() => {
+          changeLoading(false)
+        })
       }
     }
   })

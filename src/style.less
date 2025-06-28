@@ -65,3 +65,28 @@ a:active,
 a:hover {
   outline: none;
 }
+p {
+	margin: 8px 0;
+}
+
+.scrollbar-wrap {
+	// 滚动条美化
+	&::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		border-radius: 3px;
+		background-color: rgba(144, 147, 153, 0.3);
+
+		&:hover {
+			background-color: rgba(144, 147, 153, 0.5);
+		}
+	}
+
+	&::-webkit-scrollbar-track {
+		border-radius: 3px;
+		background-color: rgba(144, 147, 153, 0.1);
+	}
+}

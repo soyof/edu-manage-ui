@@ -8,10 +8,12 @@
       </template>
 
       <el-tabs v-model="activeTab">
-        <el-tab-pane label="基本信息" name="baseinfo">
+        <el-tab-pane label="基本信息" name="baseInfo">
           <ModifyUserBaseInfo />
         </el-tab-pane>
-
+        <el-tab-pane label="其他信息" name="otherInfo">
+          <OtherUserInfo />
+        </el-tab-pane>
         <el-tab-pane label="修改密码" name="password">
           <ModifyPassword />
         </el-tab-pane>
@@ -23,11 +25,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ModifyUserBaseInfo from '@/components/user/modifyUserBaseInfo.vue'
+import OtherUserInfo from '@/components/user/otherUserInfo.vue'
 import ModifyPassword from '@/components/user/modifyPassword.vue'
 
 // 当前激活的标签页
-const activeTab = ref('baseinfo')
-
+const activeTab = ref('otherInfo')
 </script>
 
 <style lang="less" scoped>
@@ -37,6 +39,31 @@ const activeTab = ref('baseinfo')
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+  }
+  .el-tabs {
+    :deep(.el-tabs__content) {
+      width: 100%;
+      max-height: calc(@contentHeight - 160px);
+      overflow: auto;
+      &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        background-color: rgba(144, 147, 153, 0.3);
+
+        &:hover {
+          background-color: rgba(144, 147, 153, 0.5);
+        }
+      }
+
+      &::-webkit-scrollbar-track {
+        border-radius: 3px;
+        background-color: rgba(144, 147, 153, 0.1);
+      }
     }
   }
 }
