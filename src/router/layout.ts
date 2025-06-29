@@ -12,6 +12,12 @@ export default [
     component: () => import(/* webpackChunkName: "userManage" */ '../views/userManage.vue')
   },
   {
+    path: '/modifyUserOtherInfos',
+    name: 'modifyUserOtherInfos',
+    meta: { title: '学术档案', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyUserInfos" */ '../views/modifyUserOtherInfos.vue')
+  },
+  {
     path: '/noticeManage',
     name: 'noticeManage',
     meta: { title: '通知管理', tabClosable: true },

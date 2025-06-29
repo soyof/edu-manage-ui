@@ -7,9 +7,9 @@
   >
     <el-tab-pane
       v-for="(item, ids) in tabsList"
-      :key="`${item?.path}_${ids}_menu_tab`"
+      :key="`${item?.fullPath}_${ids}_menu_tab`"
       :label="item?.meta?.title"
-      :name="item?.path"
+      :name="item?.fullPath"
       :closable="item?.meta?.tabClosable"
     >
       <template #label>
@@ -54,17 +54,16 @@ const tabItemRefs = useTemplateRef('contextMenuPopover')
 
 const curTabPath = computed({
   get() {
-    return store.getCurTabPath || routeInfo.path
+    return store.getCurTabPath || routeInfo.fullPath || routeInfo.path
   },
   set(val) {
-    const tabItem = tabsList.value.find((item) => item.path === val)
+    const tabItem = tabsList.value.find((item) => item.fullPath ? item.fullPath === val : item.path === val)
     router.push({ ...tabItem })
     store.changeCurTabInfo(val)
   }
 })
 
 const handleTabRemove = (path: string) => {
-  console.log(path)
   store.delTabList(path, router)
 }
 

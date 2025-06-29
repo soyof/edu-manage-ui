@@ -122,11 +122,17 @@
               + 新增标签
             </el-button>
           </div>
-
-          <!-- <div v-if="!isViewMode" class="tags-hint">
-            <el-text type="info" size="small">点击标签可编辑，按回车确认</el-text>
-          </div> -->
         </div>
+      </el-form-item>
+
+      <el-form-item label="证件照" prop="idPic">
+        <IdPhotoUploader
+          v-model="userInfoForm.idPic"
+          :userId="userInfoForm.userId"
+          :disabled="isViewMode"
+          @uploadSuccess="handleIdPhotoSuccess"
+          @uploadError="handleIdPhotoError"
+        />
       </el-form-item>
 
       <!-- 按钮区域 -->
@@ -147,11 +153,12 @@ import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
 import { EditPen } from '@element-plus/icons-vue'
 import AvatarUploader from './avatarUploader.vue'
+import IdPhotoUploader from './idPhotoUploader.vue'
 import service from '@/utils/services'
 import { useUserTitleDict } from '@/hooks/useDictionary'
 import useLoading from '@/hooks/useLoading'
 
-const { loading, changeLoading, closeLoading } = useLoading({
+const { loading, changeLoading } = useLoading({
   target: '.user-info-card'
 })
 
@@ -232,6 +239,17 @@ const handleNewTagConfirm = () => {
   newTagValue.value = ''
 }
 
+// 处理证件照上传成功
+const handleIdPhotoSuccess = (url: string) => {
+  console.log(url)
+  userInfoForm.idPic = url
+}
+
+// 处理证件照上传错误
+const handleIdPhotoError = (error: any) => {
+  console.error('证件照上传失败:', error)
+}
+
 // 随机生成头像背景颜色
 const avatarColors = [
   '#67C23A', // 绿色
@@ -269,7 +287,8 @@ const userInfo = computed(() => {
     avatar: info.avatar || '',
     labHomepage: info.labHomepage || '',
     personalHomepage: info.personalHomepage || '',
-    tags: info.tags || []
+    tags: info.tags || [],
+    idPic: info.idPic || ''
   }
 })
 
@@ -282,7 +301,8 @@ const userInfoForm = reactive({
   title: '',
   labHomepage: '',
   personalHomepage: '',
-  tags: [] as string[]
+  tags: [] as string[],
+  idPic: ''
 })
 
 // 用户信息表单验证规则
@@ -324,9 +344,9 @@ const initUserInfoForm = () => {
   userInfoForm.email = userInfo.value.email
   userInfoForm.phone = userInfo.value.phone
   userInfoForm.title = userInfo.value.title
-  // userInfoForm.avatar = userInfo.value.avatar
   userInfoForm.labHomepage = userInfo.value.labHomepage
   userInfoForm.personalHomepage = userInfo.value.personalHomepage
+  userInfoForm.idPic = userInfo.value.idPic || ''
 
   // 处理标签数据
   if (typeof userInfo.value.tags === 'string') {
@@ -369,9 +389,15 @@ const saveUserInfo = () => {
   formRef.value.validate((valid) => {
     if (valid) {
       changeLoading(true, { text: '保存中...' })
-      service.post('/api/updateProfile', {
-        ...userInfoForm
-      }).then(async() => {
+
+      // 准备要提交的数据
+      const submitData = {
+        ...userInfoForm,
+        // 确保标签数据格式正确
+        tags: Array.isArray(userInfoForm.tags) ? userInfoForm.tags : []
+      }
+
+      service.post('/api/updateProfile', submitData).then(async() => {
         ElMessage.success('更新成功')
         await userInfoStore.getUserInfoAction()
         // 退出编辑模式

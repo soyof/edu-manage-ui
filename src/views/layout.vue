@@ -18,11 +18,14 @@
       <div class="layout-bottom-right">
         <MenuTabs />
         <el-scrollbar class="content-wrap">
-          <router-view v-slot="{ Component }">
+          <router-view v-slot="{ Component, route: routeProps }">
             <transition name="fade-transform" mode="out-in">
-              <KeepAlive>
-                <component :is="Component" />
-              </KeepAlive>
+              <keep-alive :include="cachedViews">
+                <component
+                  :is="Component"
+                  :key="routeProps.fullPath"
+                />
+              </keep-alive>
             </transition>
           </router-view>
         </el-scrollbar>
@@ -35,7 +38,43 @@
 import MenuInfo from '@/components/menuInfo.vue'
 import MenuTabs from '@/components/menuTabs.vue'
 import UserDropdown from '@/components/userDropdown.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useTabsStore } from '@/stores/menuTabs'
+import { computed, watch, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
+const route = useRoute()
+const router = useRouter()
+const store = useTabsStore()
+const { tabsList } = storeToRefs(store)
+
+// 需要缓存的组件名称列表
+const cachedViews = computed(() => {
+  // 从tabsList中获取所有需要缓存的组件名称
+  return tabsList.value
+    .filter(tab => tab.name) // 过滤掉没有name的路由
+    .map(tab => tab.name as string) // 提取name属性作为组件名
+})
+
+// 监听路由变化，处理缓存
+watch(() => route.fullPath, () => {
+  // 确保当前路由已添加到tabsList中
+  if (route.name && !cachedViews.value.includes(route.name as string)) {
+    // 如果当前路由不在缓存列表中，尝试添加到tabs中
+    const currentTab = {
+      path: route.path,
+      fullPath: route.fullPath,
+      name: route.name as string,
+      query: route.query,
+      params: route.params,
+      meta: {
+        title: route.meta.title as string,
+        tabClosable: route.meta.tabClosable !== false
+      }
+    }
+    store.addTabList(currentTab)
+  }
+}, { immediate: true })
 </script>
 
 <style lang="less" scoped>

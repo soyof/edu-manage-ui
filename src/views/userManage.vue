@@ -94,6 +94,18 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="status"
+        label="状态"
+        width="80"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          <el-tag :type="scope.row.status ? 'success' : 'danger'">
+            {{ scope.row.status ? '启用' : '禁用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="email"
         label="邮箱"
         minWidth="180"
@@ -146,18 +158,6 @@
         showOverflowTooltip
       />
       <el-table-column
-        prop="status"
-        label="状态"
-        width="80"
-        showOverflowTooltip
-      >
-        <template #default="scope">
-          <el-tag :type="scope.row.status ? 'success' : 'danger'">
-            {{ scope.row.status ? '启用' : '禁用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
         prop="opera"
         label="操作"
         width="140"
@@ -165,27 +165,63 @@
         showOverflowTooltip
       >
         <template #default="scope">
-          <a
-            href="javascript:void(0)"
-            class="user-manage-opera-view"
-            @click="handleView(scope.row)"
-          >
-            查看
-          </a>
-          <a
-            href="javascript:void(0)"
-            class="user-manage-opera-edit"
-            @click="handleEdit(scope.row)"
-          >
-            编辑
-          </a>
-          <a
-            href="javascript:void(0)"
-            class="user-manage-opera-delete"
-            @click="handleDelete(scope.row)"
-          >
-            删除
-          </a>
+          <div class="operation-buttons">
+            <el-tooltip
+              content="查看"
+              placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
+            >
+              <el-button
+                type="primary"
+                link
+                :icon="View"
+                @click="handleView(scope.row)"
+              />
+            </el-tooltip>
+
+            <el-tooltip
+              content="基本信息编辑"
+              placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
+            >
+              <el-button
+                type="primary"
+                link
+                :icon="EditPen"
+                @click="handleEdit(scope.row)"
+              />
+            </el-tooltip>
+
+            <el-tooltip
+              content="学术档案"
+              placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
+            >
+              <el-button
+                type="primary"
+                link
+                :icon="School"
+                @click="handleEditOther(scope.row)"
+              />
+            </el-tooltip>
+
+            <el-tooltip
+              content="删除"
+              placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
+            >
+              <el-button
+                type="danger"
+                link
+                :icon="Delete"
+                @click="handleDelete(scope.row)"
+              />
+            </el-tooltip>
+          </div>
         </template>
       </el-table-column>
     </TablePage>
@@ -207,9 +243,13 @@ import service from '@/utils/services'
 import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useUserTitleDict } from '@/hooks/useDictionary'
+import { useRouter } from 'vue-router'
+import { View, EditPen, Delete, School } from '@element-plus/icons-vue'
 
 // 获取职称字典
 const { dictList: userTitleList, getDictLabel: translateTitle } = useUserTitleDict()
+
+const $router = useRouter()
 
 const searchForm = {
   username: '',
@@ -264,6 +304,17 @@ const handleEdit = (row: any) => {
   }
 }
 
+const handleEditOther = (row: any) => {
+  $router.push({
+    path: `/modifyUserOtherInfos`,
+    query: {
+      userId: row.userId,
+      userName: row.username,
+      tabTitle: encodeURIComponent(`【${row.username}】学术档案`)
+    }
+  })
+}
+
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(
     `确认删除【${row.username}_${row.userId}】用户吗？`,
@@ -299,6 +350,15 @@ const handleSuccess = () => {
 
 <style lang="less" scoped>
 .user-manage {
+  .operation-buttons {
+    display: flex;
+    justify-content: center;
+
+    .el-button {
+      padding: 2px;
+    }
+  }
+
   .user-manage-opera-view {
     margin-right: 8px;
     color: @primaryColor;

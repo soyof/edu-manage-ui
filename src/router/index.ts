@@ -3,7 +3,6 @@ import type { RouteRecordRaw } from 'vue-router'
 import layout from './layout'
 import pinia from '@/stores'
 import { useTabsStore } from '@/stores/menuTabs'
-import { useUserInfoStore } from '@/stores/userInfo'
 import { routerBeforeEach } from '@/utils/permission'
 
 let store: any = null
@@ -48,9 +47,6 @@ router.beforeEach(async(to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  const isExist = layout.findIndex((item) => item.path === to.path) > -1
-  if (isExist) {
-    store?.addTabList(to)
-    store?.changeCurTabInfo(to.path)
-  }
+  store?.addTabList(to)
+  store?.changeCurTabInfo(to.fullPath)
 })

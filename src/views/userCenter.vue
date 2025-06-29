@@ -8,13 +8,13 @@
       </template>
 
       <el-tabs v-model="activeTab">
-        <el-tab-pane label="基本信息" name="baseInfo">
+        <el-tab-pane label="基本信息" name="baseInfo" lazy>
           <ModifyUserBaseInfo />
         </el-tab-pane>
-        <el-tab-pane label="其他信息" name="otherInfo">
+        <el-tab-pane label="学术档案" name="otherInfo" lazy>
           <OtherUserInfo />
         </el-tab-pane>
-        <el-tab-pane label="修改密码" name="password">
+        <el-tab-pane label="修改密码" name="password" lazy>
           <ModifyPassword />
         </el-tab-pane>
       </el-tabs>
@@ -29,7 +29,7 @@ import OtherUserInfo from '@/components/user/otherUserInfo.vue'
 import ModifyPassword from '@/components/user/modifyPassword.vue'
 
 // 当前激活的标签页
-const activeTab = ref('otherInfo')
+const activeTab = ref('baseInfo')
 </script>
 
 <style lang="less" scoped>
