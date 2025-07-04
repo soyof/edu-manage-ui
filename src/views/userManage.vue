@@ -273,7 +273,7 @@
 </template>
 
 <script setup lang="ts">
-import TablePage from '@/components/global/TablePage.vue'
+import TablePage from '@/components/global/tablePage.vue'
 import ModifyUserDialog from '@/components/user/modifyUserDialog.vue'
 import { ref } from 'vue'
 import service from '@/utils/services'
