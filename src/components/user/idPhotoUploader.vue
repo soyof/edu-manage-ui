@@ -41,40 +41,21 @@
       </el-button>
     </div>
 
-    <!-- 裁剪对话框 -->
-    <el-dialog
-      v-model="cropperVisible"
+    <!-- 使用通用裁剪对话框组件 -->
+    <CropperDialog
+      v-model:visible="cropperVisible"
       title="裁剪证件照"
-      width="600px"
-      destroyOnClose
-      :closeOnClickModal="false"
-    >
-      <div class="cropper-container">
-        <VueCropper
-          ref="cropperRef"
-          :img="cropperImage"
-          :outputSize="1"
-          :outputType="'png'"
-          :info="true"
-          :full="false"
-          :canMove="true"
-          :canMoveBox="true"
-          :original="false"
-          :autoCrop="true"
-          :fixed="true"
-          :fixedNumber="[8.5, 10]"
-          :centerBox="true"
-          :high="true"
-          @realTime="cropperRealTime"
-        />
-      </div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="cropperVisible = false">取消</el-button>
-          <el-button type="primary" @click="cropImage">确认</el-button>
-        </span>
-      </template>
-    </el-dialog>
+      :imageUrl="cropperImage"
+      :fixed="true"
+      :showFull="true"
+      :canScale="true"
+      :autoCropWidth="340"
+      :autoCropHeight="400"
+      :fixedNumber="[8.5, 10]"
+      :loading="loading"
+      @confirm="handleCropperConfirm"
+      @cancel="cropperVisible = false"
+    />
   </div>
 </template>
 
@@ -82,10 +63,9 @@
 import { ref, defineProps, defineEmits } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Plus, Delete } from '@element-plus/icons-vue'
-import 'vue-cropper/dist/index.css'
-import { VueCropper } from 'vue-cropper'
 import service from '@/utils/services'
 import useLoading from '@/hooks/useLoading'
+import CropperDialog from '@/components/global/cropperDialog.vue'
 
 const props = defineProps({
   modelValue: {
@@ -112,12 +92,6 @@ const { loading, changeLoading } = useLoading({
 // 裁剪相关
 const cropperVisible = ref(false)
 const cropperImage = ref('')
-const cropperRef = ref()
-const cropperResult = ref({
-  file: null as File | null,
-  blob: null as Blob | null,
-  dataUrl: ''
-})
 
 // 处理文件选择
 const handleFileChange = (fileInfo: any) => {
@@ -146,44 +120,34 @@ const handleFileChange = (fileInfo: any) => {
   reader.readAsDataURL(file)
 }
 
-// 裁剪实时数据
-const cropperRealTime = (data: any) => {
-  cropperResult.value = data
-}
+// 处理裁剪确认
+const handleCropperConfirm = (data: { blob: Blob, file: File }) => {
+  if (loading.value) return
+  changeLoading(true, { text: '上传中...' })
 
-// 裁剪图片
-const cropImage = async() => {
-  if (!cropperRef.value) return
+  // 创建FormData对象
+  const formData = new FormData()
+  // 将blob转换为文件
+  console.log(data.file)
+  formData.append('idcard', data.file)
+  formData.append('userId', props.userId)
+  formData.append('type', 'idPic')
 
-  // 获取裁剪后的图片blob数据
-  cropperRef.value.getCropBlob((blob: Blob) => {
+  // 调用上传API
+  service.upload('/api/uploadIdCard', formData).then((res: any) => {
+    console.log(res)
+    if (res && res.url) {
+      emit('update:modelValue', res.url)
+      emit('uploadSuccess', res.url)
+      ElMessage.success('证件照上传成功')
+    } else {
+      emit('uploadError', '无法获取图片URL')
+    }
+  }).catch((error) => {
+    emit('uploadError', error)
+  }).finally(() => {
     cropperVisible.value = false
-    changeLoading(true, { text: '上传中...' })
-
-    // 创建FormData对象
-    const formData = new FormData()
-    // 将blob转换为文件
-    const file = new File([blob], 'idphoto.png', { type: 'image/png' })
-    console.log(file)
-    formData.append('idcard', file)
-    formData.append('userId', props.userId)
-    formData.append('type', 'idPic')
-
-    // 调用上传API
-    service.upload('/api/uploadIdCard', formData).then((res: any) => {
-      console.log(res)
-      if (res && res.url) {
-        emit('update:modelValue', res.url)
-        emit('uploadSuccess', res.url)
-        ElMessage.success('证件照上传成功')
-      } else {
-        emit('uploadError', '无法获取图片URL')
-      }
-    }).catch((error) => {
-      emit('uploadError', error)
-    }).finally(() => {
-      changeLoading(false)
-    })
+    changeLoading(false)
   })
 }
 
@@ -214,10 +178,8 @@ const handleDelete = () => {
     width: 100%;
     height: 100%;
     display: flex;
-    // align-items: center;
 
     .id-photo-uploader {
-      width: 100%;
       height: 100%;
       margin-right: 10px;
     }
@@ -288,10 +250,5 @@ const handleDelete = () => {
       margin-left: 10px;
     }
   }
-}
-
-.cropper-container {
-  height: 400px;
-  width: 100%;
 }
 </style>

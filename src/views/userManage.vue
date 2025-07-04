@@ -101,7 +101,7 @@
       >
         <template #default="scope">
           <el-tag :type="scope.row.status ? 'success' : 'danger'">
-            {{ scope.row.status ? '启用' : '禁用' }}
+            {{ scope.row.status ? '已启用' : '已禁用' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -133,6 +133,29 @@
           {{ scope.row.role === 'admin' ? '管理员' : '普通用户' }}
         </template>
       </el-table-column>
+      <!-- <el-table-column
+        prop="idPic"
+        label="证件照"
+        width="100"
+      >
+        <template #default="scope">
+          <el-image
+            v-if="scope.row.idPic"
+            :src="`/api/previewImage?filename=${scope.row.idPic}`"
+            fit="cover"
+            style="width: 60px; height: 80px; border-radius: 4px;"
+            :previewSrcList="[`/api/previewImage?filename=${scope.row.idPic}`]"
+          >
+            <template #error>
+              <div class="image-error">
+                <el-icon><Picture /></el-icon>
+                <span>加载失败</span>
+              </div>
+            </template>
+          </el-image>
+          <span v-else>-</span>
+        </template>
+      </el-table-column> -->
       <el-table-column
         prop="labHomepage"
         label="实验室主页"
@@ -160,7 +183,7 @@
       <el-table-column
         prop="opera"
         label="操作"
-        width="140"
+        width="160"
         fixed="right"
         showOverflowTooltip
       >
@@ -209,6 +232,20 @@
             </el-tooltip>
 
             <el-tooltip
+              :content="scope.row.status ? '禁用' : '启用'"
+              placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
+            >
+              <el-button
+                :type="scope.row.status ? 'warning' : 'success'"
+                link
+                :icon="scope.row.status ? Lock : Unlock"
+                @click="handleToggleStatus(scope.row)"
+              />
+            </el-tooltip>
+
+            <el-tooltip
               content="删除"
               placement="top"
               :showAfter="1000"
@@ -244,7 +281,7 @@ import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useUserTitleDict } from '@/hooks/useDictionary'
 import { useRouter } from 'vue-router'
-import { View, EditPen, Delete, School } from '@element-plus/icons-vue'
+import { View, EditPen, Delete, School, Picture, Lock, Unlock } from '@element-plus/icons-vue'
 
 // 获取职称字典
 const { dictList: userTitleList, getDictLabel: translateTitle } = useUserTitleDict()
@@ -346,6 +383,29 @@ const handleSuccess = () => {
   // 刷新列表
   tablePageRef.value?.getList()
 }
+
+const handleToggleStatus = (row: any) => {
+  const newStatus = !row.status
+  const statusText = newStatus ? '启用' : '禁用'
+
+  ElMessageBox.confirm(
+    `确认${statusText}【${row.username}_${row.userId}】用户吗？`,
+    `${statusText}确认`,
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: newStatus ? 'success' : 'warning'
+    }
+  ).then(() => {
+    service.post('/api/updateUserStatus', {
+      userId: row.userId,
+      status: newStatus ? 1 : 0
+    }).then(() => {
+      ElMessage.success(`${statusText}成功`)
+      tablePageRef.value?.getList()
+    })
+  })
+}
 </script>
 
 <style lang="less" scoped>
@@ -369,6 +429,33 @@ const handleSuccess = () => {
   }
   .user-manage-opera-delete {
     color: @dangerColor;
+  }
+
+  .image-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 80px;
+    background-color: #f5f7fa;
+    border-radius: 4px;
+    color: #909399;
+    font-size: 12px;
+
+    .el-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+  }
+
+  :deep(.el-image) {
+    cursor: pointer;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 }
 </style>

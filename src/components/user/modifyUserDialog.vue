@@ -84,6 +84,15 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="证件照" prop="idPic">
+          <IdPhotoUploader
+            v-model="form.idPic"
+            :userId="form.userId || ''"
+            :disabled="isViewMode"
+            @uploadSuccess="handleIdPhotoSuccess"
+            @uploadError="handleIdPhotoError"
+          />
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -114,6 +123,7 @@ import { ROLE_LIST } from '@/dic/dic'
 import { ElMessage } from 'element-plus'
 import service from '@/utils/services'
 import { useUserTitleDict } from '@/hooks/useDictionary'
+import IdPhotoUploader from './idPhotoUploader.vue'
 
 const { dictList: userTitleList } = useUserTitleDict()
 
@@ -158,6 +168,7 @@ interface UserForm {
   labHomepage: string
   personalHomepage: string
   tags: string[]
+  idPic: string
   [key: string]: string | string[]
 }
 
@@ -171,7 +182,8 @@ const form = ref<UserForm>({
   role: '',
   labHomepage: '',
   personalHomepage: '',
-  tags: []
+  tags: [],
+  idPic: ''
 })
 
 // 标签选项
@@ -270,6 +282,17 @@ const resetForm = () => {
       form.value[key] = ''
     }
   }
+}
+
+// 处理证件照上传成功
+const handleIdPhotoSuccess = (url: string) => {
+  form.value.idPic = url
+}
+
+// 处理证件照上传错误
+const handleIdPhotoError = (error: any) => {
+  console.error('证件照上传失败:', error)
+  ElMessage.error('证件照上传失败')
 }
 
 // 关闭弹窗

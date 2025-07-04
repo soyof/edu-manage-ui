@@ -45,43 +45,40 @@
           </el-upload>
         </div>
 
-        <div v-else class="cropper-container">
-          <VueCropper
-            ref="cropperRef"
-            :img="imageUrl"
+        <div v-else>
+          <!-- 使用通用裁剪对话框组件 -->
+          <CropperDialog
+            v-model:visible="showCropper"
+            title="裁剪头像"
+            :imageUrl="imageUrl"
             :outputSize="0.8"
             :outputType="outputType"
-            :info="true"
-            :full="true"
+            :showFull="true"
             :canScale="true"
-            :canMove="true"
             :fixed="false"
-            :canMoveBox="true"
-            :fixedBox="false"
-            :autoCrop="true"
             :autoCropWidth="cropWidth"
             :autoCropHeight="cropHeight"
-            :centerBox="true"
-            @realTime="realTime"
+            :showPreview="true"
+            :previewCircle="true"
+            :showReupload="true"
+            :loading="uploading"
+            @confirm="handleCropperConfirm"
+            @cancel="handleCropperCancel"
+            @reupload="uploadAgain"
+            @preview="handlePreview"
           />
-        </div>
-
-        <div v-if="imageUrl" class="preview-container">
-          <div class="preview-title">预览</div>
-          <div class="preview">
-            <img :src="previewUrl" alt="预览" class="preview-img">
-          </div>
         </div>
       </div>
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="cancelCrop">取 消</el-button>
+          <el-button @click="cancelUpload">取 消</el-button>
           <el-button v-if="imageUrl" @click="uploadAgain">重新上传</el-button>
           <el-button
+            v-if="imageUrl"
             type="primary"
             :loading="uploading"
-            @click="confirmCrop"
+            @click="confirmUpload"
           >
             确 认
           </el-button>
@@ -92,13 +89,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits } from 'vue'
+import { ref, computed, defineProps, defineEmits, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { EditPen, Plus } from '@element-plus/icons-vue'
-import { VueCropper } from 'vue-cropper'
 import service from '@/utils/services'
-import 'vue-cropper/dist/index.css'
 import { useUserInfoStore } from '@/stores/userInfo'
+import CropperDialog from '@/components/global/cropperDialog.vue'
 
 // 定义属性
 const props = defineProps({
@@ -147,11 +143,16 @@ const userInfoStore = useUserInfoStore()
 // 头像上传相关
 const outputType = ref('jpeg')
 const showUploadDialog = ref(false)
+const showCropper = ref(false)
 const imageUrl = ref('')
 const previewUrl = ref('')
-const cropperRef = ref<any>(null)
 const uploading = ref(false)
 const currentAvatar = computed(() => props.avatar ? `/api/previewAvatar?filename=${props.avatar}&userId=${props.userId}` : '')
+
+// 监听imageUrl变化，当有图片时显示裁剪组件
+watch(() => imageUrl.value, (newVal) => {
+  showCropper.value = !!newVal
+})
 
 // 用户头像相关
 const avatarFallback = computed(() => {
@@ -188,8 +189,8 @@ const handleAvatarChange = (file: any) => {
   reader.readAsDataURL(file.raw)
 }
 
-// 裁剪实时预览
-const realTime = (data: any) => {
+// 处理预览
+const handlePreview = (data: any) => {
   previewUrl.value = data.url
 }
 
@@ -197,6 +198,7 @@ const realTime = (data: any) => {
 const resetUploadData = () => {
   imageUrl.value = ''
   previewUrl.value = ''
+  showCropper.value = false
 }
 
 // 处理对话框关闭
@@ -204,8 +206,8 @@ const handleDialogClose = () => {
   resetUploadData()
 }
 
-// 取消裁剪
-const cancelCrop = () => {
+// 取消上传
+const cancelUpload = () => {
   showUploadDialog.value = false
   resetUploadData()
 }
@@ -215,30 +217,31 @@ const uploadAgain = () => {
   resetUploadData()
 }
 
-// 确认裁剪并上传
-const confirmCrop = async() => {
-  if (!cropperRef.value) return
+// 处理裁剪取消
+const handleCropperCancel = () => {
+  showCropper.value = false
+}
+
+// 确认上传
+const confirmUpload = () => {
+  // 触发裁剪组件的确认方法
+  showCropper.value = true
+}
+
+// 处理裁剪确认
+const handleCropperConfirm = async(data: { blob: Blob, file: File, url: string }) => {
   uploading.value = true
   try {
-    // 获取裁剪后的图片数据
-    const base64 = await new Promise<string>((resolve) => {
-      cropperRef.value.getCropData((data: string) => {
-        resolve(data)
-      })
-    })
-    // 将 base64 转换为文件对象
-    const blob = dataURLtoBlob(base64)
-    const file = new File([blob], `avatar.${outputType.value}`, { type: `image/${outputType.value}` })
     // 创建表单数据
     const formData = new FormData()
     formData.append('userId', props.userId)
-    formData.append('avatar', file)
+    formData.append('avatar', data.file)
     // 调用上传API
     const res: any = await service.upload('/api/uploadAvatar', formData)
     if (res) {
       ElMessage.success('头像上传成功')
       // 向父组件通知上传成功，传递新头像URL
-      const avatarUrl = res.avatarUrl || base64
+      const avatarUrl = res.avatarUrl || data.url
       userInfoStore.updateAvatar(avatarUrl)
       emit('update:avatar', avatarUrl)
       emit('uploadSuccess', avatarUrl)
@@ -246,22 +249,12 @@ const confirmCrop = async() => {
       showUploadDialog.value = false
       resetUploadData()
     }
+  } catch (error) {
+    ElMessage.error('头像上传失败')
+    console.error('上传头像出错:', error)
   } finally {
     uploading.value = false
   }
-}
-
-// base64 转 blob
-const dataURLtoBlob = (dataurl: string) => {
-  const arr = dataurl.split(',')
-  const mime = arr[0].match(/:(.*?);/)?.[1]
-  const bstr = atob(arr[1])
-  let n = bstr.length
-  const u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
-  }
-  return new Blob([u8arr], { type: mime })
 }
 </script>
 
@@ -348,42 +341,8 @@ const dataURLtoBlob = (dataurl: string) => {
       }
     }
   }
-
-  .cropper-container {
-    width: 100%;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .preview-container {
-    margin-top: 20px;
-    text-align: center;
-
-    .preview-title {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .preview {
-      width: 100px;
-      height: 100px;
-      overflow: hidden;
-      border-radius: 50%;
-      border: 1px solid #eee;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-
-      .preview-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-  }
 }
+
 .dialog-footer {
   .el-button {
     margin-right: 8px;
