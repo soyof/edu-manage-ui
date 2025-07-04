@@ -96,7 +96,7 @@
       <el-table-column
         prop="status"
         label="状态"
-        width="80"
+        width="100"
         showOverflowTooltip
       >
         <template #default="scope">
@@ -281,12 +281,15 @@ import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useUserTitleDict } from '@/hooks/useDictionary'
 import { useRouter } from 'vue-router'
-import { View, EditPen, Delete, School, Picture, Lock, Unlock } from '@element-plus/icons-vue'
+import { View, EditPen, Delete, School, Lock, Unlock } from '@element-plus/icons-vue'
+import { useUserInfoStore } from '@/stores/userInfo'
 
 // 获取职称字典
 const { dictList: userTitleList, getDictLabel: translateTitle } = useUserTitleDict()
 
 const $router = useRouter()
+// 获取用户信息存储
+const userInfoStore = useUserInfoStore()
 
 const searchForm = {
   username: '',
@@ -385,6 +388,13 @@ const handleSuccess = () => {
 }
 
 const handleToggleStatus = (row: any) => {
+  // 判断是否是当前登录用户
+  const currentUserId = userInfoStore.userInfo?.userId
+  if (currentUserId === row.userId) {
+    ElMessage.warning('不能修改自己的账号状态')
+    return
+  }
+
   const newStatus = !row.status
   const statusText = newStatus ? '启用' : '禁用'
 

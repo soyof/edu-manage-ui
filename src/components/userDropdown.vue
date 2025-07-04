@@ -2,10 +2,15 @@
   <div class="user-dropdown">
     <el-dropdown trigger="click" @visibleChange="handleVisibleChange">
       <div class="avatar-wrapper">
-        <el-avatar :size="32" :src="userAvatar" class="user-avatar">
-          {{ avatarFallback }}
-        </el-avatar>
-        <span class="user-name">{{ userInfo.username }}</span>
+        <div class="avatar-container">
+          <el-avatar :size="36" :src="userAvatar" class="user-avatar">
+            {{ avatarFallback }}
+          </el-avatar>
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ userInfo.username }}</span>
+          <span class="user-role">{{ userInfo.roleName }}</span>
+        </div>
         <el-icon class="el-icon--right" :class="{ 'is-reverse': dropdownVisible }">
           <ArrowDown />
         </el-icon>
@@ -15,6 +20,7 @@
           <el-dropdown-item @click="handleCommand('center')">
             <el-icon><User /></el-icon>个人中心
           </el-dropdown-item>
+
           <el-dropdown-item divided @click="handleCommand('logout')">
             <el-icon><SwitchButton /></el-icon>退出登录
           </el-dropdown-item>
@@ -29,7 +35,12 @@ import { ArrowDown, User, SwitchButton } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserInfoStore } from '@/stores/userInfo'
+import { useThemeStore } from '@/stores/theme'
 import { ElMessageBox, ElMessage, ElLoading } from 'element-plus'
+
+// 获取当前主题
+const themeStore = useThemeStore()
+const currentTheme = computed(() => themeStore.currentTheme)
 
 // 下拉菜单是否可见
 const dropdownVisible = ref(false)
@@ -85,7 +96,10 @@ const avatarBgColor = computed(() => {
 // 用户头像
 const userAvatar = computed(() => {
   // 如果用户信息中有头像则使用，否则返回空字符串使用占位符
-  return userInfo.value.avatar ? `/api/previewAvatar?filename=${userInfo.value.avatar}&userId=${userInfo.value.userId}` : ''
+  if (userInfo.value.avatar) {
+    return `/api/previewAvatar?filename=${userInfo.value.avatar}&userId=${userInfo.value.userId}`
+  }
+  return ''
 })
 
 // 用户信息
@@ -144,25 +158,62 @@ const handleCommand = (command: string) => {
   .avatar-wrapper {
     display: flex;
     align-items: center;
+    padding: 0 10px 0 0;
+    border-radius: 20px;
+    background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.08)"');
+    transition: all 0.3s ease;
+    border: 1px solid v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.05)"');
 
-    .user-avatar {
-      margin-right: 8px;
-      background-color: v-bind(avatarBgColor);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
+    &:hover {
+      background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.12)"');
     }
 
-    .user-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
+    .avatar-container {
+      margin-left: 2px;
+      margin-right: 8px;
+      border-radius: 50%;
+      overflow: hidden;
+
+      .user-avatar {
+        background-color: v-bind(avatarBgColor);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 500;
+        border: 2px solid v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.15)"');
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+        :deep(img) {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+      }
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      margin-right: 8px;
+
+      .user-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.9)"');
+        line-height: 1.3;
+      }
+
+      .user-role {
+        font-size: 12px;
+        color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.5)"');
+        line-height: 1.3;
+      }
     }
 
     .el-icon--right {
       margin-left: 4px;
-      color: #fff;
-      font-weight: 700;
+      color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.5)"');
+      font-weight: 400;
       font-size: 12px;
       transition: transform 0.3s ease;
 
@@ -171,5 +222,10 @@ const handleCommand = (command: string) => {
       }
     }
   }
+}
+
+:deep(.el-dropdown-menu__item.is-active) {
+  color: var(--el-color-primary);
+  background-color: rgba(64, 158, 255, 0.1);
 }
 </style>

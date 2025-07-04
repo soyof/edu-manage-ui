@@ -43,6 +43,8 @@ export default router
 router.beforeEach(async(to, from, next) => {
   // 获取store
   store = useTabsStore(pinia)
+  // 初始化标签页状态，过滤掉登录页签
+  store.initStore()
   routerBeforeEach(to, from, next)
 })
 

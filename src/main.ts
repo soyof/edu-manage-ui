@@ -10,6 +10,8 @@ import 'element-plus/dist/index.css'
 import '@/styles/el-cover.less'
 import './assets/iconfont/iconfont.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { useTabsStore } from '@/stores/menuTabs'
+import { useThemeStore } from './stores/theme'
 
 // 创建应用实例
 const app = createApp(App)
@@ -20,6 +22,14 @@ app.use(router)
 app.use(ElementPlus, {
   locale: zhCn
 })
+
+// 初始化主题（在使用pinia之后）
+const themeStore = useThemeStore()
+themeStore.initTheme()
+
+// 初始化标签页store，确保过滤掉登录页签
+const tabsStore = useTabsStore()
+tabsStore.initStore()
 
 // 挂载应用
 app.mount('#app')

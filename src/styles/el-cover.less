@@ -4,6 +4,12 @@
   th.el-table-fixed-column--right {
     background-color: #f5f7fa !important;
   }
+  --el-table-header-bg-color: #edf2fc;
+  --el-table-header-text-color: #2c3e50;
+  --el-table-row-hover-bg-color: #ecf5ff;
+  --el-table-border-color: #dcdfe6;
+  --el-table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  --el-table-tr-bg-color: #ffffff;
 }
 .el-overlay {
   .el-dialog__footer  {
@@ -14,3 +20,63 @@
     }
   }
 }
+
+/* 增强浅色主题下的按钮对比度 */
+.el-button--primary {
+  --el-button-hover-bg-color: #1867c0;
+  --el-button-hover-border-color: #1867c0;
+}
+
+/* 增强浅色主题下的表单元素对比度 */
+.el-input__inner {
+  &:focus {
+    border-color: var(--primaryColor);
+  }
+}
+
+/* 增强浅色主题下的分页控件对比度 */
+.el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+  background-color: var(--primaryColor);
+}
+
+/* 增强浅色主题下的标签页对比度 */
+.el-tabs__active-bar {
+  background-color: var(--primaryColor);
+}
+
+.el-tabs__item.is-active {
+  color: var(--primaryColor);
+}
+
+/* 增强浅色主题下的下拉菜单对比度 */
+.el-dropdown-menu__item:focus, 
+.el-dropdown-menu__item:not(.is-disabled):hover {
+  background-color: #ecf5ff;
+  color: var(--primaryColor);
+}
+
+/* 增强浅色主题下的状态标签对比度 */
+.el-tag--success {
+  --el-tag-bg-color: #e7f9ed;
+  --el-tag-border-color: #c2e7d0;
+  --el-tag-text-color: #67c23a;
+}
+
+.el-tag--info {
+  --el-tag-bg-color: #f4f4f5;
+  --el-tag-border-color: #e9e9eb;
+  --el-tag-text-color: #909399;
+}
+
+.el-tag--warning {
+  --el-tag-bg-color: #fdf6ec;
+  --el-tag-border-color: #f5dab1;
+  --el-tag-text-color: #e6a23c;
+}
+
+.el-tag--danger {
+  --el-tag-bg-color: #fef0f0;
+  --el-tag-border-color: #fbc4c4;
+  --el-tag-text-color: #f56c6c;
+}
+

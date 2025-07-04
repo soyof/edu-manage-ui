@@ -1,16 +1,32 @@
-@headerBgColor: #c6e2ff;
-@menuBgColor: #1890ff;
-@menuBgColorS: #409efe;
-@menuTextColor: #fff;
-@menuActiveTextColor: #1890ff;
-@logoTextColor: #4f3189;
-@bgColor: #f7f7f7;
+:root {
+  /* 暗色主题（深蓝黑色调）- 默认值 */
+  --headerBgColor: #1d2935;
+  --menuBgColor: #1d2935;
+  --menuBgColorS: #263445;
+  --menuTextColor: #bfcbd9;
+  --menuActiveTextColor: #409eff;
+  --logoTextColor: #f0f2f5;
+  --bgColor: #f5f7fa;
+  --textActiveColor: #409eff;
+  --primaryColor: #409eff;
+  --borderActiveColor: #409eff;
+  --dangerColor: #F56C6C;
+  --borderColor: #d9d9d9;
+}
+
+@headerBgColor: var(--headerBgColor);
+@menuBgColor: var(--menuBgColor);
+@menuBgColorS: var(--menuBgColorS);
+@menuTextColor: var(--menuTextColor);
+@menuActiveTextColor: var(--menuActiveTextColor);
+@logoTextColor: var(--logoTextColor);
+@bgColor: var(--bgColor);
 @pageBgColor: #fff;
-@textActiveColor: @menuBgColorS;
-@primaryColor: @menuBgColorS;
-@dangerColor: #F56C6C;
-@borderColor: #d9d9d9;
-@borderActiveColor: @menuBgColorS;
+@textActiveColor: var(--textActiveColor);
+@primaryColor: var(--primaryColor);
+@dangerColor: var(--dangerColor);
+@borderColor: var(--borderColor);
+@borderActiveColor: var(--borderActiveColor);
 
 @layoutTopHeight: 60px;
 @layoutBottomHeight: calc(100vh - @layoutTopHeight);
