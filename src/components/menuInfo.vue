@@ -1,10 +1,11 @@
 <template>
   <el-menu
     :activeTextColor="menuActiveTextColor"
-    :backgroundColor="menuBgColor"
+    :backgroundColor="'transparent'"
     :textColor="menuTextColor"
     :defaultActive="routeInfo.path"
     router
+    class="custom-menu"
   >
     <el-menu-item
       v-for="(item, ids) in menuInfos"
@@ -44,11 +45,33 @@ const menuActiveTextColor = computed(() => {
 </script>
 
 <style lang="less" scoped>
-.el-menu {
+.custom-menu {
+  position: relative;
   --el-menu-item-font-size: 14px !important;
   height: 100%;
   color: var(--menuTextColor);
   border-right: none;
+  background-color: transparent !important;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: var(--menuBgGradient);
+    background-size: 100% 100%;
+    z-index: -1;
+  }
+
+  :deep(.el-menu) {
+    background-color: transparent !important;
+  }
+
+  :deep(.el-menu--horizontal) {
+    background-color: transparent !important;
+  }
 
   :deep(.el-menu-item), :deep(.el-sub-menu__title) {
     height: @menuItemHeight;
@@ -56,18 +79,28 @@ const menuActiveTextColor = computed(() => {
     margin: 2px 6px;
     border-radius: 4px;
     transition: all 0.3s;
+    font-weight: 500;
+    background-color: transparent !important;
 
     &:hover {
       color: #fff !important;
-      background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(0, 0, 0, 0.2)"');
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     }
   }
 
   :deep(.el-menu-item) {
     &.is-active {
-      background-color: v-bind('currentTheme === "light" ? "rgba(64, 158, 255, 0.1)" : "rgba(64, 158, 255, 0.15)"');
+      background: linear-gradient(90deg,
+        rgba(0, 0, 0, 0.25) 0%,
+        rgba(0, 0, 0, 0.2) 50%,
+        rgba(0, 0, 0, 0.1) 100%) !important;
       color: var(--menuActiveTextColor);
       position: relative;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 
       &::before {
         content: '';
@@ -75,12 +108,37 @@ const menuActiveTextColor = computed(() => {
         left: -6px;
         top: 50%;
         transform: translateY(-50%);
-        height: 60%;
-        width: 3px;
+        height: 70%;
+        width: 4px;
         background-color: var(--menuActiveTextColor);
         border-radius: 0 3px 3px 0;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.3), 0 0 5px var(--menuActiveTextColor);
+        animation: pulse 1.5s infinite alternate;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2) inset, 0 0 15px rgba(0, 0, 0, 0.1);
+        pointer-events: none;
       }
     }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.85;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3), 0 0 5px var(--menuActiveTextColor);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.4), 0 0 8px var(--menuActiveTextColor);
   }
 }
 </style>

@@ -9,61 +9,101 @@ export interface DictItem {
 }
 
 export interface DictState {
-  userTitleList: DictItem[];
-  userTitleDict: Record<string, string>; // 职称字典对象，用于翻译
+  dictInfo: Record<string, DictItem[]>; // 字典信息，键为字典类型，值为字典项数组
+  dictObjCache: Record<string, Record<string, string>>; // 缓存字典对象，用于快速查询
 }
 
 export const useDictStore = defineStore('dict', {
   state: (): DictState => {
     return {
-      userTitleList: [],
-      userTitleDict: {}
+      dictInfo: {},
+      dictObjCache: {}
     }
   },
   getters: {
-    getUserTitleList: (state) => {
-      return computed(() => state.userTitleList || [])
+    // 获取指定类型的字典列表
+    getDictList: (state) => {
+      return (dictType: string) => {
+        return computed(() => state.dictInfo[dictType] || [])
+      }
     },
-    // 获取职称字典对象
-    getUserTitleDict: (state) => {
-      return computed(() => state.userTitleDict || {})
+    // 获取指定类型的字典对象（id -> value映射）
+    getDictObj: (state) => {
+      return (dictType: string) => {
+        return computed(() => {
+          // 如果缓存中已有该字典对象，直接返回
+          if (state.dictObjCache[dictType]) {
+            return state.dictObjCache[dictType]
+          }
+
+          // 否则构建字典对象并缓存
+          const dictList = state.dictInfo[dictType] || []
+          const dictObj: Record<string, string> = {}
+          dictList.forEach((item: DictItem) => {
+            if (item.dictId && item.dictValue) {
+              dictObj[item.dictId] = item.dictValue
+            }
+          })
+
+          // 更新缓存
+          state.dictObjCache[dictType] = dictObj
+
+          return dictObj
+        })
+      }
     }
   },
   actions: {
-    async getUserTitleListAction() {
+    // 获取指定类型的字典数据
+    async getDictByType(dictType: string) {
       // 如果已有数据，直接返回
-      if (this.userTitleList && this.userTitleList.length > 0) {
-        return Promise.resolve(this.userTitleList)
+      if (this.dictInfo[dictType]) {
+        return Promise.resolve(this.dictInfo[dictType])
       }
 
       // 否则调用接口获取
-      return await service.get('/api/getDictByType?dictType=user_title').then((res: any) => {
+      return await service.get(`/api/getDictByType?dictType=${dictType}`).then((res: any) => {
         if (res && Array.isArray(res)) {
-          this.updateUserTitleList(res || [])
-
-          // 构建职称字典对象，便于翻译
-          const dict: Record<string, string> = {}
-          this.userTitleList.forEach((item: any) => {
-            if (typeof item === 'object' && item !== null) {
-              if (item.dictId && item.dictValue) {
-                dict[item.dictId] = item.dictValue
-              }
-            }
-          })
-          this.updateUserTitleDict(dict)
+          this.updateDict(dictType, res)
         }
-        return this.userTitleList
+        return this.dictInfo[dictType] || []
       })
     },
-    updateUserTitleList(userTitleList: DictItem[]) {
-      this.userTitleList = userTitleList
+
+    // 更新字典数据
+    updateDict(dictType: string, dictList: DictItem[]) {
+      this.dictInfo[dictType] = dictList
+
+      // 同时更新字典对象缓存
+      const dictObj: Record<string, string> = {}
+      dictList.forEach((item: DictItem) => {
+        if (item.dictId && item.dictValue) {
+          dictObj[item.dictId] = item.dictValue
+        }
+      })
+      this.dictObjCache[dictType] = dictObj
     },
-    updateUserTitleDict(dict: Record<string, string>) {
-      this.userTitleDict = dict
+
+    // 根据字典类型和代码获取名称
+    getDictNameByCode(dictType: string, code: string): string {
+      const dictObj = this.dictObjCache[dictType] || {}
+      return dictObj[code] || code
     },
-    // 根据职称代码获取职称名称
-    getTitleNameByCode(code: string): string {
-      return this.userTitleDict[code] || code
+
+    // 清除指定类型的字典缓存
+    clearDictCache(dictType: string) {
+      if (this.dictInfo[dictType]) {
+        delete this.dictInfo[dictType]
+      }
+      if (this.dictObjCache[dictType]) {
+        delete this.dictObjCache[dictType]
+      }
+    },
+
+    // 清除所有字典缓存
+    clearAllDictCache() {
+      this.dictInfo = {}
+      this.dictObjCache = {}
     }
   },
   persist: {

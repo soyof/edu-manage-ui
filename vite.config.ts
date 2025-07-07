@@ -31,5 +31,18 @@ export default defineConfig({
         ws: true // 是否代理 websockets
       }
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'tinymce': ['tinymce']
+        }
+      }
+    },
+    sourcemap: true
+  },
+  optimizeDeps: {
+    include: ['tinymce']
   }
 })

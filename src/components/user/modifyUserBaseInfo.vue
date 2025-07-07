@@ -155,7 +155,7 @@ import { EditPen } from '@element-plus/icons-vue'
 import AvatarUploader from './avatarUploader.vue'
 import IdPhotoUploader from './idPhotoUploader.vue'
 import service from '@/utils/services'
-import { useUserTitleDict } from '@/hooks/useDictionary'
+import { useDictionary } from '@/hooks/useDictionary'
 import useLoading from '@/hooks/useLoading'
 
 const { loading, changeLoading } = useLoading({
@@ -163,7 +163,10 @@ const { loading, changeLoading } = useLoading({
 })
 
 const userInfoStore = useUserInfoStore()
-const { dictList: userTitleList } = useUserTitleDict()
+const { dictList: userTitleList } = useDictionary({
+  dictType: 'user_title',
+  autoLoad: true
+})
 // 是否处于编辑模式
 const isEditing = ref(false)
 // 是否处于只读模式

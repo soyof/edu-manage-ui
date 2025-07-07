@@ -24,6 +24,12 @@ export default [
     component: () => import(/* webpackChunkName: "noticeManage" */ '../views/noticeManage.vue')
   },
   {
+    path: '/modifyNotice',
+    name: 'modifyNotice',
+    meta: { title: '编辑通知', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyNoticeInfos" */ '../views/modifyNoticeInfos.vue')
+  },
+  {
     path: '/userCenter',
     name: 'userCenter',
     meta: { title: '个人中心', isHidden: true, tabClosable: true },

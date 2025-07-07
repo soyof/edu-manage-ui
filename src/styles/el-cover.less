@@ -1,3 +1,20 @@
+/* Element Plus 样式覆盖，使用CSS变量实现主题切换 */
+
+/* 全局 Element Plus 基础颜色变量覆盖 */
+:root {
+  /* Element Plus 主要变量 */
+  --el-color-primary: var(--primaryColor);
+  --el-color-primary-light-3: color-mix(in srgb, var(--primaryColor) 60%, white);
+  --el-color-primary-light-5: color-mix(in srgb, var(--primaryColor) 40%, white);
+  --el-color-primary-light-7: color-mix(in srgb, var(--primaryColor) 20%, white);
+  --el-color-primary-light-8: color-mix(in srgb, var(--primaryColor) 10%, white);
+  --el-color-primary-light-9: color-mix(in srgb, var(--primaryColor) 5%, white);
+  --el-color-primary-dark-2: color-mix(in srgb, var(--primaryColor) 80%, black);
+  --el-border-color-hover: var(--primaryColor);
+  --el-text-color-primary: #303133;
+  --el-text-color-regular: #606266;
+}
+
 .el-table {
   th.el-table__cell,
   th.el-table-fixed-column--left,
@@ -6,11 +23,12 @@
   }
   --el-table-header-bg-color: #edf2fc;
   --el-table-header-text-color: #2c3e50;
-  --el-table-row-hover-bg-color: #ecf5ff;
+  --el-table-row-hover-bg-color: color-mix(in srgb, var(--primaryColor) 10%, white);
   --el-table-border-color: #dcdfe6;
   --el-table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   --el-table-tr-bg-color: #ffffff;
 }
+
 .el-overlay {
   .el-dialog__footer  {
     .dialog-footer {
@@ -21,25 +39,37 @@
   }
 }
 
-/* 增强浅色主题下的按钮对比度 */
+/* 按钮相关样式 */
 .el-button--primary {
-  --el-button-hover-bg-color: #1867c0;
-  --el-button-hover-border-color: #1867c0;
+  --el-button-bg-color: var(--primaryColor);
+  --el-button-border-color: var(--primaryColor);
+  --el-button-hover-bg-color: color-mix(in srgb, var(--primaryColor) 80%, white);
+  --el-button-hover-border-color: color-mix(in srgb, var(--primaryColor) 80%, white);
+  --el-button-active-bg-color: color-mix(in srgb, var(--primaryColor) 90%, black);
+  --el-button-active-border-color: color-mix(in srgb, var(--primaryColor) 90%, black);
 }
 
-/* 增强浅色主题下的表单元素对比度 */
+/* 表单元素样式 */
 .el-input__inner {
   &:focus {
     border-color: var(--primaryColor);
   }
 }
 
-/* 增强浅色主题下的分页控件对比度 */
+.el-input.is-active .el-input__wrapper {
+  box-shadow: 0 0 0 1px var(--primaryColor) inset !important;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--primaryColor) inset !important;
+}
+
+/* 分页控件样式 */
 .el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
   background-color: var(--primaryColor);
 }
 
-/* 增强浅色主题下的标签页对比度 */
+/* 标签页样式 */
 .el-tabs__active-bar {
   background-color: var(--primaryColor);
 }
@@ -48,14 +78,14 @@
   color: var(--primaryColor);
 }
 
-/* 增强浅色主题下的下拉菜单对比度 */
+/* 下拉菜单样式 */
 .el-dropdown-menu__item:focus, 
 .el-dropdown-menu__item:not(.is-disabled):hover {
-  background-color: #ecf5ff;
+  background-color: color-mix(in srgb, var(--primaryColor) 10%, white);
   color: var(--primaryColor);
 }
 
-/* 增强浅色主题下的状态标签对比度 */
+/* 状态标签样式 */
 .el-tag--success {
   --el-tag-bg-color: #e7f9ed;
   --el-tag-border-color: #c2e7d0;
@@ -80,3 +110,65 @@
   --el-tag-text-color: #f56c6c;
 }
 
+/* 复选框样式 */
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: var(--primaryColor);
+  border-color: var(--primaryColor);
+}
+
+.el-checkbox__input.is-focus .el-checkbox__inner {
+  border-color: var(--primaryColor);
+}
+
+/* 单选框样式 */
+.el-radio__input.is-checked .el-radio__inner {
+  background-color: var(--primaryColor);
+  border-color: var(--primaryColor);
+}
+
+.el-radio__input.is-checked + .el-radio__label {
+  color: var(--primaryColor);
+}
+
+/* 选择器样式 */
+.el-select .el-input.is-focus .el-input__wrapper {
+  box-shadow: 0 0 0 1px var(--primaryColor) inset !important;
+}
+
+.el-select-dropdown__item.selected {
+  color: var(--primaryColor);
+}
+
+/* 开关样式 */
+.el-switch.is-checked .el-switch__core {
+  border-color: var(--primaryColor);
+  background-color: var(--primaryColor);
+}
+
+/* 滑块样式 */
+.el-slider__bar {
+  background-color: var(--primaryColor);
+}
+
+.el-slider__button {
+  border-color: var(--primaryColor);
+}
+
+/* Element Plus 菜单相关样式 */
+.el-menu {
+  --el-menu-bg-color: transparent !important;
+  background-color: transparent !important;
+  border-right: none !important;
+}
+
+.el-menu--horizontal {
+  background-color: transparent !important;
+}
+
+.el-menu-item, .el-sub-menu__title {
+  background-color: transparent !important;
+}
+
+.el-menu-item:hover, .el-sub-menu__title:hover {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}

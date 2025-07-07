@@ -3,7 +3,7 @@
     <el-dropdown trigger="click" @visibleChange="handleVisibleChange">
       <div class="avatar-wrapper">
         <div class="avatar-container">
-          <el-avatar :size="36" :src="userAvatar" class="user-avatar">
+          <el-avatar :size="32" :src="userAvatar" class="user-avatar">
             {{ avatarFallback }}
           </el-avatar>
         </div>
@@ -158,11 +158,12 @@ const handleCommand = (command: string) => {
   .avatar-wrapper {
     display: flex;
     align-items: center;
-    padding: 0 10px 0 0;
-    border-radius: 20px;
+    padding: 0 8px 0 0;
+    border-radius: 18px;
     background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.08)"');
     transition: all 0.3s ease;
     border: 1px solid v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.05)"');
+    height: 36px;
 
     &:hover {
       background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.12)"');
@@ -177,7 +178,7 @@ const handleCommand = (command: string) => {
       .user-avatar {
         background-color: v-bind(avatarBgColor);
         color: #fff;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 500;
         border: 2px solid v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.15)"');
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -194,27 +195,27 @@ const handleCommand = (command: string) => {
     .user-info {
       display: flex;
       flex-direction: column;
-      margin-right: 8px;
+      margin-right: 6px;
 
       .user-name {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
         color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.9)"');
-        line-height: 1.3;
+        line-height: 1.2;
       }
 
       .user-role {
-        font-size: 12px;
+        font-size: 11px;
         color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.5)"');
-        line-height: 1.3;
+        line-height: 1.2;
       }
     }
 
     .el-icon--right {
-      margin-left: 4px;
+      margin-left: 2px;
       color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.5)"');
       font-weight: 400;
-      font-size: 12px;
+      font-size: 11px;
       transition: transform 0.3s ease;
 
       &.is-reverse {

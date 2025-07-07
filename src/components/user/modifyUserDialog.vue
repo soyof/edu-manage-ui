@@ -122,10 +122,13 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ROLE_LIST } from '@/dic/dic'
 import { ElMessage } from 'element-plus'
 import service from '@/utils/services'
-import { useUserTitleDict } from '@/hooks/useDictionary'
+import { useDictionary } from '@/hooks/useDictionary'
 import IdPhotoUploader from './idPhotoUploader.vue'
 
-const { dictList: userTitleList } = useUserTitleDict()
+const { dictList: userTitleList } = useDictionary({
+  dictType: 'user_title',
+  autoLoad: true
+})
 
 const props = defineProps({
   visible: {

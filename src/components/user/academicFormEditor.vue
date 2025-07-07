@@ -19,13 +19,10 @@
             <template v-for="(field, fieldIndex) in section.fields" :key="`${sectionIndex}-${fieldIndex}`">
               <el-form-item :label="field.label" :prop="field.prop">
                 <TinyMceEditor
-                  :id="`editor-${section.title}-${field.prop}-${field.lang}`"
-                  :key="`editor-${section.title}-${field.prop}-${field.lang}_${fieldIndex}_${sectionIndex}`"
-                  :ref="el => { if (el) editorRefs[`${section.title}-${field.prop}`] = el }"
                   v-model="(userInfoForm[field.prop as keyof typeof userInfoForm] as string)"
                   :disabled="isDisabled"
                   :placeholder="field.placeholder"
-                  :height="310"
+                  :height="500"
                 />
               </el-form-item>
             </template>
@@ -62,13 +59,10 @@
             <template v-for="(field, fieldIndex) in section.fields" :key="`${sectionIndex}-${fieldIndex}`">
               <el-form-item :label="field.label" :prop="field.prop">
                 <TinyMceEditor
-                  :id="`editor-opt-${section.key}-${field.prop}-${field.lang}`"
-                  :key="`editor-opt-${section.key}-${field.prop}-${field.lang}_${fieldIndex}_${sectionIndex}`"
-                  :ref="el => { if (el) editorRefs[`opt-${section.key}-${field.prop}`] = el }"
                   v-model="(userInfoForm[field.prop as keyof typeof userInfoForm] as string)"
                   :disabled="isDisabled"
                   :placeholder="field.placeholder"
-                  :height="310"
+                  :height="500"
                 />
               </el-form-item>
             </template>
@@ -147,9 +141,6 @@ onBeforeUnmount(() => {
 // 折叠面板激活项
 const activeCollapse = ref(['个人简介', '研究方向'])
 const activeOptionalCollapse = ref<string[]>([])
-
-// 编辑器引用集合
-const editorRefs = reactive<Record<string, any>>({})
 
 // 定义表单字段接口
 interface FormField {
@@ -230,7 +221,7 @@ const requiredSections: Section[] = [
       {
         label: '简介(英文)',
         prop: 'bioEn',
-        placeholder: '请输入英文个人简介',
+        placeholder: 'please enter your bio in English',
         lang: 'en'
       }
     ]
@@ -441,63 +432,42 @@ const initForm = (data: any) => {
 const saveForm = () => {
   if (!formRef.value || loading.value) return
 
-  formRef.value.validate((valid) => {
+  formRef.value.validate((valid: boolean) => {
     if (valid) {
       // 构建要保存的数据 - 使用扁平化结构适配接口参数
       const formData = {
         // 必须保存的部分
-        bio: userInfoForm.bio,
-        bioEn: userInfoForm.bioEn,
-        researchDirection: userInfoForm.researchDirection,
-        researchDirectionEn: userInfoForm.researchDirectionEn,
+        bio: removeSpace(userInfoForm.bio),
+        bioEn: removeSpace(userInfoForm.bioEn),
+        researchDirection: removeSpace(userInfoForm.researchDirection),
+        researchDirectionEn: removeSpace(userInfoForm.researchDirectionEn),
 
-        // 可选部分 - 如果没有启用该部分，则不传递该参数
-        ...(userInfoForm.sections.projects ? {
-          researchProject: userInfoForm.researchProject,
-          researchProjectEn: userInfoForm.researchProjectEn
-        } : {}),
-
-        ...(userInfoForm.sections.academic ? {
-          academicAppointment: userInfoForm.academicAppointment,
-          academicAppointmentEn: userInfoForm.academicAppointmentEn
-        } : {}),
-
-        ...(userInfoForm.sections.awards ? {
-          awards: userInfoForm.awards,
-          awardsEn: userInfoForm.awardsEn
-        } : {}),
-
-        ...(userInfoForm.sections.research ? {
-          academicResearch: userInfoForm.academicResearch,
-          academicResearchEn: userInfoForm.academicResearchEn
-        } : {}),
-
-        ...(userInfoForm.sections.papers ? {
-          publications: userInfoForm.publications,
-          publicationsEn: userInfoForm.publicationsEn
-        } : {})
+        // 可选部分
+        researchProject: userInfoForm.sections.projects ? removeSpace(userInfoForm.researchProject) : '',
+        researchProjectEn: userInfoForm.sections.projects ? removeSpace(userInfoForm.researchProjectEn) : '',
+        academicAppointment: userInfoForm.sections.academic ? removeSpace(userInfoForm.academicAppointment) : '',
+        academicAppointmentEn: userInfoForm.sections.academic ? removeSpace(userInfoForm.academicAppointmentEn) : '',
+        awards: userInfoForm.sections.awards ? removeSpace(userInfoForm.awards) : '',
+        awardsEn: userInfoForm.sections.awards ? removeSpace(userInfoForm.awardsEn) : '',
+        academicResearch: userInfoForm.sections.research ? removeSpace(userInfoForm.academicResearch) : '',
+        academicResearchEn: userInfoForm.sections.research ? removeSpace(userInfoForm.academicResearchEn) : '',
+        publications: userInfoForm.sections.papers ? removeSpace(userInfoForm.publications) : '',
+        publicationsEn: userInfoForm.sections.papers ? removeSpace(userInfoForm.publicationsEn) : ''
       }
 
-      const params = removeSpace({
-        userId: props.userId,
-        ...formData
-      })
-
       // 触发保存事件
-      emit('save', params)
+      emit('save', { ...formData, userId: props.userId })
+    } else {
+      // 如果验证不通过，展开所有部分，便于用户查看错误
+      expandAllSections()
     }
   })
 }
 
 // 取消编辑
 const cancelEdit = () => {
-  // 重置表单数据到初始状态
-  initForm(originalData.value || {})
-
-  // 清除验证状态
-  formRef.value?.clearValidate()
-
-  // 触发取消事件
+  // 重置表单数据
+  initForm(originalData.value)
   emit('cancel')
 }
 

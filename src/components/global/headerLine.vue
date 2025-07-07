@@ -107,7 +107,7 @@ export default defineComponent({
         width: 4px;
         height: 14px;
         margin-right: 8px;
-        background-color: @theme-color;
+        background-color: @primaryColor;
       }
 
       &-text {

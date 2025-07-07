@@ -1,17 +1,19 @@
 :root {
-  /* 暗色主题（深蓝黑色调）- 默认值 */
-  --headerBgColor: #1d2935;
-  --menuBgColor: #1d2935;
-  --menuBgColorS: #263445;
-  --menuTextColor: #bfcbd9;
+  /* 暗色主题（深蓝色调）- 默认值 */
+  --headerBgColor: #2c3e50;
+  --menuBgColor: #2c3e50;
+  --menuBgColorS: #34495e;
+  --menuTextColor: #d1dbe5;
   --menuActiveTextColor: #409eff;
-  --logoTextColor: #f0f2f5;
+  --logoTextColor: #ffffff;
   --bgColor: #f5f7fa;
   --textActiveColor: #409eff;
   --primaryColor: #409eff;
   --borderActiveColor: #409eff;
   --dangerColor: #F56C6C;
   --borderColor: #d9d9d9;
+  --headerBgGradient: linear-gradient(135deg, #34495e 0%, #2c3e50 50%, #243342 100%);
+  --menuBgGradient: linear-gradient(180deg, #34495e 0%, #2c3e50 50%, #243342 100%);
 }
 
 @headerBgColor: var(--headerBgColor);
@@ -27,12 +29,14 @@
 @dangerColor: var(--dangerColor);
 @borderColor: var(--borderColor);
 @borderActiveColor: var(--borderActiveColor);
+@headerBgGradient: var(--headerBgGradient);
+@menuBgGradient: var(--menuBgGradient);
 
-@layoutTopHeight: 60px;
+@layoutTopHeight: 50px;
 @layoutBottomHeight: calc(100vh - @layoutTopHeight);
 // layout内容区高度 = @layoutBottomHeight - 菜单栏高度35 - 菜单栏margin-top 5
 @layoutContentHeight: calc(@layoutBottomHeight - 40px);
 // 内容区高度 = @layoutContentHeight - 内容区padding-top + padding-bottom 24px
 @contentHeight: calc(@layoutContentHeight - 24px);
 @menuWidth: 220px;
-@menuItemHeight: 50px;
+@menuItemHeight: 40px;

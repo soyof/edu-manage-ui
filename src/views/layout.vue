@@ -2,49 +2,11 @@
   <!-- https://lin-xin.github.io/example/vue-manage-system/#/dashboard -->
   <div class="layout-wrap">
     <div class="layout-top">
+      <!-- 合成生物研究所 -->
       <div class="logo-wrap">合成生物研究所</div>
       <div class="other-info-wrap">
-        <!-- 主题切换图标按钮 -->
-        <div class="theme-switch">
-          <el-dropdown trigger="click" @command="handleThemeChange">
-            <div class="theme-icon">
-              <el-icon :size="18">
-                <component :is="themeIcon" />
-              </el-icon>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'dark' }" command="dark">
-                  <el-icon><MoonNight /></el-icon>暗黑风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'blue' }" command="blue">
-                  <el-icon><Sunny /></el-icon>天蓝风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'green' }" command="green">
-                  <el-icon><Opportunity /></el-icon>绿色风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'purple' }" command="purple">
-                  <el-icon><Star /></el-icon>紫色风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'orange' }" command="orange">
-                  <el-icon><Orange /></el-icon>橙色风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'red' }" command="red">
-                  <el-icon><Cherry /></el-icon>红色风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'pink' }" command="pink">
-                  <el-icon><Female /></el-icon>粉色风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'teal' }" command="teal">
-                  <el-icon><Ship /></el-icon>海蓝风格
-                </el-dropdown-item>
-                <el-dropdown-item :class="{ 'is-active': currentTheme === 'light' }" command="light">
-                  <el-icon><Monitor /></el-icon>浅色风格
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
+        <!-- 主题切换组件 -->
+        <themeSwitch />
         <div class="user-info">
           <UserDropdown />
         </div>
@@ -61,11 +23,12 @@
         <el-scrollbar class="content-wrap">
           <router-view v-slot="{ Component, route: routeProps }">
             <transition name="fade-transform" mode="out-in">
-              <div :key="getComponentKey(routeProps.fullPath)" class="route-component-wrapper">
-                <keep-alive :include="cachedViews">
-                  <component :is="Component" />
-                </keep-alive>
-              </div>
+              <keep-alive :include="cachedViews">
+                <component
+                  :is="wrapComponent(Component, routeProps)"
+                  :key="getComponentKey(routeProps)"
+                />
+              </keep-alive>
             </transition>
           </router-view>
         </el-scrollbar>
@@ -78,87 +41,73 @@
 import MenuInfo from '@/components/menuInfo.vue'
 import MenuTabs from '@/components/menuTabs.vue'
 import UserDropdown from '@/components/userDropdown.vue'
-import { useRoute, useRouter } from 'vue-router'
+import themeSwitch from '@/components/themeSwitch.vue'
+import { useRoute } from 'vue-router'
 import { useTabsStore } from '@/stores/menuTabs'
-import { useThemeStore } from '@/stores/theme'
-import { computed, watch, ref } from 'vue'
+import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { MoonNight, Sunny, Monitor, Brush, Opportunity, Star, Orange, Cherry, Female, Ship } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-import type { ThemeType } from '@/stores/theme'
+import { componentWrap, clearComponentCache } from '@/utils/componentWrap'
 
 const route = useRoute()
-const router = useRouter()
 const store = useTabsStore()
-const themeStore = useThemeStore()
 const { tabsList, refreshMap } = storeToRefs(store)
 
-// 获取当前主题
-const currentTheme = computed(() => themeStore.currentTheme)
-
-// 根据当前主题返回对应的图标
-const themeIcon = computed(() => {
-  switch (currentTheme.value) {
-    case 'dark':
-      return MoonNight
-    case 'blue':
-      return Sunny
-    case 'green':
-      return Opportunity
-    case 'purple':
-      return Star
-    case 'orange':
-      return Orange
-    case 'red':
-      return Cherry
-    case 'pink':
-      return Female
-    case 'teal':
-      return Ship
-    case 'light':
-      return Monitor
-    default:
-      return Brush
-  }
+// 需要缓存的组件名称列表（实际上是路径列表）
+const cachedViews = computed(() => {
+  return tabsList.value
+    .filter(tab => tab.fullPath) // 确保有fullPath
+    .map(tab => tab.fullPath) // 使用fullPath作为缓存键
 })
 
-// 处理主题切换
-const handleThemeChange = (theme: ThemeType) => {
-  themeStore.changeTheme(theme)
-  ElMessage.success(`已切换到${theme === 'dark' ? '暗黑' : theme === 'blue' ? '天蓝' : theme === 'green' ? '绿色' : theme === 'purple' ? '紫色' : theme === 'orange' ? '橙色' : theme === 'red' ? '红色' : theme === 'pink' ? '粉色' : theme === 'teal' ? '海蓝' : '浅色'}风格`)
+// 包装组件，使组件name与路由路径一致
+const wrapComponent = (Component: any, routeProps: any) => {
+  const { fullPath } = routeProps
+
+  // 检查是否需要刷新
+  if (refreshMap.value[fullPath]) {
+    // 如果需要刷新，先清除缓存
+    clearComponentCache(fullPath)
+  }
+
+  // 使用组件包装器重写组件名称
+  return componentWrap(Component, fullPath)
 }
 
-// 需要缓存的组件名称列表
-const cachedViews = computed(() => {
-  // 从tabsList中获取所有需要缓存的组件名称
-  return tabsList.value
-    .filter(tab => tab.name) // 过滤掉没有name的路由
-    .map(tab => tab.name as string) // 提取name属性作为组件名
-})
+// 获取组件的key，用于控制组件更新和缓存
+const getComponentKey = (routeProps: any) => {
+  const { fullPath } = routeProps
 
-// 获取组件的key，用于强制刷新组件
-const getComponentKey = (path: string) => {
-  // 如果路径在refreshMap中存在，返回路径+时间戳作为key
-  return refreshMap.value[path] ? `${path}_${refreshMap.value[path]}` : path
+  // 检查当前路径是否在刷新列表中
+  if (refreshMap.value[fullPath]) {
+    return `${fullPath}-${refreshMap.value[fullPath]}` // 添加时间戳强制刷新
+  }
+
+  return fullPath
 }
 
 // 监听路由变化，处理缓存
 watch(() => route.fullPath, () => {
   // 确保当前路由已添加到tabsList中
-  if (route.name && !cachedViews.value.includes(route.name as string)) {
-    // 如果当前路由不在缓存列表中，尝试添加到tabs中
-    const currentTab = {
-      path: route.path,
-      fullPath: route.fullPath,
-      name: route.name as string,
-      query: route.query,
-      params: route.params,
-      meta: {
-        title: route.meta.title as string,
-        tabClosable: route.meta.tabClosable !== false
+  const routeName = route.name as string
+  if (routeName) {
+    // 找到当前路由对应的标签
+    const existingTab = tabsList.value.find(tab => tab.fullPath === route.fullPath)
+
+    if (!existingTab) {
+      // 如果不存在，添加到tabs中
+      const currentTab = {
+        path: route.path,
+        fullPath: route.fullPath,
+        name: routeName,
+        query: route.query,
+        params: route.params,
+        meta: {
+          title: route.meta.title as string,
+          tabClosable: route.meta.tabClosable !== false
+        }
       }
+      store.addTabList(currentTab)
     }
-    store.addTabList(currentTab)
   }
 }, { immediate: true })
 </script>
@@ -176,10 +125,22 @@ watch(() => route.fullPath, () => {
     justify-content: space-between;
     width: 100%;
     height: @layoutTopHeight;
-    background: var(--headerBgColor);
+    background: var(--headerBgGradient);
     box-sizing: border-box;
-    box-shadow: v-bind('currentTheme === "light" ? "0 1px 4px rgba(0, 0, 0, 0.1)" : "0 1px 4px rgba(0, 0, 0, 0.2)"');
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     z-index: 1;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.0));
+      pointer-events: none;
+    }
 
     .logo-wrap {
       display: flex;
@@ -187,13 +148,26 @@ watch(() => route.fullPath, () => {
       justify-content: center;
       width: 220px;
       height: 100%;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 600;
       color: var(--logoTextColor);
-      background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.02)" : "rgba(0, 0, 0, 0.15)"');
+      background-color: rgba(0, 0, 0, 0.15);
       position: relative;
       overflow: hidden;
       transition: all 0.3s;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+        opacity: 0.8;
+        z-index: -1;
+      }
 
       &::after {
         content: '';
@@ -202,7 +176,7 @@ watch(() => route.fullPath, () => {
         right: 0;
         height: 100%;
         width: 1px;
-        background: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.1)"');
+        background: rgba(255, 255, 255, 0.15);
       }
     }
 
@@ -211,27 +185,6 @@ watch(() => route.fullPath, () => {
       align-items: center;
       justify-content: center;
       padding-right: 20px;
-
-      .theme-switch {
-        margin-right: 16px;
-
-        .theme-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.08)"');
-          color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.9)"');
-          cursor: pointer;
-          transition: all 0.3s;
-
-          &:hover {
-            background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.12)"');
-          }
-        }
-      }
 
       .user-info {
         display: flex;
@@ -248,10 +201,42 @@ watch(() => route.fullPath, () => {
       width: @menuWidth;
       min-width: @menuWidth;
       height: 100%;
-      background: v-bind('themeStore.themeConfig.menuBgGradient || themeStore.themeConfig.menuBgColor');
-      box-shadow: v-bind('currentTheme === "light" ? "0 1px 4px rgba(0, 0, 0, 0.05)" : "0 1px 4px rgba(0, 0, 0, 0.2)"');
+      background: var(--menuBgGradient);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
       position: relative;
       z-index: 1;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.05) 30%,
+          rgba(0, 0, 0, 0.03) 70%,
+          rgba(0, 0, 0, 0.08) 100%);
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(to bottom,
+          rgba(255, 255, 255, 0.05) 0%,
+          rgba(255, 255, 255, 0.1) 50%,
+          rgba(255, 255, 255, 0.05) 100%);
+        pointer-events: none;
+      }
+
       .menu-wrap {
         width: 100%;
         height: 100%;
@@ -282,7 +267,7 @@ watch(() => route.fullPath, () => {
 // 路由过渡动画
 .fade-transform-enter-active,
 .fade-transform-leave-active {
-  transition: all 0.5s;
+  transition: all 0.2s;
 }
 
 .fade-transform-enter-from {
@@ -300,10 +285,5 @@ watch(() => route.fullPath, () => {
   width: 100%;
   height: 100%;
   position: relative;
-}
-
-:deep(.el-dropdown-menu__item.is-active) {
-  color: var(--el-color-primary);
-  background-color: rgba(64, 158, 255, 0.1);
 }
 </style>

@@ -5,10 +5,18 @@
       v-model:visible="contextMenuVisible"
       :x="menuLeft"
       :y="menuTop"
+      :isActiveTab="isActiveTabRightClicked"
+      :isClosable="isTabClosable"
+      :tabsCount="tabsList.length"
+      :hasRightTabs="hasRightTabs"
+      :hasLeftTabs="hasLeftTabs"
+      :allTabsUnclosable="allTabsUnclosable"
+      :onlyUnclosableTabs="onlyUnclosableTabs"
       @command="handleMenuCommand"
     />
 
     <el-tabs
+      ref="tabsRef"
       v-model="curTabPath"
       type="card"
       class="menu-tabs-wrap demo-tabs"
@@ -34,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTabsStore } from '@/stores/menuTabs'
 import { storeToRefs } from 'pinia'
@@ -46,12 +54,27 @@ const store = useTabsStore()
 const router = useRouter()
 const routeInfo = useRoute()
 
+// 标签页滚动相关
+const tabsRef = ref<any>(null)
+
 // 右键菜单相关
 const contextMenuVisible = ref(false)
 const activeTabIndex = ref(-1)
 const activeTabPath = ref('')
 const menuTop = ref(0)
 const menuLeft = ref(0)
+// 判断右键点击的是否为当前激活的标签页
+const isActiveTabRightClicked = ref(true)
+// 当前标签页是否可关闭
+const isTabClosable = ref(true)
+// 是否有右侧标签页
+const hasRightTabs = ref(false)
+// 是否有左侧标签页
+const hasLeftTabs = ref(false)
+// 是否所有标签页都不可关闭
+const allTabsUnclosable = ref(false)
+// 是否只有不可关闭的标签页
+const onlyUnclosableTabs = ref(false)
 
 const curTabPath = computed({
   get() {
@@ -62,6 +85,11 @@ const curTabPath = computed({
     router.push({ ...tabItem })
     store.changeCurTabInfo(val)
   }
+})
+
+// 组件挂载后初始化
+onMounted(() => {
+  // 初始化逻辑可以保留在这里
 })
 
 const handleTabRemove = (path: string) => {
@@ -76,6 +104,26 @@ const handleContextMenu = (event: MouseEvent, item: any, index: number) => {
   // 记录当前操作的标签页信息
   activeTabIndex.value = index
   activeTabPath.value = item.fullPath || item.path
+
+  // 判断右键点击的是否为当前激活的标签页
+  isActiveTabRightClicked.value = activeTabPath.value === curTabPath.value
+
+  // 判断当前标签页是否可关闭
+  isTabClosable.value = item.meta?.tabClosable !== false
+
+  // 计算是否有右侧标签页
+  hasRightTabs.value = index < tabsList.value.length - 1 &&
+    tabsList.value.some((tab, i) => i > index && tab.meta?.tabClosable !== false)
+
+  // 计算是否有左侧标签页
+  hasLeftTabs.value = index > 0 &&
+    tabsList.value.some((tab, i) => i < index && i > 0 && tab.meta?.tabClosable !== false)
+
+  // 计算是否所有标签页都不可关闭
+  allTabsUnclosable.value = tabsList.value.every(tab => tab.meta?.tabClosable === false)
+
+  // 计算是否只有不可关闭的标签页
+  onlyUnclosableTabs.value = tabsList.value.filter(tab => tab.meta?.tabClosable !== false).length <= 1
 
   // 设置菜单位置为鼠标点击位置
   menuLeft.value = event.clientX
@@ -115,37 +163,43 @@ const refreshCurrentTab = () => {
   if (activeTabPath.value) {
     // 获取当前标签页对象
     const currentTab = tabsList.value.find(item => item.fullPath === activeTabPath.value)
+
     if (currentTab) {
-      // 直接调用store的刷新方法，而不是通过路由导航
-      store.refreshTab(currentTab.fullPath)
+      // 只有当右键点击的是当前激活的标签页时，才执行刷新
+      if (isActiveTabRightClicked.value) {
+        // 使用新的刷新方法，直接通过路径刷新组件
+        store.refreshTab(activeTabPath.value)
+      }
     }
   }
 }
 
 const closeCurrentTab = () => {
-  if (activeTabPath.value) {
+  if (activeTabPath.value && isTabClosable.value) {
     store.delTabList(activeTabPath.value, router)
   }
 }
 
 const closeOtherTabs = () => {
-  if (activeTabPath.value) {
+  if (activeTabPath.value && !onlyUnclosableTabs.value) {
     store.delOtherTabs(activeTabPath.value, router)
   }
 }
 
 const closeAllTabs = () => {
-  store.delAllTabs(router)
+  if (!allTabsUnclosable.value) {
+    store.delAllTabs(router)
+  }
 }
 
 const closeRightTabs = () => {
-  if (activeTabIndex.value >= 0) {
+  if (activeTabIndex.value >= 0 && hasRightTabs.value) {
     store.delRightTabs(activeTabIndex.value, router)
   }
 }
 
 const closeLeftTabs = () => {
-  if (activeTabIndex.value >= 0) {
+  if (activeTabIndex.value >= 0 && hasLeftTabs.value) {
     store.delLeftTabs(activeTabIndex.value, router)
   }
 }
@@ -161,41 +215,70 @@ const closeLeftTabs = () => {
   height: 35px;
   min-width: 35px;
   z-index: 1;
-  box-shadow:  0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 5px;
+
   :deep(.el-tabs__header) {
     margin-bottom: 0;
     border-bottom: none;
+
     .el-tabs__nav-wrap {
       margin-bottom: 0;
+
       .el-tabs__nav {
         border: none;
       }
+      .el-tabs__nav-prev, .el-tabs__nav-next {
+        line-height: 35px;
+        color: var(--el-color-primary);
+        font-weight: bold;
+        border-radius: 4px;
+
+        .el-icon {
+          font-size: 16px;
+          vertical-align: middle;
+          font-weight: bold;
+        }
+      }
+
+      .el-tabs__nav-prev {
+        box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.15);
+      }
+
+      .el-tabs__nav-next {
+        box-shadow: -4px 0 8px -2px rgba(0, 0, 0, 0.15);
+      }
     }
+
     .el-tabs__item {
       height: 35px !important;
-      line-height: 35px!important;
+      line-height: 35px !important;
       border-top-left-radius: 6px;
       border-top-right-radius: 6px;
       margin-right: 3px;
       border: 1px solid @borderColor;
       border-bottom: none;
       padding: 0 12px !important;
+
       &:last-child {
         margin-right: 0;
       }
+
       &.is-active {
         background-color: #fff;
+
         .is-icon-close {
           font-size: 14px;
           color: @textActiveColor !important;
           width: 0 !important;
         }
       }
+
       &.is-active {
         &:hover {
           .is-icon-close {
             width: 14px !important;
+
             &:hover {
               color: @textActiveColor !important;
               background-color: transparent !important;

@@ -54,32 +54,20 @@ export const useDictionary = (options: DictionaryOptions) => {
   const dictList = computed(() => {
     if (isBuiltInDict(dictType)) {
       // 内置字典走store
-      switch (dictType) {
-        case 'user_title':
-          return dictStore.userTitleList
-        default:
-          return []
-      }
-    } else {
-      // 自定义字典走缓存
-      return dictCache[dictType] || []
+      return dictStore.getDictList(dictType).value
     }
+    // 自定义字典走缓存
+    return dictCache[dictType] || []
   })
 
   // 字典映射对象
   const dictMapping = computed(() => {
     if (isBuiltInDict(dictType)) {
       // 内置字典走store
-      switch (dictType) {
-        case 'user_title':
-          return dictStore.userTitleDict
-        default:
-          return {}
-      }
-    } else {
-      // 自定义字典走缓存
-      return dictMapCache[dictType] || {}
+      return dictStore.getDictObj(dictType).value
     }
+    // 自定义字典走缓存
+    return dictMapCache[dictType] || {}
   })
 
   // 加载状态
@@ -89,7 +77,7 @@ export const useDictionary = (options: DictionaryOptions) => {
    * 判断是否为内置字典类型
    */
   const isBuiltInDict = (type: string): boolean => {
-    return ['user_title'].includes(type)
+    return ['user_title', 'notice_type', 'notice_importance'].includes(type)
   }
 
   /**
@@ -102,14 +90,8 @@ export const useDictionary = (options: DictionaryOptions) => {
     loadingState[dictType] = true
     try {
       if (isBuiltInDict(dictType)) {
-        // 内置字典处理
-        switch (dictType) {
-          case 'user_title':
-            await dictStore.getUserTitleListAction()
-            break
-          default:
-            console.warn(`未知的内置字典类型: ${dictType}`)
-        }
+        // 内置字典直接使用store的方法加载
+        await dictStore.getDictByType(dictType)
       } else {
         // 自定义字典处理
         if (customLoader) {
@@ -160,6 +142,9 @@ export const useDictionary = (options: DictionaryOptions) => {
   const getDictLabel = (code: string, defaultValue: string = code): string => {
     if (!code) return defaultValue
 
+    if (isBuiltInDict(dictType)) {
+      return dictStore.getDictNameByCode(dictType, code) || defaultValue
+    }
     return dictMapping.value[code] || defaultValue
   }
 
@@ -167,6 +152,10 @@ export const useDictionary = (options: DictionaryOptions) => {
    * 刷新字典数据
    */
   const refreshDict = () => {
+    if (isBuiltInDict(dictType)) {
+      // 内置字典先清除缓存再重新加载
+      dictStore.clearDictCache(dictType)
+    }
     loadDictData()
   }
 
@@ -185,12 +174,9 @@ export const useDictionary = (options: DictionaryOptions) => {
   }
 }
 
-/**
- * 使用职称字典钩子
- */
-export const useUserTitleDict = (autoLoad = true) => {
+export const useDictInfo = (dictType: string, autoLoad = true) => {
   return useDictionary({
-    dictType: 'user_title',
+    dictType,
     autoLoad
   })
 }

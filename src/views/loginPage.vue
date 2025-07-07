@@ -7,6 +7,7 @@
         :model="loginForm"
         :rules="rules"
         class="login-form"
+        @keyup.enter="submitForm"
       >
         <el-form-item prop="username">
           <el-input v-model="loginForm.username" placeholder="请输入用户名" :prefixIcon="User" />
@@ -30,7 +31,7 @@
             type="primary"
             class="login-btn"
             :loading="loading"
-            @click="submitForm"
+            @click.prevent="submitForm"
           >
             登录
           </el-button>
@@ -44,13 +45,14 @@
 import { ref, reactive } from 'vue'
 import { ElMessage, type FormInstance } from 'element-plus'
 import { User, Lock, View } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import services from '@/utils/services'
 import { encodePwByMd5 } from '@/utils/pwdUtils'
 import { useUserInfoStore } from '@/stores/userInfo'
 import pinia from '@/stores'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserInfoStore(pinia)
 const loginFormRef = ref<FormInstance | null>(null) // 修改类
 const loginForm = reactive({
@@ -88,7 +90,9 @@ const submitForm = () => {
           userStore.updateToken(res.token)
           userStore.updateUserInfo(res.userInfos)
           ElMessage.success('登录成功')
-          router.push('/')
+          // 如果存在redirect参数，则跳转到该页面，否则跳转到首页
+          const redirectUrl = route.query.redirect as string
+          router.push(redirectUrl || '/')
         } else {
           ElMessage.error('登录失败，返回数据格式不正确')
         }

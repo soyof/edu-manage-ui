@@ -279,13 +279,16 @@ import { ref } from 'vue'
 import service from '@/utils/services'
 import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { useUserTitleDict } from '@/hooks/useDictionary'
+import { useDictionary } from '@/hooks/useDictionary'
 import { useRouter } from 'vue-router'
 import { View, EditPen, Delete, School, Lock, Unlock } from '@element-plus/icons-vue'
 import { useUserInfoStore } from '@/stores/userInfo'
 
 // 获取职称字典
-const { dictList: userTitleList, getDictLabel: translateTitle } = useUserTitleDict()
+const { dictList: userTitleList, getDictLabel: translateTitle } = useDictionary({
+  dictType: 'user_title',
+  autoLoad: true
+})
 
 const $router = useRouter()
 // 获取用户信息存储

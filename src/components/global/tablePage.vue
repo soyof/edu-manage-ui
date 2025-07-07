@@ -5,18 +5,19 @@
         ref="ruleFormRef"
         :model="searchForm"
         statusIcon
-        labelWidth="auto"
+        :labelWidth="labelWidth"
         size="default"
         inline
+        @keyup.enter="handleSearch"
       >
         <el-row :gutter="24">
           <slot name="search-form" :form="searchForm"></slot>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" @click="handleSearch">
+              <ThrottleButton type="primary" @click.prevent="handleSearch">
                 查询
-              </el-button>
-              <el-button @click="resetForm">重置</el-button>
+              </ThrottleButton>
+              <ThrottleButton @click.prevent="resetForm">重置</ThrottleButton>
             </el-form-item>
           </el-col>
         </el-row>
@@ -48,6 +49,7 @@
 import Pagination from '@/components/global/pagination.vue'
 import { ref, useTemplateRef } from 'vue'
 import { useAutoTable } from '@/hooks/useAutoTable'
+import ThrottleButton from '@/components/global/throttleButton.vue'
 
 const props = defineProps({
   // 是否显示搜索区域
@@ -74,6 +76,11 @@ const props = defineProps({
   fetchData: {
     type: Function,
     required: true
+  },
+  // 搜索表单的label宽度
+  labelWidth: {
+    type: String,
+    default: 'auto'
   }
 })
 
@@ -112,6 +119,7 @@ const handleSearch = () => {
 }
 
 const getList = (pageNo?: any) => {
+  if (loading.value) return
   loading.value = true
   props.fetchData({
     pageNo: pageNo || pager.value.pageNo,
@@ -175,6 +183,11 @@ getList()
     width: 100%;
     .el-table {
       width: 100%;
+      :deep(.el-table__body) {
+        .el-table__cell {
+          padding: 4px 0;
+        }
+      }
     }
   }
 }

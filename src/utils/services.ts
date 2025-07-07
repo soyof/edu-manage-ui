@@ -10,6 +10,48 @@ import { useUserInfoStore } from '@/stores/userInfo'
 let isLogoutProcessing = false
 
 /**
+ * 处理需要退出登录的情况
+ * @param errorMessage 错误信息
+ */
+const handleLogout = (errorMessage = '登录已过期，请重新登录') => {
+  if (isLogoutProcessing) return
+
+  isLogoutProcessing = true
+  try {
+    // 获取store实例
+    const userStore = useUserInfoStore()
+    // 先清除token，确保后续请求不会带上无效token
+    userStore.removeToken()
+
+    // 重定向到登录页
+    router.push({
+      path: '/login',
+      query: {
+        redirect: window.location.pathname
+      }
+    })
+
+    // 显示提示信息
+    errorFn(errorMessage)
+
+    // 最后再调用登出接口，不等待其结果
+    userStore.logout().catch(err => {
+      console.error('登出接口调用失败:', err)
+    })
+  } catch (error) {
+    console.error('处理退出登录失败:', error)
+    // 确保清除token
+    useUserInfoStore().removeToken()
+    router.push('/login')
+  } finally {
+    // 延迟重置标志位，防止快速连续请求
+    setTimeout(() => {
+      isLogoutProcessing = false
+    }, 1500)
+  }
+}
+
+/**
  * 添加时间戳参数，避免缓存
  */
 const getNewParams = (params: any) => {
@@ -156,6 +198,15 @@ class Services {
           if (data.status === 200 && data.errorCode === 0) {
             return data.data
           }
+
+          // 处理需要退出登录的业务状态码
+          // 注意: 以下errorCode需要根据实际业务接口规范调整
+          // 常见的登录失效相关错误码: token过期、token无效、用户被禁用、账号在其他设备登录等
+          if (data.errorCode === 401) {
+            handleLogout(data.message || '登录已过期，请重新登录')
+            return Promise.reject(data)
+          }
+
           errorFn(data.message || '请求失败')
           return Promise.reject(data)
         }
@@ -192,25 +243,7 @@ class Services {
           const status = error.response.status
           switch (status) {
             case 401:
-              // 避免重复调用退出接口
-              if (!isLogoutProcessing) {
-                isLogoutProcessing = true
-                try {
-                  await useUserInfoStore().logout()
-                  router.push('/login?redirect=' + window.location.pathname)
-                  errorFn('登录已过期，请重新登录')
-                } catch (logoutError) {
-                  console.error('登出失败:', logoutError)
-                  // 即使登出失败也清除本地token
-                  useUserInfoStore().removeToken()
-                  router.push('/login')
-                } finally {
-                  // 延迟重置标志位，防止快速连续请求
-                  setTimeout(() => {
-                    isLogoutProcessing = false
-                  }, 1500)
-                }
-              }
+              handleLogout()
               break
             case 403:
               errorFn('没有权限访问该资源')
