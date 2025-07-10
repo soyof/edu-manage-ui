@@ -24,11 +24,6 @@ export const componentWrap = (component: any, key: string) => {
     return pages.get(key)
   }
 
-  // 不需要包装的情况（不包含查询参数）
-  if (!key.includes('?')) {
-    return component
-  }
-
   const originalComponent = component.type || component
 
   // 创建修复后的包装组件
@@ -36,7 +31,7 @@ export const componentWrap = (component: any, key: string) => {
     name: key,
 
     setup(props, { attrs, slots }) {
-      const instance = getCurrentInstance()!
+      const instance: any = getCurrentInstance()!
       let innerComponent: ComponentInstance | null = null
 
       // 核心修复：确保组件实例包含必要的上下文方法
@@ -83,13 +78,13 @@ export const componentWrap = (component: any, key: string) => {
       return () => {
         return h(originalComponent, {
           ...attrs,
-          ref: (el: ComponentInstance) => {
+          ref: (el: any) => {
             innerComponent = el
             // 处理原始组件的 ref
             if (attrs.ref) {
               if (typeof attrs.ref === 'function') {
                 attrs.ref(el)
-              } else if (attrs.ref && 'value' in attrs.ref) {
+              } else if (attrs.ref && typeof attrs.ref === 'object' && 'value' in attrs.ref) {
                 attrs.ref.value = el
               }
             }
