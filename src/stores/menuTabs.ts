@@ -73,7 +73,8 @@ export const useTabsStore = defineStore('menuTabInfos', {
         }
       })
     },
-    delTabList(path: string, router: any) {
+    // 删除标签页并可选跳转到指定路由
+    delCurTab(path: string, router: any, targetPath?: string) {
       // 找到要删除的标签页索引
       const deleteIndex = this.tabsList.findIndex((item) => {
         return item.fullPath === path
@@ -87,6 +88,12 @@ export const useTabsStore = defineStore('menuTabInfos', {
       // 判断当前激活的标签页
       const isActivated = this.curTabInfo.fullPath === path
 
+      // 如果提供了目标路径，先检查该路径是否存在于标签列表中
+      let targetTab = null
+      if (targetPath) {
+        targetTab = this.tabsList.find(tab => tab.fullPath === targetPath)
+      }
+
       // 删除标签页
       this.tabsList = this.tabsList.filter((item) => {
         return item.fullPath !== path
@@ -97,7 +104,14 @@ export const useTabsStore = defineStore('menuTabInfos', {
         return
       }
 
-      // 如果删除的是当前激活的标签页，需要切换路由
+      // 如果存在指定的目标路径并且该路径在标签列表中存在，则跳转到该路径
+      if (targetPath && targetTab) {
+        router && router.push({ ...targetTab })
+        this.changeCurTabInfo(targetPath)
+        return
+      }
+
+      // 如果没有指定目标路径或目标路径不存在于标签列表中，则使用原有逻辑
       // 优先选择删除位置的前一个标签页
       let newActiveIndex = deleteIndex - 1
 

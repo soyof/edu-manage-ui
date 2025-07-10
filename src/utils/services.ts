@@ -53,6 +53,8 @@ const handleLogout = (errorMessage = '登录已过期，请重新登录') => {
 
 /**
  * 添加时间戳参数，避免缓存
+ * 注意：此函数已不再使用，由addTimestampToUrl替代
+ * @deprecated
  */
 const getNewParams = (params: any) => {
   params = params || {}
@@ -60,6 +62,16 @@ const getNewParams = (params: any) => {
     ...params,
     timestamp: new Date().getTime()
   }
+}
+
+/**
+ * 为URL添加时间戳参数，避免缓存
+ * @param url 原始URL
+ * @returns 添加了时间戳的URL
+ */
+const addTimestampToUrl = (url: string): string => {
+  const separator = url.includes('?') ? '&' : '?'
+  return `${url}${separator}timestamp=${new Date().getTime()}`
 }
 
 /**
@@ -276,29 +288,39 @@ class Services {
   }
 
   get<T>(url: string, params?: Record<string, any>, config: AxiosRequestConfig = {}): Promise<ResponseData<T>> {
-    params = getNewParams(params)
-    return this.service.get(getNewUrl(url, params), config)
+    // 添加参数到URL，但不添加时间戳（时间戳会单独添加）
+    const urlWithParams = params ? getNewUrl(url, params) : url
+    // 添加时间戳到URL
+    const urlWithTimestamp = addTimestampToUrl(urlWithParams)
+    return this.service.get(urlWithTimestamp, config)
   }
 
   post<T>(url: string, data?: Record<string, any>, config: AxiosRequestConfig = {}): Promise<ResponseData<T>> {
-    data = getNewParams(data)
-    return this.service.post(url, data, config)
+    // 添加时间戳到URL，而不是添加到请求体
+    const urlWithTimestamp = addTimestampToUrl(url)
+    return this.service.post(urlWithTimestamp, data, config)
   }
 
   put<T>(url: string, data?: Record<string, any>, config: AxiosRequestConfig = {}): Promise<ResponseData<T>> {
-    data = getNewParams(data)
-    return this.service.put(url, data, config)
+    // 添加时间戳到URL，而不是添加到请求体
+    const urlWithTimestamp = addTimestampToUrl(url)
+    return this.service.put(urlWithTimestamp, data, config)
   }
 
   delete<T>(url: string, params?: Record<string, any>, config: AxiosRequestConfig = {}): Promise<ResponseData<T>> {
-    params = getNewParams(params)
-    return this.service.delete(getNewUrl(url, params), config)
+    // 添加参数到URL，但不添加时间戳（时间戳会单独添加）
+    const urlWithParams = params ? getNewUrl(url, params) : url
+    // 添加时间戳到URL
+    const urlWithTimestamp = addTimestampToUrl(urlWithParams)
+    return this.service.delete(urlWithTimestamp, config)
   }
 
   getDownload(url: string, params?: Record<string, any>, fileName = ''): Promise<void> {
-    params = getNewParams(params)
-    const newUrl = getNewUrl(url, params)
-    return this.service.get(newUrl, {
+    // 添加参数到URL，但不添加时间戳（时间戳会单独添加）
+    const urlWithParams = params ? getNewUrl(url, params) : url
+    // 添加时间戳到URL
+    const urlWithTimestamp = addTimestampToUrl(urlWithParams)
+    return this.service.get(urlWithTimestamp, {
       responseType: 'blob'
     }).then((response) => {
       // 获取文件名

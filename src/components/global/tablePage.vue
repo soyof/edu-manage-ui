@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import Pagination from '@/components/global/pagination.vue'
-import { ref, useTemplateRef } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import { useAutoTable } from '@/hooks/useAutoTable'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 
@@ -81,6 +81,11 @@ const props = defineProps({
   labelWidth: {
     type: String,
     default: 'auto'
+  },
+  // 是否在组件挂载时自动加载数据
+  autoLoad: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -143,8 +148,12 @@ defineExpose({
   searchForm
 })
 
-// 初始化加载数据
-getList()
+onMounted(() => {
+  // 只有当autoLoad为true时才自动加载数据
+  if (props.autoLoad) {
+    getList()
+  }
+})
 </script>
 
 <style lang="less" scoped>

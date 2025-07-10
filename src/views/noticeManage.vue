@@ -115,7 +115,7 @@
       >
         <template #default="scope">
           <el-tag :type="scope.row.isPublished ? 'success' : 'info'">
-            {{ scope.row.isPublished ? '已发布' : '未发布' }}
+            {{ scope.row.isPublished ? '已发布' : '待发布' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -164,27 +164,59 @@
         width="180"
         showOverflowTooltip
       />
-      <el-table-column label="操作" width="260" fixed="right">
+      <el-table-column label="操作" width="150" fixed="right">
         <template #default="scope">
-          <el-button size="small" @click="handleView(scope.row)">查看</el-button>
-          <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button
-            v-if="scope.row.status === 0"
-            size="small"
-            type="success"
-            @click="handlePublish(scope.row)"
-          >
-            发布
-          </el-button>
-          <el-button
-            v-else
-            size="small"
-            type="warning"
-            @click="handleUnpublish(scope.row)"
-          >
-            撤回
-          </el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <div class="action-buttons">
+            <!-- 查看 -->
+            <el-tooltip content="查看" placement="top">
+              <el-button
+                circle
+                type="info"
+                size="small"
+                @click="handleView(scope.row)"
+              >
+                <el-icon><View /></el-icon>
+              </el-button>
+            </el-tooltip>
+
+            <!-- 编辑 - 仅未发布时可编辑 -->
+            <el-tooltip :content="scope.row.isPublished ? '已发布通知不可编辑' : '编辑'" placement="top">
+              <el-button
+                circle
+                type="primary"
+                size="small"
+                :disabled="scope.row.isPublished"
+                @click="handleEdit(scope.row)"
+              >
+                <el-icon><Edit /></el-icon>
+              </el-button>
+            </el-tooltip>
+
+            <!-- 发布/撤回 -->
+            <el-tooltip :content="scope.row.isPublished ? '撤回' : '发布'" placement="top">
+              <el-button
+                circle
+                :type="scope.row.isPublished ? 'warning' : 'success'"
+                size="small"
+                @click="scope.row.isPublished ? handleUnpublish(scope.row) : handlePublish(scope.row)"
+              >
+                <el-icon v-if="scope.row.isPublished"><TurnOff /></el-icon>
+                <el-icon v-else><Check /></el-icon>
+              </el-button>
+            </el-tooltip>
+
+            <!-- 删除 -->
+            <el-tooltip content="删除" placement="top">
+              <el-button
+                circle
+                type="danger"
+                size="small"
+                @click="handleDelete(scope.row)"
+              >
+                <el-icon><Delete /></el-icon>
+              </el-button>
+            </el-tooltip>
+          </div>
         </template>
       </el-table-column>
     </TablePage>
@@ -195,6 +227,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { View, Edit, Delete, Check, TurnOff } from '@element-plus/icons-vue'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
@@ -238,7 +271,7 @@ const { dictList: importanceList, getDictLabel: translateImportance } = useDicti
 })
 
 const statusList = [
-  { dictId: 0, dictValue: '未发布' },
+  { dictId: 0, dictValue: '待发布' },
   { dictId: 1, dictValue: '已发布' }
 ]
 
@@ -260,37 +293,39 @@ const handleSelectionChange = (selection: NoticeItem[]) => {
 
 // 查看通知
 const handleView = (row: NoticeItem) => {
-  import('@/utils/tabUtils').then(({ addTab }) => {
-    addTab({
-      path: '/modifyNotice',
-      query: {
-        mode: 'view',
-        id: String(row.id)
-      },
-      title: `查看通知【${row.title}】`
-    })
+  // 显式创建标题并打印，确保标题正确传递
+  const tabTitle = `查看通知【${row.title}】`
+  router.push({
+    path: '/modifyNotice',
+    query: {
+      mode: 'view',
+      id: String(row.id),
+      tabTitle: encodeURIComponent(tabTitle)
+    }
   })
 }
 
 // 编辑通知
 const handleEdit = (row: NoticeItem) => {
+  const tabTitle = `编辑通知【${row.title}】`
   router.push({
     path: '/modifyNotice',
     query: {
       mode: 'edit',
-      tabTitle: encodeURIComponent(`编辑通知【${row.title}】`),
-      id: String(row.id)
+      id: String(row.id),
+      tabTitle: encodeURIComponent(tabTitle)
     }
   })
 }
 
 // 新增通知
 const handleAdd = () => {
+  const tabTitle = `新增通知`
   router.push({
     path: '/modifyNotice',
     query: {
       mode: 'add',
-      tabTitle: encodeURIComponent(`新增通知`)
+      tabTitle: encodeURIComponent(tabTitle)
     }
   })
 }
@@ -391,5 +426,15 @@ onMounted(() => {
 
 :deep(.el-table .cell) {
   word-break: break-all;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+
+  .el-button {
+    margin-left: 0;
+  }
 }
 </style>

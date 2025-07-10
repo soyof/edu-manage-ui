@@ -253,6 +253,7 @@ watch(() => route.fullPath, () => {
       flex: 1;
       overflow: hidden;
       .content-wrap {
+        position: relative;
         width: 100%;
         height: @layoutContentHeight;
         min-height: @layoutContentHeight;

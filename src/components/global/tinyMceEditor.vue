@@ -8,11 +8,12 @@
       :init="editorConfig"
       :tinymceScriptSrc="TINYMCE_SCRIPT_SRC"
     />
+    <el-skeleton v-if="!isCompletedEditor" :rows="7" animated />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, useTemplateRef } from 'vue'
+import { defineProps, defineEmits, computed, useTemplateRef, ref, onUnmounted, onDeactivated } from 'vue'
 import Editor from '@tinymce/tinymce-vue'
 import { TINYMCE_SCRIPT_SRC, getBaseConfig, generateEditorId } from '../../utils/editorConfig'
 
@@ -44,6 +45,14 @@ const props = defineProps({
     type: String,
     default: ''
   }
+})
+
+const isCompletedEditor = ref(false)
+onUnmounted(() => {
+  isCompletedEditor.value = false
+})
+onDeactivated(() => {
+  isCompletedEditor.value = false
 })
 
 // 定义事件
@@ -90,7 +99,10 @@ const editorConfig = computed(() => {
     ...baseConfig,
     height: props.height,
     placeholder: props.placeholder,
-    ...props.customConfig
+    ...props.customConfig,
+    init_instance_callback: (editor: any) => {
+      isCompletedEditor.value = true
+    }
   }
 })
 
@@ -104,6 +116,17 @@ defineExpose({
 .tinymce-wrapper {
   position: relative;
   width: 100%;
+  height: v-bind(height);
+
+  .el-skeleton {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: #fff;
+  }
 
   .tinymce-wrapper-content {
     width: 100%;

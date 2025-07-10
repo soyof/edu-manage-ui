@@ -3,11 +3,6 @@
     <div class="page-header">
       <h2>{{ pageTitle }}</h2>
       <div class="header-actions">
-        <el-tooltip content="返回" placement="bottom">
-          <el-button circle @click="goBack">
-            <el-icon><ArrowLeft /></el-icon>
-          </el-button>
-        </el-tooltip>
         <el-tooltip v-if="!isView" content="保存" placement="bottom">
           <el-button type="primary" circle @click="submitForm">
             <el-icon><Check /></el-icon>
@@ -60,7 +55,7 @@
       <!-- 文本类型的通知内容 -->
       <template v-if="isTextType">
         <!-- 通知内容 - 中文 -->
-        <el-form-item label="通知内容(中)" prop="content">
+        <el-form-item label="通知内容(中)" prop="content" required>
           <TinyMceEditor
             v-model="formData.content"
             :height="350"
@@ -81,8 +76,8 @@
       <!-- 超链接类型的通知内容 -->
       <template v-else>
         <!-- 超链接地址 -->
-        <el-form-item label="链接地址" prop="content">
-          <el-input v-model="formData.content" placeholder="请输入超链接地址" />
+        <el-form-item label="链接地址" prop="linkUrl" required>
+          <el-input v-model="formData.linkUrl" placeholder="请输入超链接地址" />
           <div class="form-tip">链接地址需要以http://或https://开头的完整URL</div>
         </el-form-item>
       </template>
@@ -99,7 +94,7 @@
           </div>
           <div v-if="isTextType" class="content-preview" v-html="formData.content"></div>
           <div v-else class="link-preview">
-            <a :href="formData.content" target="_blank">{{ formData.content }}</a>
+            <a :href="formData.linkUrl" target="_blank">{{ formData.linkUrl }}</a>
           </div>
         </el-tab-pane>
 
@@ -111,7 +106,7 @@
           </div>
           <div v-if="isTextType" class="content-preview" v-html="formData.contentEn || '无英文内容'"></div>
           <div v-else class="link-preview">
-            <a :href="formData.content" target="_blank">{{ formData.content }}</a>
+            <a :href="formData.linkUrl" target="_blank">{{ formData.linkUrl }}</a>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -123,10 +118,19 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Check, ArrowLeft } from '@element-plus/icons-vue'
+import { Check } from '@element-plus/icons-vue'
 import TinyMceEditor from '@/components/global/tinyMceEditor.vue'
 import service from '@/utils/services'
 import { useDictionary } from '@/hooks/useDictionary'
+import useLoading from '@/hooks/useLoading'
+import { useTabsStore } from '@/stores/menuTabs'
+import pinia from '@/stores'
+
+const tabsStore = useTabsStore(pinia)
+
+const { changeLoading, closeLoading } = useLoading({
+  target: '.content-wrap'
+})
 
 // 定义通知数据接口
 interface NoticeData {
@@ -137,8 +141,8 @@ interface NoticeData {
   importance: string | number
   content: string
   contentEn: string
+  linkUrl?: string
   status: number
-  receiver?: string
   [key: string]: any
 }
 
@@ -172,6 +176,7 @@ const { dictList: noticeTypeList, getDictLabel: getNoticeTypeName } = useDiction
   dictType: 'notice_type',
   autoLoad: true
 })
+console.log(noticeTypeList)
 
 const { dictList: importanceList, getDictLabel: getImportanceName } = useDictionary({
   dictType: 'notice_importance',
@@ -188,18 +193,18 @@ const formData = reactive<{
   importance: string | number
   content: string
   contentEn: string
-  status: number
-  receiver: string
+  linkUrl: string
+  status?: number
 }>({
   id: '',
   title: '', // 中文标题
   titleEn: '', // 英文标题
-  noticeType: '2001', // 通知类型
+  noticeType: '2002', // 通知类型（默认为文本类型）
   importance: '3001', // 默认为普通
   content: '', // 中文内容
   contentEn: '', // 英文内容
-  status: 0, // 状态：0-未发布，1-已发布
-  receiver: 'all' // 接收对象，默认所有人
+  linkUrl: '', // 链接地址
+  status: 0 // 状态：0-未发布，1-已发布
 })
 
 // 验证URL地址格式
@@ -233,14 +238,16 @@ const formRules = {
   titleEn: [{ required: false, message: '请输入英文通知标题', trigger: 'blur' }],
   noticeType: [{ required: true, message: '请选择通知类型', trigger: 'change' }],
   importance: [{ required: true, message: '请选择重要程度', trigger: 'change' }],
+  linkUrl: [
+    { required: true, message: '请输入链接地址', trigger: 'blur' },
+    { validator: validateUrl, trigger: 'blur' }
+  ],
   content: [
-    { required: false, message: '请输入中文通知内容', trigger: 'blur' },
     { validator: (rule: any, value: string, callback: any) => {
       const type = String(formData.noticeType)
       if (type === '2002' && !value) {
-        callback(new Error('请输入链接地址'))
-      } else if (type === '2002') {
-        validateUrl(rule, value, callback)
+        // 文本类型，内容不能为空
+        callback(new Error('请输入中文通知内容'))
       } else {
         callback()
       }
@@ -250,7 +257,7 @@ const formRules = {
 }
 
 // 是否为文本类型通知（用于决定显示富文本编辑器还是链接输入框）
-// 假设通知类型字典中，文本类型的ID为1，超链接类型的ID为2
+// 通知类型字典中，2002为文本类型，2001为超链接类型
 const isTextType = computed(() => {
   // 将任何类型的值转换为字符串进行比较
   const type = formData.noticeType
@@ -259,66 +266,83 @@ const isTextType = computed(() => {
 
 // 处理通知类型变更
 const handleTypeChange = () => {
-  // 当类型变更时，清空内容
-  formData.content = ''
-  formData.contentEn = ''
+  // 切换类型时不再清空内容，保留原有数据
+  // 内容验证将在提交表单时进行
 }
 
 // 获取通知详情
-const fetchNoticeDetail = async() => {
+const fetchNoticeDetail = () => {
   if (!noticeId.value) return
 
-  try {
-    const res = await service.get(`/api/notice/${noticeId.value}`)
-    if (res.code === 200 && res.data) {
-      const noticeData = res.data as NoticeData
+  changeLoading(true)
+
+  service.post(`/api/notice/detail`, {
+    id: noticeId.value
+  }).then((res: any) => {
+    console.log(res)
+
+    if (res) {
+      const noticeData = res as NoticeData
       formData.id = noticeData.id
       formData.title = noticeData.title
       formData.titleEn = noticeData.titleEn
       formData.noticeType = noticeData.noticeType
       formData.importance = noticeData.importance
-      formData.content = noticeData.content
-      formData.contentEn = noticeData.contentEn
-      formData.status = noticeData.status
-      formData.receiver = noticeData.receiver || 'all'
-    } else {
-      ElMessage.error('获取通知详情失败')
-    }
-  } catch (error) {
-    console.error('获取通知详情出错:', error)
-    ElMessage.error('获取通知详情出错')
-  }
-}
 
-// 提交表单
-const submitForm = async() => {
-  if (!formRef.value) return
-
-  await formRef.value.validate(async(valid: boolean) => {
-    if (!valid) return
-
-    try {
-      const apiUrl = formData.id ? '/api/notice/update' : '/api/notice/add'
-      const method = formData.id ? 'put' : 'post'
-
-      const res = await service[method](apiUrl, formData)
-
-      if (res.code === 200) {
-        ElMessage.success(`${formData.id ? '更新' : '添加'}通知成功`)
-        goBack()
+      // 根据通知类型设置对应的内容字段
+      if (String(noticeData.noticeType) === '2002') {
+      // 文本类型
+        formData.content = noticeData.content
+        formData.contentEn = noticeData.contentEn
       } else {
-        ElMessage.error(res.message || `${formData.id ? '更新' : '添加'}通知失败`)
+      // 超链接类型
+        formData.linkUrl = noticeData.linkUrl || noticeData.content // 兼容旧数据
       }
-    } catch (error) {
-      console.error('保存通知出错:', error)
-      ElMessage.error('操作失败，请稍后重试')
+
+      formData.status = noticeData.status
     }
+  }).finally(() => {
+    closeLoading()
   })
 }
 
-// 返回上一页
-const goBack = () => {
-  router.push('/notice-manage')
+// 提交表单
+const submitForm = () => {
+  if (!formRef.value) return
+
+  formRef.value.validate((valid: boolean) => {
+    if (!valid) return
+
+    // 创建一个新对象来构建提交参数，而不是修改原对象
+    const params: any = {
+      id: formData.id,
+      title: formData.title,
+      titleEn: formData.titleEn,
+      noticeType: formData.noticeType,
+      importance: formData.importance
+      // status字段不需要提交
+    }
+
+    // 根据通知类型处理提交的字段
+    if (String(formData.noticeType) === '2002') {
+      // 文本类型，提交富文本内容
+      params.content = formData.content
+      params.contentEn = formData.contentEn
+    } else {
+      // 超链接类型，提交链接地址到content字段
+      params.content = formData.linkUrl
+    }
+
+    changeLoading(true)
+    service['post']('/api/notice/save', params).then((res: any) => {
+      if (res) {
+        ElMessage.success(`${formData.id ? '更新' : '添加'}通知成功`)
+      }
+    }).finally(() => {
+      closeLoading()
+      tabsStore.delCurTab(route.fullPath, router, '/noticeManage')
+    })
+  })
 }
 
 // 页面初始化

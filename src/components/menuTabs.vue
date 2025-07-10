@@ -19,7 +19,7 @@
       ref="tabsRef"
       v-model="curTabPath"
       type="card"
-      class="menu-tabs-wrap demo-tabs"
+      class="menu-tabs-wrap"
       @tabRemove="handleTabRemove"
     >
       <el-tab-pane
@@ -93,7 +93,7 @@ onMounted(() => {
 })
 
 const handleTabRemove = (path: string) => {
-  store.delTabList(path, router)
+  store.delCurTab(path, router)
 }
 
 // 处理右键菜单
@@ -176,7 +176,7 @@ const refreshCurrentTab = () => {
 
 const closeCurrentTab = () => {
   if (activeTabPath.value && isTabClosable.value) {
-    store.delTabList(activeTabPath.value, router)
+    store.delCurTab(activeTabPath.value, router)
   }
 }
 

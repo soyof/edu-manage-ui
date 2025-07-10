@@ -7,7 +7,7 @@ import type { LoadingOptions } from 'element-plus/es/components/loading/src/type
  * @param defaultOptions 默认配置选项
  * @returns loading状态和控制方法
  */
-export default function useLoading(defaultOptions: LoadingOptions = {}) {
+export default (defaultOptions: LoadingOptions = {}) => {
   // 加载状态
   const loading = ref(false)
   // 加载实例
