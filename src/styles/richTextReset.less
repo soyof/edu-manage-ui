@@ -1,0 +1,48 @@
+/* richTextReset.less */
+/* 富文本内容样式重置，用于覆盖全局reset.css和normalize.css的影响 */
+
+.rich-text-content {
+  /* 保留一些容器样式 */
+  max-width: 100%;
+  
+  /* 重置所有子元素样式 */
+  h1, h2, h3, h4, h5, h6, p, span, div, 
+  ul, ol, li, table, tr, td, th, 
+  blockquote, pre, code, a, strong, em, 
+  img, figure, figcaption {
+    all: revert;
+  }
+  
+  /* 确保图片不超出容器 */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 表格样式 */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 16px;
+    
+    td, th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+  }
+
+  /* 列表样式 */
+  ul, ol {
+    padding-left: 2em;
+  }
+
+  /* 链接样式 */
+  a {
+    color: #409EFF;
+    text-decoration: underline;
+    
+    &:hover {
+      color: #66b1ff;
+    }
+  }
+} 

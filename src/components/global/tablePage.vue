@@ -32,6 +32,7 @@
         border
         :height="tableHeight"
         v-bind="$attrs"
+        v-on="$attrs"
       >
         <slot></slot>
       </el-table>
@@ -126,8 +127,9 @@ const handleSearch = () => {
 const getList = (pageNo?: any) => {
   if (loading.value) return
   loading.value = true
+  pager.value.pageNo = pageNo || pager.value.pageNo
   props.fetchData({
-    pageNo: pageNo || pager.value.pageNo,
+    pageNo: pager.value.pageNo,
     pageSize: pager.value.pageSize,
     ...searchForm.value
   }).then((res: any) => {

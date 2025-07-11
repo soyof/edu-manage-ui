@@ -5,6 +5,7 @@
       ref="tablePageRef"
       :fetchData="fetchNoticeData"
       :initialSearchForm="initialSearchForm"
+      @selectionChange="handleSelectionChange"
     >
       <!-- 搜索表单插槽 -->
       <template #search-form="{ form }">
@@ -27,7 +28,7 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="状态">
-            <el-select v-model="form.status" placeholder="请选择状态" clearable>
+            <el-select v-model="form.publishStatus" placeholder="请选择状态" clearable>
               <el-option
                 v-for="item in statusList"
                 :key="item.dictId"
@@ -82,8 +83,8 @@
         </ThrottleButton>
         <ThrottleButton
           type="danger"
-          :disabled="selectedNotices.length === 0"
-          @click="handleBatchDelete"
+          :disabled="isDeleteButtonDisabled"
+          @click="handleDelete()"
         >
           批量删除
         </ThrottleButton>
@@ -108,14 +109,14 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="isPublished"
+        prop="publishStatus"
         label="状态"
         width="100"
         showOverflowTooltip
       >
         <template #default="scope">
-          <el-tag :type="scope.row.isPublished ? 'success' : 'info'">
-            {{ scope.row.isPublished ? '已发布' : '待发布' }}
+          <el-tag :type="statusInfos[scope.row.publishStatus as keyof typeof statusInfos].type">
+            {{ statusInfos[scope.row.publishStatus as keyof typeof statusInfos].label }}
           </el-tag>
         </template>
       </el-table-column>
@@ -180,37 +181,38 @@
             </el-tooltip>
 
             <!-- 编辑 - 仅未发布时可编辑 -->
-            <el-tooltip :content="scope.row.isPublished ? '已发布通知不可编辑' : '编辑'" placement="top">
+            <el-tooltip :content="scope.row.publishStatus === '1' ? '已发布通知不可编辑' : '编辑'" placement="top">
               <el-button
                 circle
                 type="primary"
                 size="small"
-                :disabled="scope.row.isPublished"
+                :disabled="scope.row.publishStatus === '1'"
                 @click="handleEdit(scope.row)"
               >
                 <el-icon><Edit /></el-icon>
               </el-button>
             </el-tooltip>
 
-            <!-- 发布/撤回 -->
-            <el-tooltip :content="scope.row.isPublished ? '撤回' : '发布'" placement="top">
+            <!-- 发布/下线 -->
+            <el-tooltip :content="scope.row.publishStatus === '1' ? '下线' : '发布'" placement="top">
               <el-button
                 circle
-                :type="scope.row.isPublished ? 'warning' : 'success'"
+                :type="scope.row.publishStatus === '1' ? 'warning' : 'success'"
                 size="small"
-                @click="scope.row.isPublished ? handleUnpublish(scope.row) : handlePublish(scope.row)"
+                @click="handlePublishStatus(scope.row, scope.row.publishStatus === '1' ? 'unpublish' : 'publish')"
               >
-                <el-icon v-if="scope.row.isPublished"><TurnOff /></el-icon>
+                <el-icon v-if="scope.row.publishStatus === '1'"><TurnOff /></el-icon>
                 <el-icon v-else><Check /></el-icon>
               </el-button>
             </el-tooltip>
 
             <!-- 删除 -->
-            <el-tooltip content="删除" placement="top">
+            <el-tooltip :content="scope.row.publishStatus === '1' ? '已发布通知不能删除' : '删除'" placement="top">
               <el-button
                 circle
                 type="danger"
                 size="small"
+                :disabled="scope.row.publishStatus === '1'"
                 @click="handleDelete(scope.row)"
               >
                 <el-icon><Delete /></el-icon>
@@ -224,7 +226,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { View, Edit, Delete, Check, TurnOff } from '@element-plus/icons-vue'
@@ -241,7 +243,7 @@ interface NoticeItem {
   type: number
   typeName: string
   importance: number
-  status: number
+  publishStatus: string
   content: string
   publishTime: string | null
   creator: string
@@ -252,7 +254,7 @@ interface NoticeItem {
 const initialSearchForm = {
   title: '',
   noticeType: '',
-  status: '',
+  publishStatus: '',
   importance: '',
   publishTimeRange: [] as string[],
   updateTimeRange: [] as string[]
@@ -271,15 +273,36 @@ const { dictList: importanceList, getDictLabel: translateImportance } = useDicti
 })
 
 const statusList = [
-  { dictId: 0, dictValue: '待发布' },
-  { dictId: 1, dictValue: '已发布' }
+  { dictId: '0', dictValue: '待发布' },
+  { dictId: '1', dictValue: '已发布' },
+  { dictId: '2', dictValue: '已下线' }
 ]
+
+const statusInfos = {
+  '0': {
+    type: 'info',
+    label: '待发布'
+  },
+  '1': {
+    type: 'success',
+    label: '已发布'
+  },
+  '2': {
+    type: 'warning',
+    label: '已下线'
+  }
+}
 
 // 表格页面组件引用
 const tablePageRef = ref<any>(null)
 
 // 表格相关
 const selectedNotices = ref<NoticeItem[]>([])
+
+// 计算属性：判断批量删除按钮是否应该禁用
+const isDeleteButtonDisabled = computed(() => {
+  return selectedNotices.value.length === 0 || selectedNotices.value.some(item => item.publishStatus === '1')
+})
 
 // 获取通知数据的方法（适配tablePage组件的接口）
 const fetchNoticeData = (params: any) => {
@@ -294,9 +317,9 @@ const handleSelectionChange = (selection: NoticeItem[]) => {
 // 查看通知
 const handleView = (row: NoticeItem) => {
   // 显式创建标题并打印，确保标题正确传递
-  const tabTitle = `查看通知【${row.title}】`
+  const tabTitle = `通知详情【${row.title}】`
   router.push({
-    path: '/modifyNotice',
+    path: '/noticeDetail',
     query: {
       mode: 'view',
       id: String(row.id),
@@ -331,70 +354,77 @@ const handleAdd = () => {
 }
 
 // 删除通知
-const handleDelete = (row: NoticeItem) => {
-  ElMessageBox.confirm('确认删除该通知吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
+const handleDelete = (row?: NoticeItem) => {
+  // 如果传入了row参数，则为单个删除，否则为批量删除
+  const isBatchDelete = !row
 
-  }).catch(() => {})
-}
-
-// 批量删除
-const handleBatchDelete = () => {
-  if (selectedNotices.value.length === 0) {
+  // 批量删除时检查是否有选中项
+  if (isBatchDelete && selectedNotices.value.length === 0) {
     ElMessage.warning('请选择要删除的通知')
     return
   }
 
-  ElMessageBox.confirm(`确认删除选中的 ${selectedNotices.value.length} 条通知吗？`, '提示', {
+  // 检查是否包含已发布的通知
+  if (isBatchDelete && selectedNotices.value.some(item => item.publishStatus === '1')) {
+    ElMessage.warning('已发布的通知不能删除')
+    return
+  }
+
+  // 单个删除时检查是否为已发布状态
+  if (!isBatchDelete && row?.publishStatus === '1') {
+    ElMessage.warning('已发布的通知不能删除')
+    return
+  }
+
+  // 获取要删除的ID
+  const ids = isBatchDelete
+    ? selectedNotices.value.map(item => item.id)
+    : row!.id
+
+  // 确认提示信息
+  const confirmMessage = isBatchDelete
+    ? `确认删除选中的 ${selectedNotices.value.length} 条通知吗？`
+    : '确认删除该通知吗？'
+
+  ElMessageBox.confirm(confirmMessage, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
+    service.post('/api/notice/delete', { ids })
+      .then(() => {
+        ElMessage.success('删除成功')
+        refreshTable(1)
+      })
   }).catch(() => {})
 }
 
-// 发布通知
-const handlePublish = (row: NoticeItem) => {
-  ElMessageBox.confirm('确认发布该通知吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'info'
-  }).then(() => {
-  }).catch(() => {})
-}
+// 处理通知发布状态（发布/下线）
+const handlePublishStatus = (row: NoticeItem, action: 'publish' | 'unpublish') => {
+  const isPublish = action === 'publish'
+  const actionText = isPublish ? '发布' : '下线'
 
-// 撤回通知
-const handleUnpublish = (row: NoticeItem) => {
-  ElMessageBox.confirm('确认撤回该通知吗？', '提示', {
+  ElMessageBox.confirm(`确认${actionText}该通知吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
-    type: 'warning'
+    type: isPublish ? 'info' : 'warning'
   }).then(() => {
+    service.post('/api/notice/publish', {
+      id: row.id,
+      action
+    }).then(() => {
+      ElMessage.success(`${actionText}成功`)
+      refreshTable(1)
+    })
   }).catch(() => {})
 }
 
 // 刷新表格数据
-const refreshTable = () => {
+const refreshTable = (pageNum: number) => {
   if (tablePageRef.value) {
-    tablePageRef.value.getList()
+    tablePageRef.value.getList(pageNum)
   }
 }
-
-// 添加表格选择事件监听
-onMounted(() => {
-  // 需要在表格初始化后添加selection-change事件监听
-  setTimeout(() => {
-    const tableElement = document.querySelector('.notice-manage-container .el-table')
-    if (tableElement) {
-      tableElement.addEventListener('selection-change', (event: any) => {
-        handleSelectionChange(event.detail)
-      })
-    }
-  }, 500)
-})
 </script>
 
 <style scoped lang="less">

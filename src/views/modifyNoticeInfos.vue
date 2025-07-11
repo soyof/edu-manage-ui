@@ -3,7 +3,7 @@
     <div class="page-header">
       <h2>{{ pageTitle }}</h2>
       <div class="header-actions">
-        <el-tooltip v-if="!isView" content="保存" placement="bottom">
+        <el-tooltip content="保存" placement="bottom">
           <el-button type="primary" circle @click="submitForm">
             <el-icon><Check /></el-icon>
           </el-button>
@@ -16,7 +16,6 @@
       :model="formData"
       :rules="formRules"
       :labelWidth="120"
-      :disabled="isView"
     >
       <!-- 通知标题 - 中文 -->
       <el-form-item label="通知标题(中)" prop="title">
@@ -82,35 +81,6 @@
         </el-form-item>
       </template>
     </el-form>
-
-    <!-- 查看模式下的内容展示区域 -->
-    <div v-if="isView" class="notice-preview">
-      <el-tabs type="border-card">
-        <el-tab-pane label="中文内容">
-          <h3>{{ formData.title }}</h3>
-          <div class="notice-meta">
-            <span>类型：{{ getNoticeTypeName(String(formData.noticeType)) }}</span>
-            <span>重要程度：{{ getImportanceName(String(formData.importance)) }}</span>
-          </div>
-          <div v-if="isTextType" class="content-preview" v-html="formData.content"></div>
-          <div v-else class="link-preview">
-            <a :href="formData.linkUrl" target="_blank">{{ formData.linkUrl }}</a>
-          </div>
-        </el-tab-pane>
-
-        <el-tab-pane v-if="formData.titleEn || formData.contentEn" label="英文内容">
-          <h3>{{ formData.titleEn || '无英文标题' }}</h3>
-          <div class="notice-meta">
-            <span>Type：{{ getNoticeTypeName(String(formData.noticeType)) }}</span>
-            <span>Importance：{{ getImportanceName(String(formData.importance)) }}</span>
-          </div>
-          <div v-if="isTextType" class="content-preview" v-html="formData.contentEn || '无英文内容'"></div>
-          <div v-else class="link-preview">
-            <a :href="formData.linkUrl" target="_blank">{{ formData.linkUrl }}</a>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
   </div>
 </template>
 
@@ -150,7 +120,7 @@ interface NoticeData {
 const route = useRoute()
 const router = useRouter()
 
-// 页面模式：add-新增，edit-编辑，view-查看
+// 页面模式：add-新增，edit-编辑
 const mode = ref(route.query.mode as string || 'add')
 const noticeId = ref(route.query.id as string)
 
@@ -163,22 +133,18 @@ const pageTitle = computed(() => {
   switch (mode.value) {
     case 'add': return '新增通知'
     case 'edit': return '编辑通知'
-    case 'view': return '查看通知'
     default: return '通知信息'
   }
 })
 
-// 是否为查看模式
-const isView = computed(() => mode.value === 'view')
-
 // 字典数据
-const { dictList: noticeTypeList, getDictLabel: getNoticeTypeName } = useDictionary({
+const { dictList: noticeTypeList } = useDictionary({
   dictType: 'notice_type',
   autoLoad: true
 })
 console.log(noticeTypeList)
 
-const { dictList: importanceList, getDictLabel: getImportanceName } = useDictionary({
+const { dictList: importanceList } = useDictionary({
   dictType: 'notice_importance',
   autoLoad: true
 })
@@ -347,7 +313,7 @@ const submitForm = () => {
 
 // 页面初始化
 onMounted(() => {
-  if (mode.value === 'edit' || mode.value === 'view') {
+  if (mode.value === 'edit') {
     fetchNoticeDetail()
   }
 })
@@ -400,55 +366,6 @@ onMounted(() => {
         content: '*';
         color: var(--el-color-danger);
         margin-right: 4px;
-      }
-    }
-  }
-
-  .notice-preview {
-    margin-top: 20px;
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-
-    h3 {
-      margin-top: 10px;
-      margin-bottom: 15px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .notice-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 15px;
-      color: #666;
-      font-size: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ebeef5;
-
-      span {
-        margin-right: 15px;
-      }
-    }
-
-    .content-preview {
-      padding: 10px;
-      line-height: 1.8;
-      min-height: 200px;
-    }
-
-    .link-preview {
-      padding: 10px;
-      word-break: break-all;
-
-      a {
-        color: #409EFF;
-        text-decoration: underline;
-
-        &:hover {
-          color: #66b1ff;
-        }
       }
     }
   }
