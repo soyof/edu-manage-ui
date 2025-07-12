@@ -1,21 +1,33 @@
 <template>
-  <div class="lab-profile-manage-container">
+  <div class="notice-manage-container">
     <!-- 使用通用表格页面组件 -->
     <TablePage
       ref="tablePageRef"
-      :fetchData="fetchProfileData"
+      :fetchData="fetchNoticeData"
       :initialSearchForm="initialSearchForm"
       @selectionChange="handleSelectionChange"
     >
       <!-- 搜索表单插槽 -->
       <template #search-form="{ form }">
         <el-col :span="6">
-          <el-form-item label="简介标题">
-            <el-input v-model="form.title" placeholder="请输入简介标题" clearable />
+          <el-form-item label="通知标题">
+            <el-input v-model="form.title" placeholder="请输入通知标题" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="发布状态">
+          <el-form-item label="通知类型">
+            <el-select v-model="form.noticeType" placeholder="请选择通知类型" clearable>
+              <el-option
+                v-for="item in noticeTypeList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="状态">
             <el-select v-model="form.publishStatus" placeholder="请选择状态" clearable>
               <el-option
                 v-for="item in statusList"
@@ -27,13 +39,15 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="创建人">
-            <el-input v-model="form.createUserName" placeholder="请输入创建人" clearable />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="更新人">
-            <el-input v-model="form.updateUserName" placeholder="请输入更新人" clearable />
+          <el-form-item label="重要程度">
+            <el-select v-model="form.importance" placeholder="请选择重要程度" clearable>
+              <el-option
+                v-for="item in importanceList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -64,7 +78,7 @@
 
       <!-- 操作区域插槽 -->
       <template #operation>
-        <el-tooltip content="新增简介" placement="top">
+        <el-tooltip content="新增通知" placement="top">
           <ThrottleButton size="small" type="primary" @click="handleAdd">
             <el-icon><Plus /></el-icon>
           </ThrottleButton>
@@ -85,19 +99,44 @@
       <el-table-column type="selection" width="55" />
       <el-table-column
         prop="title"
-        label="简介标题"
+        label="通知标题"
         minWidth="200"
         showOverflowTooltip
       />
       <el-table-column
+        prop="noticeType"
+        label="通知类型"
+        width="120"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          {{ translateNoticeType(scope.row.noticeType.toString()) }}
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="publishStatus"
-        label="发布状态"
+        label="状态"
         width="100"
         showOverflowTooltip
       >
         <template #default="scope">
           <el-tag :type="statusInfos[scope.row.publishStatus as keyof typeof statusInfos].type">
             {{ statusInfos[scope.row.publishStatus as keyof typeof statusInfos].label }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="importance"
+        label="重要程度"
+        width="100"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          <el-tag
+            :type="scope.row.importance === '3003' ? 'danger' : scope.row.importance === '3002' ? 'warning' : 'info'"
+            :effect="scope.row.importance === '3003' ? 'dark' : 'light'"
+          >
+            {{ translateImportance(scope.row.importance.toString()) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -153,7 +192,7 @@
             <!-- 编辑 - 仅未发布时可编辑 -->
             <el-tooltip
               :showAfter="1000"
-              :content="scope.row.publishStatus === '1' ? '已发布简介不可编辑' : '编辑'"
+              :content="scope.row.publishStatus === '1' ? '已发布通知不可编辑' : '编辑'"
               placement="top"
             >
               <el-button
@@ -187,7 +226,7 @@
             <!-- 删除 -->
             <el-tooltip
               :showAfter="1000"
-              :content="scope.row.publishStatus === '1' ? '已发布简介不能删除' : '删除'"
+              :content="scope.row.publishStatus === '1' ? '已发布通知不能删除' : '删除'"
               placement="top"
             >
               <el-button
@@ -215,31 +254,44 @@ import { View, Edit, Delete, Check, TurnOff, Plus } from '@element-plus/icons-vu
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
+import { useDictionary } from '@/hooks/useDictionary'
 
 const router = useRouter()
 
-interface ProfileItem {
+interface NoticeItem {
   id: number
   title: string
+  type: number
+  typeName: string
+  importance: number
   publishStatus: string
   content: string
-  content_en: string
   publishTime: string | null
-  createUserName: string
-  updateUserName: string
-  createdTimes: string
-  updatedTimes: string
+  creator: string
+  receiver: string
 }
 
 // 搜索表单初始值
 const initialSearchForm = {
   title: '',
+  noticeType: '',
   publishStatus: '',
-  createUserName: '',
-  updateUserName: '',
+  importance: '',
   publishTimeRange: [] as string[],
   updateTimeRange: [] as string[]
 }
+
+const { dictList: noticeTypeList, getDictLabel: translateNoticeType } = useDictionary({
+  // 通知类型
+  dictType: 'notice_type',
+  autoLoad: true
+})
+
+const { dictList: importanceList, getDictLabel: translateImportance } = useDictionary({
+  // 重要程度
+  dictType: 'notice_importance',
+  autoLoad: true
+})
 
 const statusList = [
   { dictId: '0', dictValue: '待发布' },
@@ -266,40 +318,42 @@ const statusInfos = {
 const tablePageRef = ref<any>(null)
 
 // 表格相关
-const selectedProfiles = ref<ProfileItem[]>([])
+const selectedNotices = ref<NoticeItem[]>([])
 
 // 计算属性：判断批量删除按钮是否应该禁用
 const isDeleteButtonDisabled = computed(() => {
-  return selectedProfiles.value.length === 0 || selectedProfiles.value.some(item => item.publishStatus === '1')
+  return selectedNotices.value.length === 0 || selectedNotices.value.some(item => item.publishStatus === '1')
 })
 
-// 获取简介数据的方法（适配tablePage组件的接口）
-const fetchProfileData = (params: any) => {
-  return service.post('/api/labProfile/list', params)
+// 获取通知数据的方法（适配tablePage组件的接口）
+const fetchNoticeData = (params: any) => {
+  return service.post('/api/notice/list', params)
 }
 
 // 处理表格选择变化
-const handleSelectionChange = (selection: ProfileItem[]) => {
-  selectedProfiles.value = selection
+const handleSelectionChange = (selection: NoticeItem[]) => {
+  selectedNotices.value = selection
 }
 
-// 查看简介
-const handleView = (row: ProfileItem) => {
-  const tabTitle = `简介详情【${row.title}】`
+// 查看通知
+const handleView = (row: NoticeItem) => {
+  // 显式创建标题并打印，确保标题正确传递
+  const tabTitle = `通知详情【${row.title}】`
   router.push({
-    path: '/labProfileDetail',
+    path: '/noticeDetail',
     query: {
+      mode: 'view',
       id: String(row.id),
       tabTitle: encodeURIComponent(tabTitle)
     }
   })
 }
 
-// 编辑简介
-const handleEdit = (row: ProfileItem) => {
-  const tabTitle = `编辑简介【${row.title}】`
+// 编辑通知
+const handleEdit = (row: NoticeItem) => {
+  const tabTitle = `编辑通知【${row.title}】`
   router.push({
-    path: '/modifyLabProfile',
+    path: '/modifyNotice',
     query: {
       mode: 'edit',
       id: String(row.id),
@@ -308,11 +362,11 @@ const handleEdit = (row: ProfileItem) => {
   })
 }
 
-// 新增简介
+// 新增通知
 const handleAdd = () => {
-  const tabTitle = `新增简介`
+  const tabTitle = `新增通知`
   router.push({
-    path: '/modifyLabProfile',
+    path: '/modifyNotice',
     query: {
       mode: 'add',
       tabTitle: encodeURIComponent(tabTitle)
@@ -320,45 +374,45 @@ const handleAdd = () => {
   })
 }
 
-// 删除简介
-const handleDelete = (row?: ProfileItem) => {
+// 删除通知
+const handleDelete = (row?: NoticeItem) => {
   // 如果传入了row参数，则为单个删除，否则为批量删除
   const isBatchDelete = !row
 
   // 批量删除时检查是否有选中项
-  if (isBatchDelete && selectedProfiles.value.length === 0) {
-    ElMessage.warning('请选择要删除的简介')
+  if (isBatchDelete && selectedNotices.value.length === 0) {
+    ElMessage.warning('请选择要删除的通知')
     return
   }
 
-  // 检查是否包含已发布的简介
-  if (isBatchDelete && selectedProfiles.value.some(item => item.publishStatus === '1')) {
-    ElMessage.warning('已发布的简介不能删除')
+  // 检查是否包含已发布的通知
+  if (isBatchDelete && selectedNotices.value.some(item => item.publishStatus === '1')) {
+    ElMessage.warning('已发布的通知不能删除')
     return
   }
 
   // 单个删除时检查是否为已发布状态
   if (!isBatchDelete && row?.publishStatus === '1') {
-    ElMessage.warning('已发布的简介不能删除')
+    ElMessage.warning('已发布的通知不能删除')
     return
   }
 
   // 获取要删除的ID
   const ids = isBatchDelete
-    ? selectedProfiles.value.map(item => item.id)
+    ? selectedNotices.value.map(item => item.id)
     : row!.id
 
   // 确认提示信息
   const confirmMessage = isBatchDelete
-    ? `确认删除选中的 ${selectedProfiles.value.length} 条简介吗？`
-    : '确认删除该简介吗？'
+    ? `确认删除选中的 ${selectedNotices.value.length} 条通知吗？`
+    : '确认删除该通知吗？'
 
   ElMessageBox.confirm(confirmMessage, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    service.post('/api/labProfile/delete', { ids })
+    service.post('/api/notice/delete', { ids })
       .then(() => {
         ElMessage.success('删除成功')
         refreshTable(1)
@@ -366,17 +420,17 @@ const handleDelete = (row?: ProfileItem) => {
   }).catch(() => {})
 }
 
-// 处理简介发布状态（发布/下线）
-const handlePublishStatus = (row: ProfileItem, action: 'publish' | 'unpublish') => {
+// 处理通知发布状态（发布/下线）
+const handlePublishStatus = (row: NoticeItem, action: 'publish' | 'unpublish') => {
   const isPublish = action === 'publish'
   const actionText = isPublish ? '发布' : '下线'
 
-  ElMessageBox.confirm(`确认${actionText}该简介吗？`, '提示', {
+  ElMessageBox.confirm(`确认${actionText}该通知吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: isPublish ? 'info' : 'warning'
   }).then(() => {
-    service.post('/api/labProfile/publish', {
+    service.post('/api/notice/publish', {
       id: row.id,
       action
     }).then(() => {
@@ -395,19 +449,43 @@ const refreshTable = (pageNum: number) => {
 </script>
 
 <style scoped lang="less">
-.lab-profile-manage-container {
-  .action-buttons {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
+.notice-manage-container {
 
-    .el-button {
-      margin-left: 0;
+  .notice-detail {
+    padding: 10px;
+
+    .notice-title {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .notice-info {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      color: #666;
+      font-size: 14px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .notice-content {
+      line-height: 1.8;
     }
   }
 }
 
 :deep(.el-table .cell) {
   word-break: break-all;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+
+  .el-button {
+    margin-left: 0;
+  }
 }
 </style>

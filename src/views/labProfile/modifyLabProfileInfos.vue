@@ -5,7 +5,7 @@
       <div class="header">
         <div class="left">
           <div class="blue-bar"></div>
-          <span class="title">新增实验室简介</span>
+          <span class="title">新增简介</span>
         </div>
         <div class="right">
           <el-button :loading="submitting" type="primary" @click="submitForm">
@@ -27,8 +27,9 @@
           <el-form-item label="简介标题" prop="title" required>
             <el-input
               v-model="formData.title"
-              placeholder="请输入实验室简介标题"
+              placeholder="请输入简介标题"
               maxlength="100"
+              showWordLimit
             />
           </el-form-item>
 
@@ -166,11 +167,8 @@ const submitForm = () => {
       const currentPath = tabsStore.getCurTabPath
       // 关闭当前标签
       if (currentPath) {
-        tabsStore.delCurTab(currentPath, router)
+        tabsStore.delCurTab(currentPath, router, '/labProfileManage')
       }
-
-      // 返回列表页
-      router.push('/labProfileManage')
     }).finally(() => {
       closeLoading()
       submitting.value = false
@@ -258,6 +256,14 @@ onMounted(() => {
 
     .form-container {
       padding: 15px;
+
+      :deep(.el-form-item) {
+        &.is-error {
+          .tox-tinymce {
+            border-color: #f56c6c;
+          }
+        }
+      }
 
       .lab-profile-form {
         .el-form-item {

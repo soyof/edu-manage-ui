@@ -107,7 +107,9 @@ export const useTabsStore = defineStore('menuTabInfos', {
       // 如果存在指定的目标路径并且该路径在标签列表中存在，则跳转到该路径
       if (targetPath && targetTab) {
         router && router.push({ ...targetTab })
+        // 进行目标路由的刷新
         this.changeCurTabInfo(targetPath)
+        this.refreshTab(targetPath)
         return
       }
 

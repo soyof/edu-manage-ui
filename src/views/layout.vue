@@ -2,8 +2,7 @@
   <!-- https://lin-xin.github.io/example/vue-manage-system/#/dashboard -->
   <div class="layout-wrap">
     <div class="layout-top">
-      <!-- 合成生物研究所 -->
-      <div class="logo-wrap">---</div>
+      <div class="logo-wrap">合成生物研究所</div>
       <div class="other-info-wrap">
         <!-- 主题切换组件 -->
         <themeSwitch />

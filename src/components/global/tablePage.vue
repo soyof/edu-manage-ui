@@ -165,7 +165,7 @@ onMounted(() => {
   min-height: @contentHeight;
   max-height: @contentHeight;
   background-color: @pageBgColor;
-  padding: 6px;
+  padding: 12px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
