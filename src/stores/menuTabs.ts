@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
+import layoutRoutes from '@/router/layout'
+
+// 提取layout中定义的所有路由路径
+const validRoutes = layoutRoutes.map(route => route.path)
+
 export interface TabItem {
   path: string
   fullPath: string
@@ -59,6 +64,12 @@ export const useTabsStore = defineStore('menuTabInfos', {
     addTabList(tab: TabItem) {
       // 排除登录页和一些特定页面，不添加到标签列表中
       if (tab.path === '/login' || tab.name === 'Login') {
+        return
+      }
+
+      // 检查路径是否在layout中定义
+      if (!validRoutes.includes(tab.path)) {
+        console.warn(`路径 ${tab.path} 未在layout中定义，跳过标签添加`)
         return
       }
 

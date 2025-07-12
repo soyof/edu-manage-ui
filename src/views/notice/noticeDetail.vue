@@ -24,10 +24,10 @@
               </el-tag>
               <el-tag
                 size="small"
-                :type="getStatusType(noticeData.publishStatus)"
+                :type="NoticeStatus.getTagType(noticeData.publishStatus)"
                 class="status-tag"
               >
-                {{ getStatusName(noticeData.publishStatus) }}
+                {{ NoticeStatus.getName(noticeData.publishStatus) }}
               </el-tag>
             </div>
           </div>
@@ -41,7 +41,7 @@
               <div class="meta-content">
                 <div class="meta-item">
                   <span class="label">发布时间</span>
-                  <span class="value">{{ noticeData.publishTime || '未发布' }}</span>
+                  <span class="value">{{ noticeData.publishTime || '--' }}</span>
                 </div>
                 <div class="meta-item">
                   <span class="label">创建时间</span>
@@ -123,9 +123,8 @@ import { TopRight, Calendar, User } from '@element-plus/icons-vue'
 import service from '@/utils/services'
 import { useDictionary } from '@/hooks/useDictionary'
 import useLoading from '@/hooks/useLoading'
-import { useThemeStore } from '@/stores/theme'
+import { NoticeStatus } from '@/dic/statusConfig'
 
-const themeStore = useThemeStore()
 const { changeLoading, closeLoading, loading } = useLoading({
   target: '.notice-content-wrapper'
 })
@@ -144,25 +143,6 @@ const { getDictLabel: getImportanceName } = useDictionary({
   dictType: 'notice_importance',
   autoLoad: true
 })
-
-// 状态信息
-const statusMap = {
-  '0': { name: '待发布', type: 'info' },
-  '1': { name: '已发布', type: 'success' },
-  '2': { name: '已下线', type: 'warning' }
-}
-
-// 获取状态名称
-const getStatusName = (status: string | number) => {
-  const statusKey = String(status)
-  return statusMap[statusKey as keyof typeof statusMap]?.name || '未知状态'
-}
-
-// 获取状态类型
-const getStatusType = (status: string | number) => {
-  const statusKey = String(status)
-  return statusMap[statusKey as keyof typeof statusMap]?.type || 'info'
-}
 
 // 获取重要程度类型
 const getImportanceType = (importance: string | number) => {

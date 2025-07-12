@@ -18,7 +18,7 @@
           <el-form-item label="发布状态">
             <el-select v-model="form.publishStatus" placeholder="请选择状态" clearable>
               <el-option
-                v-for="item in statusList"
+                v-for="item in ProfileStatus.list"
                 :key="item.dictId"
                 :label="item.dictValue"
                 :value="item.dictId"
@@ -96,8 +96,8 @@
         showOverflowTooltip
       >
         <template #default="scope">
-          <el-tag :type="statusInfos[scope.row.publishStatus as keyof typeof statusInfos].type">
-            {{ statusInfos[scope.row.publishStatus as keyof typeof statusInfos].label }}
+          <el-tag :type="ProfileStatus.getTagType(scope.row.publishStatus)">
+            {{ ProfileStatus.getName(scope.row.publishStatus) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -215,6 +215,7 @@ import { View, Edit, Delete, Check, TurnOff, Plus } from '@element-plus/icons-vu
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
+import { ProfileStatus } from '@/dic/statusConfig'
 
 const router = useRouter()
 
@@ -239,27 +240,6 @@ const initialSearchForm = {
   updateUserName: '',
   publishTimeRange: [] as string[],
   updateTimeRange: [] as string[]
-}
-
-const statusList = [
-  { dictId: '0', dictValue: '待发布' },
-  { dictId: '1', dictValue: '生效中' },
-  { dictId: '2', dictValue: '已存档' }
-]
-
-const statusInfos = {
-  '0': {
-    type: 'info',
-    label: '待发布'
-  },
-  '1': {
-    type: 'success',
-    label: '生效中'
-  },
-  '2': {
-    type: 'warning',
-    label: '已存档'
-  }
 }
 
 // 表格页面组件引用

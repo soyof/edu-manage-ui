@@ -8,10 +8,10 @@
             <h1 class="title">{{ profileData.title }}</h1>
             <el-tag
               size="small"
-              :type="statusInfos[profileData.publishStatus as keyof typeof statusInfos]?.type"
+              :type="ProfileStatus.getTagType(profileData.publishStatus)"
               class="status-tag"
             >
-              {{ statusInfos[profileData.publishStatus as keyof typeof statusInfos]?.label }}
+              {{ ProfileStatus.getName(profileData.publishStatus) }}
             </el-tag>
           </div>
 
@@ -56,6 +56,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import service from '@/utils/services'
 import { ElMessage } from 'element-plus'
+import { ProfileStatus } from '@/dic/statusConfig'
 
 // 路由相关
 const route = useRoute()
@@ -66,22 +67,6 @@ const loading = ref(false)
 
 // 简介数据
 const profileData = ref<any>(null)
-
-// 状态信息映射
-const statusInfos = {
-  '0': {
-    type: 'info',
-    label: '待发布'
-  },
-  '1': {
-    type: 'success',
-    label: '已发布'
-  },
-  '2': {
-    type: 'warning',
-    label: '已下线'
-  }
-}
 
 // 获取简介详情数据
 const getProfileDetail = () => {

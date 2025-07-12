@@ -68,7 +68,11 @@
         </el-col>
       </template>
       <template #operation>
-        <el-button type="primary" @click="handleAdd">新增</el-button>
+        <el-tooltip content="新增用户" placement="top">
+          <ThrottleButton size="small" type="primary" @click="handleAdd">
+            <el-icon><Plus /></el-icon>
+          </ThrottleButton>
+        </el-tooltip>
       </template>
 
       <el-table-column
@@ -275,13 +279,14 @@
 <script setup lang="ts">
 import TablePage from '@/components/global/tablePage.vue'
 import ModifyUserDialog from '@/components/user/modifyUserDialog.vue'
+import ThrottleButton from '@/components/global/throttleButton.vue'
 import { ref } from 'vue'
 import service from '@/utils/services'
 import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useDictionary } from '@/hooks/useDictionary'
 import { useRouter } from 'vue-router'
-import { View, EditPen, Delete, School, Lock, Unlock } from '@element-plus/icons-vue'
+import { View, EditPen, Delete, School, Lock, Unlock, Plus } from '@element-plus/icons-vue'
 import { useUserInfoStore } from '@/stores/userInfo'
 
 // 获取职称字典

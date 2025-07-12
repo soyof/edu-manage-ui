@@ -30,7 +30,7 @@
           <el-form-item label="状态">
             <el-select v-model="form.publishStatus" placeholder="请选择状态" clearable>
               <el-option
-                v-for="item in statusList"
+                v-for="item in NoticeStatus.list"
                 :key="item.dictId"
                 :label="item.dictValue"
                 :value="item.dictId"
@@ -120,8 +120,8 @@
         showOverflowTooltip
       >
         <template #default="scope">
-          <el-tag :type="statusInfos[scope.row.publishStatus as keyof typeof statusInfos].type">
-            {{ statusInfos[scope.row.publishStatus as keyof typeof statusInfos].label }}
+          <el-tag :type="NoticeStatus.getTagType(scope.row.publishStatus)">
+            {{ NoticeStatus.getName(scope.row.publishStatus) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -254,6 +254,7 @@ import { View, Edit, Delete, Check, TurnOff, Plus } from '@element-plus/icons-vu
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
+import { NoticeStatus } from '@/dic/statusConfig'
 import { useDictionary } from '@/hooks/useDictionary'
 
 const router = useRouter()
@@ -292,27 +293,6 @@ const { dictList: importanceList, getDictLabel: translateImportance } = useDicti
   dictType: 'notice_importance',
   autoLoad: true
 })
-
-const statusList = [
-  { dictId: '0', dictValue: '待发布' },
-  { dictId: '1', dictValue: '已发布' },
-  { dictId: '2', dictValue: '已下线' }
-]
-
-const statusInfos = {
-  '0': {
-    type: 'info',
-    label: '待发布'
-  },
-  '1': {
-    type: 'success',
-    label: '已发布'
-  },
-  '2': {
-    type: 'warning',
-    label: '已下线'
-  }
-}
 
 // 表格页面组件引用
 const tablePageRef = ref<any>(null)
