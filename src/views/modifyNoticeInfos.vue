@@ -142,7 +142,6 @@ const { dictList: noticeTypeList } = useDictionary({
   dictType: 'notice_type',
   autoLoad: true
 })
-console.log(noticeTypeList)
 
 const { dictList: importanceList } = useDictionary({
   dictType: 'notice_importance',
@@ -245,8 +244,6 @@ const fetchNoticeDetail = () => {
   service.post(`/api/notice/detail`, {
     id: noticeId.value
   }).then((res: any) => {
-    console.log(res)
-
     if (res) {
       const noticeData = res as NoticeData
       formData.id = noticeData.id

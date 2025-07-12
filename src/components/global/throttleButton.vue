@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, withDefaults, onBeforeUnmount } from 'vue'
+import { ref, withDefaults, onBeforeUnmount } from 'vue'
 
 export interface ThrottleButtonProps {
   /**

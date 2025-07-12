@@ -155,8 +155,6 @@ const statusMap = {
 // 获取状态名称
 const getStatusName = (status: string | number) => {
   const statusKey = String(status)
-  console.log(statusKey)
-
   return statusMap[statusKey as keyof typeof statusMap]?.name || '未知状态'
 }
 

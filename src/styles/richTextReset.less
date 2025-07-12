@@ -9,14 +9,17 @@
   h1, h2, h3, h4, h5, h6, p, span, div, 
   ul, ol, li, table, tr, td, th, 
   blockquote, pre, code, a, strong, em, 
-  img, figure, figcaption {
+  figure, figcaption {
     all: revert;
   }
+  p {
+    margin: 4px 0;
+  }
   
-  /* 确保图片不超出容器 */
+  /* 确保图片不超出容器，同时允许内联宽高属性生效 */
   img {
-    max-width: 100%;
-    height: auto;
+    max-width: 100%; /* 仅设置最大宽度，防止溢出 */
+    /* 移除height: auto以允许HTML标签中的height属性生效 */
   }
 
   /* 表格样式 */

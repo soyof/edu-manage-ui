@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, useTemplateRef, ref, onUnmounted, onDeactivated } from 'vue'
+import { computed, useTemplateRef, ref, onUnmounted, onDeactivated } from 'vue'
 import Editor from '@tinymce/tinymce-vue'
 import { TINYMCE_SCRIPT_SRC, getBaseConfig, generateEditorId } from '../../utils/editorConfig'
 

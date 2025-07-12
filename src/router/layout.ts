@@ -6,6 +6,12 @@ export default [
     component: () => import(/* webpackChunkName: "homePage" */ '../views/homePage.vue')
   },
   {
+    path: '/userCenter',
+    name: 'userCenter',
+    meta: { title: '个人中心', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "userCenter" */ '../views/userCenter.vue')
+  },
+  {
     path: '/userManage',
     name: 'userManage',
     meta: { title: '用户管理', tabClosable: true },
@@ -36,9 +42,21 @@ export default [
     component: () => import(/* webpackChunkName: "noticeDetail" */ '../views/noticeDetail.vue')
   },
   {
-    path: '/userCenter',
-    name: 'userCenter',
-    meta: { title: '个人中心', isHidden: true, tabClosable: true },
-    component: () => import(/* webpackChunkName: "userCenter" */ '../views/userCenter.vue')
+    path: '/labProfileManage',
+    name: 'labProfileManage',
+    meta: { title: '简介管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "labProfileManage" */ '../views/labProfileManage.vue')
+  },
+  {
+    path: '/modifyLabProfile',
+    name: 'modifyLabProfile',
+    meta: { title: '编辑简介', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyLabProfileInfos" */ '../views/modifyLabProfileInfos.vue')
+  },
+  {
+    path: '/labProfileDetail',
+    name: 'labProfileDetail',
+    meta: { title: '简介详情', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "labProfileDetail" */ '../views/labProfileDetail.vue')
   }
 ]

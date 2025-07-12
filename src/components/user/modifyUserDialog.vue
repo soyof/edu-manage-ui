@@ -117,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits, defineProps, watch, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ROLE_LIST } from '@/dic/dic'
 import { ElMessage } from 'element-plus'

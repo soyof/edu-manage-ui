@@ -10,7 +10,6 @@
 
 <script lang='ts' setup>
 import * as _ from 'lodash'
-import { defineProps, defineEmits } from 'vue'
 
 const emit = defineEmits(['update:change', 'change'])
 
