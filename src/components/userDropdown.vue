@@ -1,11 +1,14 @@
 <template>
   <div class="user-dropdown">
     <el-dropdown trigger="click" @visibleChange="handleVisibleChange">
-      <div class="avatar-wrapper">
+      <div class="avatar-wrapper" :class="{ 'active': dropdownVisible }">
         <div class="avatar-container">
-          <el-avatar :size="32" :src="userAvatar" class="user-avatar">
+          <el-avatar :size="28" :src="userAvatar" class="user-avatar"
+            :class="{'has-image': !!userInfo.avatar}"
+          >
             {{ avatarFallback }}
           </el-avatar>
+          <div class="avatar-status"></div>
         </div>
         <div class="user-info">
           <span class="user-name">{{ userInfo.username }}</span>
@@ -150,38 +153,89 @@ const handleCommand = (command: string) => {
 </script>
 
 <style lang="less" scoped>
+// 定义动画关键帧
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes statusPulse {
+  0% { box-shadow: 0 0 0 0 rgba(103, 194, 58, 0.6); }
+  70% { box-shadow: 0 0 0 4px rgba(103, 194, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(103, 194, 58, 0); }
+}
+
 .user-dropdown {
   display: flex;
   align-items: center;
   cursor: pointer;
+  animation: fadeIn 0.3s ease;
 
   .avatar-wrapper {
     display: flex;
     align-items: center;
-    padding: 0 8px 0 0;
+    padding: 0 10px 0 4px;
     border-radius: 18px;
-    background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.08)"');
-    transition: all 0.3s ease;
-    border: 1px solid v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.05)"');
-    height: 36px;
+    background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.15)"');
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)"');
+    height: 34px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
 
     &:hover {
-      background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.12)"');
+      background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.2)"');
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &.active {
+      background-color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.25)"');
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
     .avatar-container {
+      position: relative;
       margin-left: 2px;
       margin-right: 8px;
       border-radius: 50%;
-      overflow: hidden;
+      overflow: visible;
+
+      .avatar-status {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background-color: #67C23A;
+        border-radius: 50%;
+        right: 0;
+        bottom: 0;
+        border: 1.5px solid v-bind('currentTheme === "light" ? "#fff" : "#1f1f1f"');
+        animation: statusPulse 2s infinite;
+      }
 
       .user-avatar {
         background-color: v-bind(avatarBgColor);
         color: #fff;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 500;
-        border: 2px solid v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.15)"');
+        border: 1.5px solid v-bind('currentTheme === "light" ? "rgba(255, 255, 255, 0.9)" : "rgba(255, 255, 255, 0.15)"');
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &.has-image {
+          background-color: transparent !important;
+        }
+
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
 
         :deep(img) {
           width: 100%;
@@ -196,27 +250,33 @@ const handleCommand = (command: string) => {
       display: flex;
       flex-direction: column;
       margin-right: 6px;
+      transition: transform 0.2s ease;
 
       .user-name {
         font-size: 12px;
-        font-weight: 500;
-        color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.9)"');
-        line-height: 1.2;
+        font-weight: 600;
+        color: v-bind('currentTheme === "light" ? "#000000" : "#ffffff"');
+        line-height: 1.1;
+        white-space: nowrap;
+        transition: color 0.2s ease;
+        text-shadow: v-bind('currentTheme === "light" ? "0 1px 1px rgba(255, 255, 255, 0.5)" : "0 1px 2px rgba(0, 0, 0, 0.8)"');
       }
 
       .user-role {
-        font-size: 11px;
-        color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.5)"');
-        line-height: 1.2;
+        font-size: 10px;
+        color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.85)"');
+        line-height: 1.1;
+        white-space: nowrap;
+        transition: color 0.2s ease;
       }
     }
 
     .el-icon--right {
       margin-left: 2px;
-      color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.5)"');
+      color: v-bind('currentTheme === "light" ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.85)"');
       font-weight: 400;
       font-size: 11px;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
       &.is-reverse {
         transform: rotate(180deg);
@@ -225,8 +285,40 @@ const handleCommand = (command: string) => {
   }
 }
 
-:deep(.el-dropdown-menu__item.is-active) {
-  color: var(--el-color-primary);
-  background-color: rgba(64, 158, 255, 0.1);
+:deep(.el-dropdown-menu) {
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 6px;
+
+  .el-dropdown-menu__item {
+    border-radius: 6px;
+    margin: 2px 0;
+    padding: 8px 14px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+
+    .el-icon {
+      margin-right: 8px;
+      font-size: 15px;
+    }
+
+    &:hover {
+      background-color: rgba(64, 158, 255, 0.1);
+      transform: translateX(2px);
+    }
+
+    &.is-active {
+      color: var(--el-color-primary);
+      background-color: rgba(64, 158, 255, 0.1);
+      font-weight: 500;
+    }
+
+    &.el-dropdown-menu__item--divided {
+      margin-top: 6px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding-top: 10px;
+    }
+  }
 }
 </style>

@@ -98,52 +98,8 @@ export const RecruitStatus = createStatusConfig('待发布', '生效中', '已�
  */
 export const ProfileStatus = createStatusConfig('待发布', '生效中', '已存档')
 
-/**
- * 招聘类型定义
- */
-export enum RecruitTypeEnum {
-  STUDENT = 'student_recruitment',
-  STAFF = 'staff_recruitment',
-  CONTACT = 'contact_us'
-}
-
-/**
- * 招聘类型配置
- */
-export const RecruitType = {
-  // 列表形式，用于下拉选择
-  list: [
-    { value: RecruitTypeEnum.STUDENT, label: '博士后及研究生招生' },
-    { value: RecruitTypeEnum.STAFF, label: '工作人员' },
-    { value: RecruitTypeEnum.CONTACT, label: '联系我们' }
-  ],
-
-  // 获取招聘类型标签样式
-  getTagType: (type: string): string => {
-    switch (type) {
-      case RecruitTypeEnum.STUDENT:
-        return 'primary'
-      case RecruitTypeEnum.STAFF:
-        return 'success'
-      case RecruitTypeEnum.CONTACT:
-        return 'info'
-      default:
-        return ''
-    }
-  },
-
-  // 获取招聘类型名称
-  getName: (type: string): string => {
-    const option = RecruitType.list.find(item => item.value === type)
-    return option ? option.label : type
-  }
-}
-
 // 兼容旧版本的导出，避免代码修改过多
 export const noticeStatusList = NoticeStatus.list
 export const noticeStatusInfos = NoticeStatus.tags
 export const recruitStatusList = RecruitStatus.list
 export const recruitStatusInfos = RecruitStatus.tags
-export const recruitmentTypeOptions = RecruitType.list
-export const getRecruitmentTypeTag = RecruitType.getTagType
-export const getRecruitmentTypeName = RecruitType.getName

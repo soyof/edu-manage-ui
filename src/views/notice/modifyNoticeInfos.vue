@@ -98,9 +98,7 @@ import pinia from '@/stores'
 
 const tabsStore = useTabsStore(pinia)
 
-const { changeLoading, closeLoading } = useLoading({
-  target: '.content-wrap'
-})
+const { changeLoading, closeLoading } = useLoading()
 
 // 定义通知数据接口
 interface NoticeData {

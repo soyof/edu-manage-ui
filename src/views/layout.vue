@@ -2,7 +2,13 @@
   <!-- https://lin-xin.github.io/example/vue-manage-system/#/dashboard -->
   <div class="layout-wrap">
     <div class="layout-top">
-      <div class="logo-wrap">合成生物研究所</div>
+      <div class="logo-wrap">
+        <div class="logo-animation-container">
+          <span class="logo-text">合成生物研究所</span>
+          <div class="logo-particles"></div>
+          <div class="logo-glow"></div>
+        </div>
+      </div>
       <div class="other-info-wrap">
         <!-- 主题切换组件 -->
         <themeSwitch />
@@ -112,6 +118,31 @@ watch(() => route.fullPath, () => {
 </script>
 
 <style lang="less" scoped>
+// 定义动画关键帧
+@keyframes logoGlow {
+  0% { opacity: 0.5; filter: blur(8px); }
+  50% { opacity: 0.8; filter: blur(12px); }
+  100% { opacity: 0.5; filter: blur(8px); }
+}
+
+@keyframes logoParticleFloat {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-15px) translateX(5px); opacity: 0; }
+}
+
+@keyframes logoTextPulse {
+  0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
+  50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+  100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
+}
+
+@keyframes logoBackgroundShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .layout-wrap {
   width: 100vw;
   height: 100vh;
@@ -154,7 +185,80 @@ watch(() => route.fullPath, () => {
       position: relative;
       overflow: hidden;
       transition: all 0.3s;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+      .logo-animation-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      .logo-text {
+        position: relative;
+        z-index: 3;
+        animation: logoTextPulse 3s ease-in-out infinite;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        background-clip: text;
+        -webkit-background-clip: text;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: scale(1.03);
+        }
+      }
+
+      .logo-glow {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          var(--primaryColor) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        opacity: 0.5;
+        filter: blur(8px);
+        z-index: 1;
+        animation: logoGlow 4s ease-in-out infinite;
+      }
+
+      .logo-particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        overflow: hidden;
+
+        &::before, &::after {
+          content: '';
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.6);
+          box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
+        &::before {
+          top: 70%;
+          left: 30%;
+          animation: logoParticleFloat 3s ease-in-out infinite;
+        }
+
+        &::after {
+          top: 40%;
+          left: 70%;
+          width: 3px;
+          height: 3px;
+          animation: logoParticleFloat 2.5s ease-in-out infinite 0.5s;
+        }
+      }
 
       &::before {
         content: '';
@@ -163,9 +267,14 @@ watch(() => route.fullPath, () => {
         top: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+        background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(0, 0, 0, 0.1) 100%
+        );
+        background-size: 200% 200%;
+        animation: logoBackgroundShift 8s ease infinite;
         opacity: 0.8;
-        z-index: -1;
+        z-index: 0;
       }
 
       &::after {
@@ -176,6 +285,13 @@ watch(() => route.fullPath, () => {
         height: 100%;
         width: 1px;
         background: rgba(255, 255, 255, 0.15);
+      }
+
+      &:hover {
+        .logo-glow {
+          opacity: 0.7;
+          filter: blur(10px);
+        }
       }
     }
 

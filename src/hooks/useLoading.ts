@@ -16,6 +16,7 @@ export default (defaultOptions: LoadingOptions = {}) => {
   // 默认配置
   const defaultLoadingOptions: LoadingOptions = {
     text: '加载中...',
+    target: '.content-wrap',
     background: 'rgba(255, 255, 255, 0.8)',
     ...defaultOptions
   }

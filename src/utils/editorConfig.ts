@@ -27,6 +27,7 @@ export const getBaseConfig = () => {
     toolbar_sticky: false, // 粘性工具栏
     toolbar_mode: 'sliding', // sliding生效条件toolbar必须为字符串,且有'|'区分,不能为数组
     font_size_formats: '12px 14px 16px 18px 20px 22px 24px 26px 36px 48px 56px',
+    line_height_default: 1.5,
     line_height_formats: '1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 3 4 5 12px 14px 16px 18px 20px 22px 24px 26px 36px 48px 56px',
     language: 'zh_CN',
     language_url: '/tinymce/langs/zh_CN.js',

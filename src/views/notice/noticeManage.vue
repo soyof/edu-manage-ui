@@ -96,7 +96,7 @@
       </template>
 
       <!-- 表格列插槽 -->
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="selection" width="50" fixed="left" />
       <el-table-column
         prop="title"
         label="通知标题"

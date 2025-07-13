@@ -286,7 +286,7 @@ const resetPasswordForm = () => {
 
 <style lang="less" scoped>
 .password-change {
-  padding: 20px 0;
+  padding: 0;
 
   .password-form {
     max-width: 500px;

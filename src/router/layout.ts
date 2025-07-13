@@ -58,5 +58,29 @@ export default [
     name: 'labProfileDetail',
     meta: { title: '简介详情', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "labProfileDetail" */ '@/views/labProfile/labProfileDetail.vue')
+  },
+  // {
+  //   path: '/contentManagement',
+  //   name: 'contentManagement',
+  //   meta: { title: '内容管理', tabClosable: true },
+  //   component: () => import(/* webpackChunkName: "contentManagement" */ '@/views/contentManagement.vue')
+  // },
+  {
+    path: '/recruitManage',
+    name: 'recruitManage',
+    meta: { title: '招聘信息管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "recruitManage" */ '@/views/recruit/recruitManage.vue')
+  },
+  {
+    path: '/modifyRecruitInfo',
+    name: 'modifyRecruitInfo',
+    meta: { title: '编辑招聘信息', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyRecruitInfo" */ '@/views/recruit/modifyRecruitInfo.vue')
+  },
+  {
+    path: '/recruitInfoDetail',
+    name: 'recruitInfoDetail',
+    meta: { title: '招聘信息详情', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "recruitInfoDetail" */ '@/views/recruit/recruitInfoDetail.vue')
   }
 ]

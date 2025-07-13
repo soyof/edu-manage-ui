@@ -423,7 +423,7 @@ defineExpose({
 
 <style lang="less" scoped>
 .user-profile {
-  padding: 20px 0;
+  padding: 0;
 
   .profile-section {
     position: relative;

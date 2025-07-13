@@ -15,6 +15,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
+          <el-form-item label="类型">
+            <el-select v-model="form.profileType" placeholder="请选择类型" clearable>
+              <el-option
+                v-for="item in introTypeList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="发布状态">
             <el-select v-model="form.publishStatus" placeholder="请选择状态" clearable>
               <el-option
@@ -82,13 +94,23 @@
       </template>
 
       <!-- 表格列插槽 -->
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="selection" width="50" fixed="left" />
       <el-table-column
         prop="title"
         label="简介标题"
         minWidth="200"
         showOverflowTooltip
       />
+      <el-table-column
+        prop="profileType"
+        label="简介类型"
+        width="150"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          {{ getIntroTypeLabel(scope.row.profileType) }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="publishStatus"
         label="发布状态"
@@ -216,12 +238,20 @@ import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
 import { ProfileStatus } from '@/dic/statusConfig'
+import { useDictionary } from '@/hooks/useDictionary'
 
 const router = useRouter()
+
+// 获取简介类型字典数据
+const { dictList: introTypeList, getDictLabel: getIntroTypeLabel } = useDictionary({
+  dictType: 'intro_type',
+  autoLoad: true
+})
 
 interface ProfileItem {
   id: number
   title: string
+  profileType: string
   publishStatus: string
   content: string
   content_en: string
@@ -234,6 +264,7 @@ interface ProfileItem {
 
 // 搜索表单初始值
 const initialSearchForm = {
+  profileType: '',
   title: '',
   publishStatus: '',
   createUserName: '',
