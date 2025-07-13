@@ -381,7 +381,7 @@ const handleDelete = (row?: ProfileItem) => {
 const handlePublishStatus = (row: ProfileItem, action: 'publish' | 'unpublish') => {
   const isPublish = action === 'publish'
   const actionText = isPublish ? '发布' : '下线'
-  const confirmMessage = isPublish ? '发布新简介后，当前生效中的简介将会被下线。确定要发布吗？' : '确定要将该简介下线吗？下线后将不再生效'
+  const confirmMessage = isPublish ? `发布新简介后，当前生效中的【${getIntroTypeLabel(row.profileType)}】简介将会被下线。确定要发布吗？` : '确定要将该简介下线吗？下线后将不再生效'
 
   ElMessageBox.confirm(confirmMessage, '提示', {
     confirmButtonText: '确定',

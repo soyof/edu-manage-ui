@@ -307,8 +307,8 @@ const editRecruitInfo = (row: RecruitItem) => {
 const handleStatusChange = (row: RecruitItem, action: 'publish' | 'archive') => {
   const isPublish = action === 'publish'
   const actionText = isPublish ? '发布' : '存档'
-  const tipsTitle = isPublish ? '确认发布该招聘信息' : '确认要存档该招聘信息吗？'
-  const tipsMsg = isPublish ? `发布后，此信息将成为唯一有效的【${getRecruitTypeLabel(row.recruitmentType)}】招聘信息，之前发布的同类型信息将自动归档。` : '确认要存档该招聘信息吗？'
+  const tipsTitle = isPublish ? '确认发布该招聘信息' : '存档'
+  const tipsMsg = isPublish ? `发布后，此信息将成为唯一有效的【${getRecruitTypeLabel(row.recruitmentType)}】招聘信息，之前发布的同类型信息将自动归档。` : '确认要存档该招聘信息吗？存档后将不再生效'
 
   ElMessageBox.confirm(tipsMsg, tipsTitle, {
     confirmButtonText: '确认',
