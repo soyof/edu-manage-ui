@@ -1,5 +1,5 @@
 <template>
-  <div class="user-manage">
+  <div class="user-manage common-action-column">
     <TablePage
       ref="tablePageRef"
       :initialSearchForm="searchForm"
@@ -137,29 +137,6 @@
           {{ scope.row.role === 'admin' ? '管理员' : '普通用户' }}
         </template>
       </el-table-column>
-      <!-- <el-table-column
-        prop="idPic"
-        label="证件照"
-        width="100"
-      >
-        <template #default="scope">
-          <el-image
-            v-if="scope.row.idPic"
-            :src="`/api/previewImage?filename=${scope.row.idPic}`"
-            fit="cover"
-            style="width: 60px; height: 80px; border-radius: 4px;"
-            :previewSrcList="[`/api/previewImage?filename=${scope.row.idPic}`]"
-          >
-            <template #error>
-              <div class="image-error">
-                <el-icon><Picture /></el-icon>
-                <span>加载失败</span>
-              </div>
-            </template>
-          </el-image>
-          <span v-else>-</span>
-        </template>
-      </el-table-column> -->
       <el-table-column
         prop="labHomepage"
         label="实验室主页"
@@ -187,80 +164,72 @@
       <el-table-column
         prop="opera"
         label="操作"
-        width="160"
+        width="140"
         fixed="right"
         showOverflowTooltip
       >
         <template #default="scope">
-          <div class="operation-buttons">
+          <div class="action-buttons">
+            <!-- 查看 -->
             <el-tooltip
               content="查看"
               placement="top"
               :showAfter="1000"
               :hideAfter="0"
             >
-              <el-button
-                type="primary"
-                link
-                :icon="View"
-                @click="handleView(scope.row)"
-              />
+              <span class="action-icon-wrapper" @click="handleView(scope.row)">
+                <el-icon class="action-icon view-icon"><View /></el-icon>
+              </span>
             </el-tooltip>
 
+            <!-- 基本信息编辑 -->
             <el-tooltip
               content="基本信息编辑"
               placement="top"
               :showAfter="1000"
               :hideAfter="0"
             >
-              <el-button
-                type="primary"
-                link
-                :icon="EditPen"
-                @click="handleEdit(scope.row)"
-              />
+              <span class="action-icon-wrapper" @click="handleEdit(scope.row)">
+                <el-icon class="action-icon edit-icon"><EditPen /></el-icon>
+              </span>
             </el-tooltip>
 
+            <!-- 学术档案 -->
             <el-tooltip
               content="学术档案"
               placement="top"
               :showAfter="1000"
               :hideAfter="0"
             >
-              <el-button
-                type="primary"
-                link
-                :icon="School"
-                @click="handleEditOther(scope.row)"
-              />
+              <span class="action-icon-wrapper" @click="handleEditOther(scope.row)">
+                <el-icon class="action-icon school-icon"><School /></el-icon>
+              </span>
             </el-tooltip>
 
+            <!-- 启用/禁用 -->
             <el-tooltip
               :content="scope.row.status ? '禁用' : '启用'"
               placement="top"
               :showAfter="1000"
               :hideAfter="0"
             >
-              <el-button
-                :type="scope.row.status ? 'warning' : 'success'"
-                link
-                :icon="scope.row.status ? Lock : Unlock"
-                @click="handleToggleStatus(scope.row)"
-              />
+              <span class="action-icon-wrapper" @click="handleToggleStatus(scope.row)">
+                <el-icon class="action-icon" :class="scope.row.status ? 'lock-icon' : 'unlock-icon'">
+                  <component :is="scope.row.status ? Lock : Unlock" />
+                </el-icon>
+              </span>
             </el-tooltip>
 
+            <!-- 删除 -->
             <el-tooltip
               content="删除"
               placement="top"
               :showAfter="1000"
               :hideAfter="0"
             >
-              <el-button
-                type="danger"
-                link
-                :icon="Delete"
-                @click="handleDelete(scope.row)"
-              />
+              <span class="action-icon-wrapper" @click="handleDelete(scope.row)">
+                <el-icon class="action-icon delete-icon"><Delete /></el-icon>
+              </span>
             </el-tooltip>
           </div>
         </template>
@@ -428,27 +397,6 @@ const handleToggleStatus = (row: any) => {
 
 <style lang="less" scoped>
 .user-manage {
-  .operation-buttons {
-    display: flex;
-    justify-content: center;
-
-    .el-button {
-      padding: 2px;
-    }
-  }
-
-  .user-manage-opera-view {
-    margin-right: 8px;
-    color: @primaryColor;
-  }
-  .user-manage-opera-edit {
-    margin-right: 8px;
-    color: @primaryColor;
-  }
-  .user-manage-opera-delete {
-    color: @dangerColor;
-  }
-
   .image-error {
     display: flex;
     flex-direction: column;

@@ -1,5 +1,5 @@
 <template>
-  <div class="lab-profile-manage-container">
+  <div class="lab-profile-manage-container common-action-column">
     <!-- 使用通用表格页面组件 -->
     <TablePage
       ref="tablePageRef"
@@ -153,74 +153,69 @@
         width="180"
         showOverflowTooltip
       />
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="120" fixed="right">
         <template #default="scope">
           <div class="action-buttons">
             <!-- 查看 -->
             <el-tooltip
-              :showAfter="1000"
               content="查看"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                type="info"
-                size="small"
-                @click="handleView(scope.row)"
-              >
-                <el-icon><View /></el-icon>
-              </el-button>
+              <span class="action-icon-wrapper" @click="handleView(scope.row)">
+                <el-icon class="action-icon view-icon"><View /></el-icon>
+              </span>
             </el-tooltip>
 
             <!-- 编辑 - 仅未发布时可编辑 -->
             <el-tooltip
-              :showAfter="1000"
               :content="scope.row.publishStatus === '1' ? '生效中的简介不可编辑' : '编辑'"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                type="primary"
-                size="small"
-                :disabled="scope.row.publishStatus === '1'"
-                @click="handleEdit(scope.row)"
+              <span
+                class="action-icon-wrapper"
+                :class="{'disabled-wrapper': scope.row.publishStatus === '1'}"
+                @click="scope.row.publishStatus !== '1' && handleEdit(scope.row)"
               >
-                <el-icon><Edit /></el-icon>
-              </el-button>
+                <el-icon class="action-icon edit-icon"><EditPen /></el-icon>
+              </span>
             </el-tooltip>
 
             <!-- 发布/下线 -->
             <el-tooltip
-              :showAfter="1000"
               :content="scope.row.publishStatus === '1' ? '下线' : '发布'"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                :type="scope.row.publishStatus === '1' ? 'warning' : 'success'"
-                size="small"
+              <span
+                class="action-icon-wrapper"
                 @click="handlePublishStatus(scope.row, scope.row.publishStatus === '1' ? 'unpublish' : 'publish')"
               >
-                <el-icon v-if="scope.row.publishStatus === '1'"><TurnOff /></el-icon>
-                <el-icon v-else><Check /></el-icon>
-              </el-button>
+                <el-icon class="action-icon" :class="scope.row.publishStatus === '1' ? 'unpublish-icon' : 'publish-icon'">
+                  <CircleClose v-if="scope.row.publishStatus === '1'" />
+                  <Check v-else />
+                </el-icon>
+              </span>
             </el-tooltip>
 
             <!-- 删除 -->
             <el-tooltip
-              :showAfter="1000"
               :content="scope.row.publishStatus === '1' ? '生效中的简介不能删除' : '删除'"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                type="danger"
-                size="small"
-                :disabled="scope.row.publishStatus === '1'"
-                @click="handleDelete(scope.row)"
+              <span
+                class="action-icon-wrapper"
+                :class="{'disabled-wrapper': scope.row.publishStatus === '1'}"
+                @click="scope.row.publishStatus !== '1' && handleDelete(scope.row)"
               >
-                <el-icon><Delete /></el-icon>
-              </el-button>
+                <el-icon class="action-icon delete-icon"><Delete /></el-icon>
+              </span>
             </el-tooltip>
           </div>
         </template>
@@ -233,7 +228,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { View, Edit, Delete, Check, TurnOff, Plus } from '@element-plus/icons-vue'
+import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
@@ -408,15 +403,6 @@ const refreshTable = (pageNum: number) => {
 
 <style scoped lang="less">
 .lab-profile-manage-container {
-  .action-buttons {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-
-    .el-button {
-      margin-left: 0;
-    }
-  }
 }
 
 :deep(.el-table .cell) {

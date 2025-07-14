@@ -161,8 +161,8 @@ onMounted(() => {
 <style lang="less" scoped>
 .table-page {
   width: 100%;
-  height: 100%;
-  min-height: @contentHeight;
+  min-height: 300px;
+  height: @contentHeight;
   max-height: @contentHeight;
   background-color: @pageBgColor;
   padding: 12px;

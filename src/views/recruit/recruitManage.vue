@@ -1,5 +1,5 @@
 <template>
-  <div class="recruit-manage-container">
+  <div class="recruit-manage-container common-action-column">
     <!-- 使用通用表格页面组件 -->
     <TablePage
       ref="tablePageRef"
@@ -93,7 +93,7 @@
       <!-- 表格列插槽 -->
       <el-table-column type="selection" width="50" fixed="left" />
       <el-table-column prop="id" label="ID" width="50" />
-      <el-table-column label="招聘类型" width="180">
+      <el-table-column label="招聘类型" minWidth="180">
         <template #default="scope">
           {{ getRecruitTypeLabel(scope.row.recruitmentType) }}
         </template>
@@ -108,7 +108,7 @@
       <el-table-column
         prop="publishTimes"
         label="发布时间"
-        width="180"
+        minWidth="180"
         showOverflowTooltip
       />
       <el-table-column
@@ -120,7 +120,7 @@
       <el-table-column
         prop="updatedTimes"
         label="更新时间"
-        width="180"
+        minWidth="180"
         showOverflowTooltip
       />
       <el-table-column
@@ -132,77 +132,72 @@
       <el-table-column
         prop="createdTimes"
         label="创建时间"
-        width="180"
+        minWidth="180"
         showOverflowTooltip
       />
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="120" fixed="right">
         <template #default="scope">
           <div class="action-buttons">
             <!-- 查看 -->
             <el-tooltip
-              :showAfter="1000"
               content="查看"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                type="info"
-                size="small"
-                @click="viewRecruitInfo(scope.row)"
-              >
-                <el-icon><View /></el-icon>
-              </el-button>
+              <span class="action-icon-wrapper" @click="viewRecruitInfo(scope.row)">
+                <el-icon class="action-icon view-icon"><View /></el-icon>
+              </span>
             </el-tooltip>
 
             <!-- 编辑 - 仅未发布和已存档状态可编辑 -->
             <el-tooltip
-              :showAfter="1000"
               :content="scope.row.status === '1' ? '生效中的信息不可编辑' : '编辑'"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                type="primary"
-                size="small"
-                :disabled="scope.row.status === '1'"
-                @click="editRecruitInfo(scope.row)"
+              <span
+                class="action-icon-wrapper"
+                :class="{'disabled-wrapper': scope.row.status === '1'}"
+                @click="scope.row.status !== '1' && editRecruitInfo(scope.row)"
               >
-                <el-icon><Edit /></el-icon>
-              </el-button>
+                <el-icon class="action-icon edit-icon"><EditPen /></el-icon>
+              </span>
             </el-tooltip>
 
             <!-- 发布/存档 -->
             <el-tooltip
-              :showAfter="1000"
               :content="scope.row.status === '1' ? '存档' : '发布'"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                :type="scope.row.status === '1' ? 'warning' : 'success'"
-                size="small"
+              <span
+                class="action-icon-wrapper"
                 @click="handleStatusChange(scope.row, scope.row.status === '1' ? 'archive' : 'publish')"
               >
-                <el-icon v-if="scope.row.status === '1'"><TurnOff /></el-icon>
-                <el-icon v-else><Check /></el-icon>
-              </el-button>
+                <el-icon class="action-icon" :class="scope.row.status === '1' ? 'unpublish-icon' : 'publish-icon'">
+                  <CircleClose v-if="scope.row.status === '1'" />
+                  <Check v-else />
+                </el-icon>
+              </span>
             </el-tooltip>
 
             <!-- 删除 -->
             <el-tooltip
-              :showAfter="1000"
               :content="scope.row.status === '1' ? '生效中的信息不能删除' : '删除'"
               placement="top"
+              :showAfter="1000"
+              :hideAfter="0"
             >
-              <el-button
-                circle
-                type="danger"
-                size="small"
-                :disabled="scope.row.status === '1'"
-                @click="deleteRecruitInfo(scope.row)"
+              <span
+                class="action-icon-wrapper"
+                :class="{'disabled-wrapper': scope.row.status === '1'}"
+                @click="scope.row.status !== '1' && deleteRecruitInfo(scope.row)"
               >
-                <el-icon><Delete /></el-icon>
-              </el-button>
+                <el-icon class="action-icon delete-icon"><Delete /></el-icon>
+              </span>
             </el-tooltip>
           </div>
         </template>
@@ -215,7 +210,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { View, Edit, Delete, Check, TurnOff, Plus } from '@element-plus/icons-vue'
+import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
@@ -383,15 +378,5 @@ const viewRecruitInfo = (row: RecruitItem) => {
 .recruit-manage-container {
   width: 100%;
   height: 100%;
-
-  .action-buttons {
-    display: flex;
-    justify-content: space-around;
-
-    .el-button {
-      margin-left: 5px;
-      margin-right: 5px;
-    }
-  }
 }
 </style>
