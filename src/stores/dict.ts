@@ -104,6 +104,8 @@ export const useDictStore = defineStore('dict', {
     clearAllDictCache() {
       this.dictInfo = {}
       this.dictObjCache = {}
+      // 确保也从本地存储中删除
+      localStorage.removeItem('dict')
     }
   },
   persist: {

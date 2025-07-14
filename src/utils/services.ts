@@ -6,61 +6,45 @@ import { getNewUrl } from '@/utils/utils'
 import router from '@/router'
 import { useUserInfoStore } from '@/stores/userInfo'
 
-// 用于防止重复调用退出登录接口
-let isLogoutProcessing = false
-
 /**
  * 处理需要退出登录的情况
  * @param errorMessage 错误信息
  */
 const handleLogout = (errorMessage = '登录已过期，请重新登录') => {
-  if (isLogoutProcessing) return
-
-  isLogoutProcessing = true
   try {
     // 获取store实例
     const userStore = useUserInfoStore()
-    // 先清除token，确保后续请求不会带上无效token
-    userStore.removeToken()
+
+    // 取消所有正在进行的请求
+    pendingMap.forEach((controller) => {
+      controller.abort()
+    })
+    pendingMap.clear()
+
+    // 清除用户数据（包含token和其他缓存数据）
+    userStore.clearUserData()
+
+    // 显示提示信息
+    errorFn(errorMessage)
 
     // 重定向到登录页
     router.push({
       path: '/login',
       query: {
-        redirect: window.location.pathname
+        redirect: `${window.location.pathname}${window.location.search}`
       }
-    })
-
-    // 显示提示信息
-    errorFn(errorMessage)
-
-    // 最后再调用登出接口，不等待其结果
-    userStore.logout().catch(err => {
-      console.error('登出接口调用失败:', err)
     })
   } catch (error) {
     console.error('处理退出登录失败:', error)
-    // 确保清除token
-    useUserInfoStore().removeToken()
-    router.push('/login')
-  } finally {
-    // 延迟重置标志位，防止快速连续请求
-    setTimeout(() => {
-      isLogoutProcessing = false
-    }, 1500)
-  }
-}
-
-/**
- * 添加时间戳参数，避免缓存
- * 注意：此函数已不再使用，由addTimestampToUrl替代
- * @deprecated
- */
-const getNewParams = (params: any) => {
-  params = params || {}
-  return {
-    ...params,
-    timestamp: new Date().getTime()
+    try {
+      // 确保清除用户数据
+      useUserInfoStore().clearUserData()
+      router.push('/login')
+    } catch (innerError) {
+      console.error('清除用户数据失败，强制刷新页面', innerError)
+      // 最后的兜底方案：刷新页面
+      window.location.href = '/login'
+    }
   }
 }
 

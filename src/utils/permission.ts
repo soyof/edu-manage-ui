@@ -35,12 +35,12 @@ export const routerBeforeEach = async(to: any, from: any, next: any) => {
           console.log(error)
           // 获取用户信息失败，可能是token过期，清除token并跳转到登录页
           userStore.removeToken()
-          next(`/login?redirect=${to.path}`)
+          next(`/login?redirect=${to.fullPath}`)
         }
       }
     } else {
       // 未登录，重定向到登录页
-      next(`/login?redirect=${encodeURIComponent(to.path)}`)
+      next(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
     }
   }
 }

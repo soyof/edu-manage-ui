@@ -236,6 +236,13 @@ export const useTabsStore = defineStore('menuTabInfos', {
     refreshTab(path: string) {
       // 使用时间戳作为值，确保每次刷新都会触发变化
       this.refreshMap[path] = Date.now()
+    },
+    // 完全清除所有页签数据（用于登出时调用）
+    clearAllTabs() {
+      // 重置到初始状态，只保留首页
+      this.$reset()
+      // 确保也从本地存储中删除
+      localStorage.removeItem('menuTabInfos')
     }
   },
   persist: {

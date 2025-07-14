@@ -138,15 +138,21 @@ const handleCommand = (command: string) => {
         text: '退出中...',
         background: 'rgba(0, 0, 0, 0.7)'
       })
+
       // 调用退出登录方法
       userInfoStore.logout().then(() => {
         loadingInstance.close()
         ElMessage.success('退出成功')
+        // 在成功退出后直接跳转到登录页面，不需要等待额外操作
         router.push('/login')
-      }).catch(() => {
+      }).catch((error) => {
+        console.log(error)
         loadingInstance.close()
         ElMessage.error('退出失败，请稍后重试')
       })
+    }).catch(() => {
+      // 用户取消退出操作
+      console.log('用户取消了退出操作')
     })
   }
 }
