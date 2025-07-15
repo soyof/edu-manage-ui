@@ -1,0 +1,1505 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background: var(--login-bg-color);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 20px;
+  /* 生物科技风格背景 */
+  .tech-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.8;
+  }
+
+  /* 高科技粒子效果 */
+  .particle-network {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: floatParticle 20s infinite ease-in-out;
+  }
+
+  /* 分子结构网络 */
+  .molecular-network {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+  }
+
+  .molecule {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    animation: pulseMolecule 10s infinite alternate;
+  }
+
+  .molecule-center {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+  }
+
+  .molecule-bond {
+    position: absolute;
+    width: 50px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.6);
+    top: 50%;
+    left: 50%;
+    transform-origin: left center;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ffffff;
+      border-radius: 50%;
+      right: -4px;
+      top: -3px;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  /* 六边形网格背景 */
+  .hexagon-grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+  }
+
+  .hex-row {
+    position: absolute;
+    width: 100%;
+    height: 60px;
+  }
+
+  .hexagon {
+    position: absolute;
+    width: 40px;
+    height: 23px;
+    background-color: rgba(255, 255, 255, 0.1);
+    position: relative;
+    animation: hexPulse 4s infinite alternate;
+
+    &:before,
+    &:after {
+      content: "";
+      position: absolute;
+      width: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+    }
+
+    &:before {
+      bottom: 100%;
+      border-bottom: 11.5px solid rgba(255, 255, 255, 0.1);
+    }
+
+    &:after {
+      top: 100%;
+      border-top: 11.5px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  /* DNA螺旋结构 */
+  .dna-helix {
+    position: absolute;
+    width: 100px;
+    height: 400px;
+    top: 50%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    opacity: 0.4;
+    animation: rotateDNA 30s linear infinite;
+  }
+
+  .dna-strand {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dna-rung {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    perspective: 1000px;
+  }
+
+  .dna-base {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    top: -3px;
+
+    &.left {
+      left: 0;
+      box-shadow: 0 0 10px rgba(100, 200, 255, 0.8);
+    }
+
+    &.right {
+      right: 0;
+      box-shadow: 0 0 10px rgba(255, 200, 100, 0.8);
+    }
+  }
+
+  /* 数字流 */
+  .digital-stream {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .stream-column {
+    position: absolute;
+    top: -20%;
+    height: 120%;
+    width: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: streamFlow linear infinite;
+  }
+
+  .stream-digit {
+    font-family: monospace;
+    font-size: 14px;
+    color: #ffffff;
+    margin: 2px 0;
+    animation: digitFade 2s infinite alternate;
+  }
+
+  /* 科技网格 */
+  .tech-grid-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: moveGrid 60s linear infinite;
+  }
+
+  /* 全屏装饰性代码线条 */
+  .tech-code-decoration {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .code-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--login-primary-color), transparent);
+    opacity: 0;
+    transform-origin: left;
+    animation: codeLineAnim 8s infinite ease-in-out;
+    box-shadow: 0 0 5px var(--login-primary-color);
+  }
+
+  .code-line:nth-child(odd) {
+    background: linear-gradient(90deg, transparent, var(--login-primary-color), transparent);
+  }
+
+  .code-line:nth-child(even) {
+    background: linear-gradient(90deg, transparent, var(--login-primary-color), transparent);
+  }
+
+  .code-line:nth-child(3n) {
+    height: 2px;
+    animation-duration: 12s;
+  }
+
+  .code-line:nth-child(5n) {
+    animation-duration: 15s;
+    animation-name: codeLineAnim2;
+  }
+
+  /* 装饰性网格点 */
+  .tech-dots {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .tech-dot {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background-color: var(--login-primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 4px var(--login-primary-color);
+    animation: dotPulse 4s infinite ease-in-out;
+  }
+
+  .tech-dot:nth-child(3n) {
+    width: 3px;
+    height: 3px;
+    box-shadow: 0 0 6px var(--login-primary-color);
+  }
+
+  .tech-dot:nth-child(5n) {
+    animation-name: dotPulse2;
+    animation-duration: 6s;
+  }
+
+  .login-content {
+    display: flex;
+    width: 1000px;
+    height: 600px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    /* 修改边框样式 */
+    border: none;
+    box-shadow: 0 0 25px var(--login-primary-color);
+    /* 去除之前的边角装饰，使用新的科技感边框 */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: 2px;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0.5),
+        var(--login-primary-color),
+        rgba(255, 255, 255, 0.3),
+        var(--login-primary-color)
+      );
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 11;
+      animation: borderGlow 4s infinite alternate;
+    }
+  
+    /* 四个角落的L形装饰 */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background:
+        /* 左上角 */
+        linear-gradient(to right, var(--login-primary-color) 3px, transparent 3px) top left/40px 3px no-repeat,
+        linear-gradient(to bottom, var(--login-primary-color) 3px, transparent 3px) top left/3px 40px no-repeat,
+        /* 右上角 */
+        linear-gradient(to left, var(--login-primary-color) 3px, transparent 3px) top right/40px 3px no-repeat,
+        linear-gradient(to bottom, var(--login-primary-color) 3px, transparent 3px) top right/3px 40px no-repeat,
+        /* 左下角 */
+        linear-gradient(to right, var(--login-primary-color) 3px, transparent 3px) bottom left/40px 3px no-repeat,
+        linear-gradient(to top, var(--login-primary-color) 3px, transparent 3px) bottom left/3px 40px no-repeat,
+        /* 右下角 */
+        linear-gradient(to left, var(--login-primary-color) 3px, transparent 3px) bottom right/40px 3px no-repeat,
+        linear-gradient(to top, var(--login-primary-color) 3px, transparent 3px) bottom right/3px 40px no-repeat;
+      pointer-events: none;
+      z-index: 12;
+      filter: drop-shadow(0 0 5px var(--login-primary-color));
+      animation: cornerGlow 4s infinite alternate;
+    }
+  }
+
+  /* 添加整体边框发光效果 */
+  .login-content::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    box-shadow: inset 0 0 2px var(--login-primary-color);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* 玻璃态效果 */
+  .login-form-container,
+  .login-decoration {
+    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .login-form-container {
+    flex: 4;
+      padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+
+  .login-header {
+    margin-bottom: 40px;
+        text-align: center;
+
+    .title {
+      font-size: 30px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(0, 0, 0, 0.5), 0 0 25px var(--login-primary-color);
+      letter-spacing: 1px;
+      animation: titleGlow 3s infinite alternate;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0;
+      font-weight: 500;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      animation: subtitleFade 4s infinite alternate;
+    }
+  }
+
+  .login-form {
+    width: 100%;
+    z-index: 3;
+
+    :deep(.el-form-item) {
+      margin-bottom: 25px;
+    }
+
+    :deep(.el-input__wrapper) {
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    :deep(.el-input__inner) {
+      color: #ffffff;
+      font-weight: 500;
+      text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+    }
+
+    :deep(.el-input__inner::placeholder) {
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 400;
+    }
+
+    :deep(.el-input__prefix-inner .el-icon) {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+      .password-icon {
+        cursor: pointer;
+      color: rgba(255, 255, 255, 0.8);
+        &.actives, &:hover {
+        color: var(--login-primary-color);
+      }
+    }
+  }
+
+  /* 赛博朋克风格按钮 */
+  .cyber-button {
+    --primary: var(--login-primary-color);
+    --shadow-primary: rgba(0, 0, 0, 0.3);
+    --primary-dark: var(--login-primary-80);
+    --font-color: #fff;
+    --font-glow: rgba(255, 255, 255, 0.5);
+
+    width: 100%;
+    height: 50px;
+    border: 0;
+    outline: transparent;
+    position: relative;
+    background: var(--primary);
+    color: var(--font-color);
+    text-transform: uppercase;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.7px;
+    overflow: hidden;
+    box-shadow: 0 0 10px var(--shadow-primary), 0 0 15px var(--primary);
+    transition: all 0.3s ease;
+      cursor: pointer;
+    animation: buttonPulse 3s infinite alternate;
+
+    &:not(:disabled):hover {
+      background: var(--primary-dark);
+      box-shadow: 0 0 20px var(--shadow-primary), 0 0 25px var(--primary);
+      text-shadow: 0 0 10px var(--font-glow);
+      transform: translateY(-2px);
+    }
+
+    &:not(:disabled):active {
+      transform: translateY(2px);
+      box-shadow: 0 0 8px var(--shadow-primary);
+    }
+
+    &:disabled {
+      background: #a0a0a0;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: not-allowed;
+      box-shadow: none;
+      text-shadow: none;
+      animation: none;
+    }
+
+    &__text {
+      position: relative;
+      z-index: 1;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: width 0.5s ease;
+    }
+
+    &:not(:disabled):hover::after {
+      width: 100%;
+    }
+  }
+
+  /* 加载动画 */
+  .loading-dots {
+    display: inline-block;
+
+    span {
+      animation: dotFade 1.5s infinite;
+      opacity: 0;
+
+      &:nth-child(1) {
+        animation-delay: 0s;
+      }
+      &:nth-child(2) {
+        animation-delay: 0.5s;
+      }
+      &:nth-child(3) {
+        animation-delay: 1s;
+      }
+    }
+  }
+
+  .slider-container {
+    width: 100%;
+    height: 50px;
+    margin: 8px 0;
+  }
+  
+  .slider-bg {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: background-color 0.3s;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    --slider-track-width: 0px;
+  
+    /* 添加滑动轨迹效果 */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: var(--slider-track-width, 0);
+      background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0.05),
+        var(--login-primary-40)
+      );
+      border-radius: 25px;
+      transition: width 0.1s ease;
+      z-index: 1;
+      box-shadow: 0 0 10px var(--login-primary-color);
+    }
+  
+      &.success {
+      background-color: rgba(82, 196, 26, 0.15);
+      &::before {
+        width: 100% !important;
+        background: linear-gradient(90deg,
+          rgba(82, 196, 26, 0.3),
+          rgba(82, 196, 26, 0.6)
+        );
+        box-shadow: 0 0 15px rgba(82, 196, 26, 0.8);
+        animation: successPulse 2s infinite alternate;
+      }
+    }
+  }
+
+  .slider-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 50px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 500;
+    user-select: none;
+    z-index: 2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  .slider-button {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    background: var(--login-primary-gradient);
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), 0 0 15px var(--login-primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    z-index: 3;
+    transition: transform 0.2s, box-shadow 0.3s;
+  
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), 0 0 20px var(--login-primary-color);
+    }
+  
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  /* 右侧装饰区域的新样式 */
+  .login-decoration {
+    flex: 5;
+    background-color: rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30px;
+    color: white;
+  }
+  
+  /* 科技图形装饰 - 同心圆脉冲效果 */
+  .tech-graphic {
+    width: 100%;
+    height: 250px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 20px;
+  }
+  
+  .pulse-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+  
+  .tech-circle {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 20px var(--login-primary-color), 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .c1 {
+    width: 160px;
+    height: 160px;
+    animation: pulse1 6s infinite ease-out;
+    opacity: 0.8;
+  }
+  
+  .c2 {
+    width: 120px;
+    height: 120px;
+    animation: pulse2 8s infinite ease-out;
+    opacity: 0.7;
+  }
+  
+  .c3 {
+    width: 80px;
+    height: 80px;
+    animation: pulse3 10s infinite ease-out;
+    opacity: 0.6;
+  }
+  
+  .tech-circle-dot {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 20px var(--login-primary-color), 0 0 40px var(--login-primary-color), 0 0 5px rgba(0, 0, 0, 0.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: glow 4s infinite;
+  }
+
+  .tech-grid {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+    background-size: 25px 25px;
+    animation: rotate 60s linear infinite;
+    opacity: 0.3;
+    border-radius: 50%;
+    transform-origin: center;
+  }
+  
+  .tech-beams {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    opacity: 0.5;
+  }
+  
+  .tech-beam {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, #ffffff, transparent);
+    transform-origin: left center;
+    animation: beamPulse 4s infinite;
+  }
+
+  /* 研究领域展示 */
+  .research-areas {
+    margin-top: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+  }
+
+  .area-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 15px var(--login-primary-color);
+    border-left: 3px solid #ffffff;
+    padding-left: 10px;
+    position: relative;
+    z-index: 2;
+    animation: borderPulse 3s infinite alternate;
+  }
+
+  .areas-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+    position: relative;
+    z-index: 3; /* 确保文字在装饰层之上 */
+  }
+  
+  .area-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    padding: 10px;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s forwards;
+    opacity: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 3;
+    overflow: hidden;
+  
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      border-color: #ffffff;
+    }
+  
+    &::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(transparent, transparent, transparent, rgba(255, 255, 255, 0.2));
+      transform: rotate(45deg);
+      animation: areaItemShine 6s infinite;
+      opacity: 0;
+    }
+  }
+
+  .area-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+  
+  .icon-hexagon {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid #ffffff;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: rotate 4s linear infinite;
+  }
+  
+  .icon-circle {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px var(--login-primary-color);
+    animation: iconPulse 3s infinite alternate;
+  }
+
+  .area-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  }
+  
+  /* 不遮挡文字的装饰性电路 */
+  .circuit-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1; /* 确保在文字下方 */
+    opacity: 0.5;
+  }
+  
+  .circuit-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    height: 2px;
+    animation: circuitPulse 4s infinite alternate;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+  }
+
+  .circuit-node {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    animation: nodeGlow 3s infinite alternate;
+  }
+
+  .circuit-node:nth-child(4) {
+    top: 65%;
+    right: 10px;
+  }
+  
+  .circuit-node:nth-child(5) {
+    top: 40%;
+    right: 5px;
+  }
+  
+  .circuit-node:nth-child(6) {
+    bottom: 30%;
+    right: 30px;
+  }
+  
+  .circuit-node:nth-child(7) {
+    bottom: 30%;
+    right: 150px;
+  }
+  
+  /* 底部装饰区域 */
+  .bottom-decoration {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 80px;
+    z-index: 1;
+  }
+  
+  .tech-scan-line {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    animation: scan 3s infinite ease-in-out;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  }
+
+  .circuit-paths {
+    position: absolute;
+    bottom: 10px;
+    right: 30px;
+    width: 150px;
+    height: 60px;
+  }
+  
+  .circuit-path {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    animation: pathPulse 4s infinite alternate;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+
+  .circuit-path .circuit-node {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+    animation: pathNodePulse 2s infinite;
+  }
+}
+
+
+
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(30px, -30px);
+  }
+  50% {
+    transform: translate(-20px, -40px);
+  }
+  75% {
+    transform: translate(-40px, 20px);
+  }
+}
+
+@keyframes pulseMolecule {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05) rotate(5deg);
+  }
+}
+
+@keyframes hexPulse {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes rotateDNA {
+  0% {
+    transform: translate(-50%, -50%) rotateY(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotateY(360deg);
+  }
+}
+
+@keyframes streamFlow {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(300px);
+  }
+}
+
+@keyframes digitFade {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes moveGrid {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+@keyframes codeLineAnim {
+  0% {
+    transform: scaleX(0) translateY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.3;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scaleX(1) translateY(10px);
+    opacity: 0;
+  }
+}
+
+@keyframes codeLineAnim2 {
+  0% {
+    transform: scaleX(0) translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0.2;
+    transform: scaleX(0.8) translateY(5px) rotate(1deg);
+  }
+  100% {
+    transform: scaleX(1) translateY(15px) rotate(2deg);
+    opacity: 0;
+  }
+}
+
+@keyframes dotPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes dotPulse2 {
+  0% {
+    transform: scale(0) translate(0, 0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5) translate(10px, 10px);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0) translate(20px, 20px);
+    opacity: 0;
+  }
+}
+
+@keyframes slowMove {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 60px 60px, 60px 60px; }
+}
+
+/* 修改边框发光动画 */
+@keyframes borderGlow {
+  0% {
+    opacity: 0.7;
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes cornerGlow {
+  0% {
+    filter: drop-shadow(0 0 3px var(--login-primary-color));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px var(--login-primary-color));
+  }
+}
+
+@keyframes titleGlow {
+  0% {
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.5), 0 0 25px var(--login-primary-color);
+  }
+  100% {
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.7), 0 0 35px var(--login-primary-color), 0 0 50px var(--login-primary-color);
+  }
+}
+
+@keyframes subtitleFade {
+  0% {
+    opacity: 0.9;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+  }
+}
+
+@keyframes buttonPulse {
+  0% {
+    box-shadow: 0 0 10px var(--shadow-primary), 0 0 15px var(--primary);
+  }
+  100% {
+    box-shadow: 0 0 20px var(--shadow-primary), 0 0 30px var(--primary);
+  }
+}
+
+@keyframes glitch {
+  0% {
+    clip-path: polygon(
+      0 2%,
+      100% 0%,
+      100% 15%,
+      0% 30%,
+      0 58%,
+      100% 50%,
+      100% 100%,
+      0 100%
+    );
+  }
+  50% {
+    clip-path: polygon(
+      0 10%,
+      100% 15%,
+      100% 32%,
+      0% 30%,
+      0 68%,
+      100% 70%,
+      100% 100%,
+      0 100%
+    );
+  }
+  100% {
+    clip-path: polygon(
+      0 15%,
+      100% 20%,
+      100% 42%,
+      0% 40%,
+      0 78%,
+      100% 80%,
+      100% 100%,
+      0 100%
+    );
+  }
+}
+
+@keyframes shine {
+  0% { transform: translateY(-100%) translateX(-100%) rotate(45deg); }
+  100% { transform: translateY(100%) translateX(100%) rotate(45deg); }
+}
+
+@keyframes dotFade {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes successPulse {
+  0% {
+    opacity: 0.7;
+    box-shadow: 0 0 10px rgba(82, 196, 26, 0.6);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(82, 196, 26, 0.9);
+  }
+}
+
+@keyframes pulse1 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+    border-color: var(--login-primary-color);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    border-color: var(--login-primary-color);
+    box-shadow: 0 0 25px var(--login-primary-color);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+    border-color: var(--login-primary-color);
+  }
+}
+
+@keyframes pulse2 {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    border-color: var(--login-primary-color);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.5;
+    border-color: var(--login-primary-color);
+    box-shadow: 0 0 15px var(--login-primary-color);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    border-color: var(--login-primary-color);
+  }
+}
+
+@keyframes pulse3 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.6;
+    border-color: var(--login-primary-color);
+  }
+  33% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.8;
+    border-color: var(--login-primary-color);
+    box-shadow: 0 0 20px var(--login-primary-color);
+  }
+  66% {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.7;
+    border-color: var(--login-primary-color);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.6;
+    border-color: var(--login-primary-color);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 25px var(--login-primary-color), 0 0 50px var(--login-primary-color), 0 0 5px rgba(0, 0, 0, 0.5);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 15px var(--login-primary-color), 0 0 30px var(--login-primary-color), 0 0 3px rgba(0, 0, 0, 0.5);
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+@keyframes beamPulse {
+  0% {
+    opacity: 0;
+    transform: rotate(0deg) translateX(0) scaleX(0);
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: rotate(0deg) translateX(0) scaleX(1);
+    opacity: 0;
+  }
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+@keyframes borderPulse {
+  0% {
+    border-left-color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 15px var(--login-primary-color);
+  }
+  100% {
+    border-left-color: var(--login-primary-color);
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.7), 0 0 25px var(--login-primary-color);
+  }
+}
+
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes areaItemShine {
+  0% {
+    opacity: 0;
+    transform: rotate(45deg) translateY(100%);
+  }
+  10%, 20% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(45deg) translateY(-100%);
+  }
+}
+
+
+
+@keyframes iconPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px var(--login-primary-color);
+  }
+  100% {
+    transform: scale(1.2);
+    box-shadow: 0 0 15px var(--login-primary-color), 0 0 25px var(--login-primary-color);
+  }
+}
+
+
+
+@keyframes circuitPulse {
+  0% {
+    opacity: 0.3;
+    box-shadow: none;
+  }
+  100% {
+    opacity: 0.8;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+  }
+}
+
+
+
+@keyframes nodeGlow {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px #ffffff, 0 0 15px rgba(255, 255, 255, 0.7);
+  }
+}
+
+
+
+@keyframes scan {
+  0%, 100% { transform: translateY(0); opacity: 0; }
+  50% { transform: translateY(-30px); opacity: 0.8; }
+}
+
+
+
+@keyframes pathPulse {
+  0% {
+    border-color: rgba(255, 255, 255, 0.5);
+    opacity: 0.5;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    border-color: #ffffff;
+    opacity: 0.8;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+  }
+}
+
+
+
+@keyframes pathNodePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+    box-shadow: 0 0 15px #ffffff, 0 0 25px rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 1200px) {
+  .login-container {
+    padding: 30px;
+    
+    .login-content {
+      width: 500px;
+      height: auto;
+      flex-direction: column;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+  
+    .login-form-container {
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 100%;
+    }
+  
+    .login-decoration {
+      display: none; /* 在1200px宽度以下隐藏左侧装饰区域 */
+    }
+  }
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+  .login-container {
+    padding: 30px;
+    
+    .login-content {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      flex-direction: column;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+  
+    .login-form-container {
+      border-radius: 20px;
+      padding: 30px 20px;
+      width: 100%;
+    }
+  
+    .login-decoration {
+      display: none; /* 在小屏幕上隐藏左侧装饰区域 */
+    }
+    
+    .login-header {
+      margin-bottom: 30px;
+      
+      .title {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
+/* 额外添加超小屏幕的适配 */
+@media screen and (max-width: 480px) {
+  .login-container {
+    padding: 20px;
+    
+    .login-content {
+      width: 100%;
+      border-radius: 15px;
+      max-width: calc(100% - 10px);
+    }
+    
+    .login-form-container {
+      padding: 25px 15px;
+      border-radius: 15px;
+    }
+    
+    .login-header {
+      margin-bottom: 25px;
+      
+      .title {
+        font-size: 24px;
+      }
+      
+      .subtitle {
+        font-size: 16px;
+      }
+    }
+    
+    .cyber-button {
+      height: 45px;
+      font-size: 15px;
+    }
+    
+    .slider-container {
+      height: 45px;
+    }
+    
+    .slider-bg {
+      height: 45px;
+    }
+    
+    .slider-button {
+      width: 45px;
+      height: 45px;
+    }
+  }
+}

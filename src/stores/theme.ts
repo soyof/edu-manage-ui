@@ -37,35 +37,35 @@ const themeConfigs: Record<ThemeType, ThemeConfig> = {
     headerBgGradient: 'linear-gradient(135deg, #34495e 0%, #2c3e50 50%, #243342 100%)',
     menuBgGradient: 'linear-gradient(180deg, #34495e 0%, #2c3e50 50%, #243342 100%)'
   },
-  // 蓝色主题
+  // 蓝色主题 - 调整为更明亮的蓝色
   blue: {
-    headerBgColor: '#1890ff',
-    menuBgColor: '#1890ff',
-    menuBgColorS: '#40a9ff',
+    headerBgColor: '#4dabff',
+    menuBgColor: '#4dabff',
+    menuBgColorS: '#6cbcff',
     menuTextColor: '#ffffff',
     menuActiveTextColor: '#e6f7ff',
     logoTextColor: '#ffffff',
     bgColor: '#f5f7fa',
-    textActiveColor: '#1890ff',
-    primaryColor: '#1890ff',
-    borderActiveColor: '#1890ff',
-    headerBgGradient: 'linear-gradient(135deg, #40a9ff 0%, #1890ff 50%, #0960d0 100%)',
-    menuBgGradient: 'linear-gradient(180deg, #40a9ff 0%, #1890ff 50%, #096dd9 100%)'
+    textActiveColor: '#4dabff',
+    primaryColor: '#4dabff',
+    borderActiveColor: '#4dabff',
+    headerBgGradient: 'linear-gradient(135deg, #6cbcff 0%, #4dabff 50%, #2d96ff 100%)',
+    menuBgGradient: 'linear-gradient(180deg, #6cbcff 0%, #4dabff 50%, #2d96ff 100%)'
   },
-  // 绿色主题
+  // 绿色主题 - 调整为更柔和的绿色
   green: {
-    headerBgColor: '#81c784',
-    menuBgColor: '#81c784',
-    menuBgColorS: '#a5d6a7',
-    menuTextColor: '#003d00', // 深绿色文本，与浅绿背景形成强烈对比
+    headerBgColor: '#7dd87d',
+    menuBgColor: '#7dd87d',
+    menuBgColorS: '#9de49d',
+    menuTextColor: '#004d00', // 深绿色文本，与浅绿背景形成对比
     menuActiveTextColor: '#ffffff', // 白色激活文本
     logoTextColor: '#ffffff',
     bgColor: '#f5f7fa',
-    textActiveColor: '#4caf50',
-    primaryColor: '#4caf50',
-    borderActiveColor: '#4caf50',
-    headerBgGradient: 'linear-gradient(135deg, #a5d6a7 0%, #81c784 50%, #4caf50 100%)',
-    menuBgGradient: 'linear-gradient(180deg, #a5d6a7 0%, #81c784 50%, #43a047 100%)'
+    textActiveColor: '#66c266',
+    primaryColor: '#66c266',
+    borderActiveColor: '#66c266',
+    headerBgGradient: 'linear-gradient(135deg, #9de49d 0%, #7dd87d 50%, #66c266 100%)',
+    menuBgGradient: 'linear-gradient(180deg, #9de49d 0%, #7dd87d 50%, #5cb85c 100%)'
   },
   // 紫色主题
   purple: {
@@ -82,50 +82,50 @@ const themeConfigs: Record<ThemeType, ThemeConfig> = {
     headerBgGradient: 'linear-gradient(135deg, #d1c4e9 0%, #b39ddb 50%, #7e57c2 100%)',
     menuBgGradient: 'linear-gradient(180deg, #c5b3e6 0%, #b39ddb 50%, #673ab7 100%)'
   },
-  // 橙色主题
+  // 橙色主题 - 调整为更明亮的橙色
   orange: {
     headerBgColor: '#ffb74d',
     menuBgColor: '#ffb74d',
-    menuBgColorS: '#ffcc80',
-    menuTextColor: '#663c00', // 深棕色文本
+    menuBgColorS: '#ffc87a',
+    menuTextColor: '#7a4500', // 调整为不那么深的棕色文本
     menuActiveTextColor: '#ffffff', // 白色激活文本
     logoTextColor: '#ffffff',
     bgColor: '#f5f7fa',
-    textActiveColor: '#ff9800',
-    primaryColor: '#ff9800',
-    borderActiveColor: '#ff9800',
-    headerBgGradient: 'linear-gradient(135deg, #ffcc80 0%, #ffb74d 50%, #ff9800 100%)',
-    menuBgGradient: 'linear-gradient(180deg, #ffcc80 0%, #ffb74d 50%, #ef6c00 100%)'
+    textActiveColor: '#ffa726',
+    primaryColor: '#ffa726',
+    borderActiveColor: '#ffa726',
+    headerBgGradient: 'linear-gradient(135deg, #ffd59a 0%, #ffb74d 50%, #ffa726 100%)',
+    menuBgGradient: 'linear-gradient(180deg, #ffd59a 0%, #ffb74d 50%, #ff9800 100%)'
   },
-  // 红色主题
+  // 红色主题 - 调整为更柔和的红色
   red: {
-    headerBgColor: '#e57373',
-    menuBgColor: '#e57373',
-    menuBgColorS: '#ef9a9a',
-    menuTextColor: '#5f0000', // 深红色文本
+    headerBgColor: '#ff8a80',
+    menuBgColor: '#ff8a80',
+    menuBgColorS: '#ffaba3',
+    menuTextColor: '#7f0000', // 调整为不那么深的红色文本
     menuActiveTextColor: '#ffffff', // 白色激活文本
     logoTextColor: '#ffffff',
     bgColor: '#f5f7fa',
-    textActiveColor: '#d32f2f',
-    primaryColor: '#d32f2f',
-    borderActiveColor: '#d32f2f',
-    headerBgGradient: 'linear-gradient(135deg, #ef9a9a 0%, #e57373 50%, #c62828 100%)',
-    menuBgGradient: 'linear-gradient(180deg, #ef9a9a 0%, #e57373 50%, #b71c1c 100%)'
+    textActiveColor: '#ff5252',
+    primaryColor: '#ff5252',
+    borderActiveColor: '#ff5252',
+    headerBgGradient: 'linear-gradient(135deg, #ffbcaf 0%, #ff8a80 50%, #ff5252 100%)',
+    menuBgGradient: 'linear-gradient(180deg, #ffbcaf 0%, #ff8a80 50%, #ff5252 100%)'
   },
-  // 粉色主题
+  // 粉色主题 - 调整为更明亮的粉色
   pink: {
-    headerBgColor: '#f48fb1',
-    menuBgColor: '#f48fb1',
-    menuBgColorS: '#f8bbd0',
-    menuTextColor: '#880e4f', // 深粉色文本
+    headerBgColor: '#f8a5c2',
+    menuBgColor: '#f8a5c2',
+    menuBgColorS: '#fbbdd2',
+    menuTextColor: '#a31545', // 调整为不那么深的粉色文本
     menuActiveTextColor: '#ffffff', // 白色激活文本
     logoTextColor: '#ffffff',
     bgColor: '#f5f7fa',
-    textActiveColor: '#ec407a',
-    primaryColor: '#ec407a',
-    borderActiveColor: '#ec407a',
-    headerBgGradient: 'linear-gradient(135deg, #f8bbd0 0%, #f48fb1 50%, #ec407a 100%)',
-    menuBgGradient: 'linear-gradient(180deg, #f8bbd0 0%, #f48fb1 50%, #d81b60 100%)'
+    textActiveColor: '#f06292',
+    primaryColor: '#f06292',
+    borderActiveColor: '#f06292',
+    headerBgGradient: 'linear-gradient(135deg, #fccde2 0%, #f8a5c2 50%, #f06292 100%)',
+    menuBgGradient: 'linear-gradient(180deg, #fccde2 0%, #f8a5c2 50%, #f06292 100%)'
   },
   // 海蓝主题
   teal: {
