@@ -41,6 +41,12 @@
           </div>
           <div class="grid-item">
             <div class="item-label">
+              <span>发布人</span>
+            </div>
+            <div class="item-value">{{ infoDetail.publishUserName || infoDetail.publishUserId || '--' }}</div>
+          </div>
+          <div class="grid-item">
+            <div class="item-label">
               <el-icon><User /></el-icon>
               <span>创建人</span>
             </div>
@@ -101,6 +107,7 @@ const infoDetail = reactive({
   contentEn: '', // 英文内容
   status: '', // 状态
   publishTimes: '', // 发布时间
+  publishUserName: '', // 发布人
   createdTimes: '', // 创建时间
   updatedTimes: '', // 更新时间
   createUserId: '', // 创建人
@@ -124,6 +131,7 @@ const getRecruitDetail = () => {
       contentEn: data.contentEn,
       status: data.status,
       publishTimes: data.publishTimes,
+      publishUserName: data.publishUserName,
       createdTimes: data.createdTimes,
       updatedTimes: data.updatedTimes,
       createUserId: data.createUserId,

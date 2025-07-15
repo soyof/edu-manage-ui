@@ -53,7 +53,7 @@
         <el-col :span="6">
           <el-form-item label="发布时间">
             <el-date-picker
-              v-model="form.publishTimeRange"
+              v-model="form.publishTimesRange"
               type="daterange"
               rangeSeparator="至"
               startPlaceholder="开始日期"
@@ -65,7 +65,7 @@
         <el-col :span="6">
           <el-form-item label="更新时间">
             <el-date-picker
-              v-model="form.updateTimeRange"
+              v-model="form.updatedTimesRange"
               type="daterange"
               rangeSeparator="至"
               startPlaceholder="开始日期"
@@ -141,7 +141,13 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="publishTime"
+        prop="publishUserName"
+        label="发布人"
+        width="120"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="publishTimes"
         label="发布时间"
         width="180"
         showOverflowTooltip
@@ -257,7 +263,7 @@ interface NoticeItem {
   importance: number
   publishStatus: string
   content: string
-  publishTime: string | null
+  publishTimes: string | null
   creator: string
   receiver: string
 }
@@ -268,8 +274,8 @@ const initialSearchForm = {
   noticeType: '',
   publishStatus: '',
   importance: '',
-  publishTimeRange: [] as string[],
-  updateTimeRange: [] as string[]
+  publishTimesRange: [] as string[],
+  updatedTimesRange: [] as string[]
 }
 
 const { dictList: noticeTypeList, getDictLabel: translateNoticeType } = useDictionary({

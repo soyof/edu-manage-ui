@@ -18,11 +18,12 @@
           <!-- 简要元信息 -->
           <div class="meta-brief">
             <span class="meta-item">类型：{{ getIntroTypeLabel(profileData.profileType) }}</span>
-            <span class="meta-item">创建人：{{ profileData.createUserName || '未知' }}</span>
-            <span class="meta-item">创建时间：{{ profileData.createdTimes || '未知' }}</span>
-            <span class="meta-item">更新人：{{ profileData.updateUserName || '未知' }}</span>
-            <span class="meta-item">更新时间：{{ profileData.updatedTimes }}</span>
-            <span v-if="profileData.publishStatus === '1'" class="meta-item">发布时间：{{ profileData.publishTime }}</span>
+            <span class="meta-item">创建人：{{ profileData.createUserName || '--' }}</span>
+            <span class="meta-item">创建时间：{{ profileData.createdTimes || '--' }}</span>
+            <span class="meta-item">更新人：{{ profileData.updateUserName || '--' }}</span>
+            <span class="meta-item">更新时间：{{ profileData.updatedTimes || '--' }}</span>
+            <span v-if="profileData.publishStatus === '1'" class="meta-item">发布人：{{ profileData.publishUserName || '--' }}</span>
+            <span v-if="profileData.publishStatus === '1'" class="meta-item">发布时间：{{ profileData.publishTimes || '--' }}</span>
           </div>
         </div>
 

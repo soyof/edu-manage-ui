@@ -46,9 +46,14 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
+          <el-form-item label="发布人">
+            <el-input v-model="form.publishUserId" placeholder="请输入发布人" clearable />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="发布时间">
             <el-date-picker
-              v-model="form.publishTimeRange"
+              v-model="form.publishTimesRange"
               type="daterange"
               rangeSeparator="至"
               startPlaceholder="开始日期"
@@ -60,7 +65,7 @@
         <el-col :span="6">
           <el-form-item label="更新时间">
             <el-date-picker
-              v-model="form.updateTimeRange"
+              v-model="form.updatedTimesRange"
               type="daterange"
               rangeSeparator="至"
               startPlaceholder="开始日期"
@@ -106,6 +111,12 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="publishUserName"
+        label="发布人"
+        width="150"
+        showOverflowTooltip
+      />
+      <el-table-column
         prop="publishTimes"
         label="发布时间"
         minWidth="180"
@@ -114,7 +125,7 @@
       <el-table-column
         prop="updateUserName"
         label="更新人"
-        width="180"
+        width="150"
         showOverflowTooltip
       />
       <el-table-column
@@ -126,7 +137,7 @@
       <el-table-column
         prop="createUserName"
         label="创建人"
-        width="120"
+        width="150"
         showOverflowTooltip
       />
       <el-table-column
@@ -252,10 +263,11 @@ interface RecruitItem {
 const initialSearchForm = {
   recruitmentType: '',
   status: '',
+  publishUserId: '',
   createUserId: '',
   updateUserId: '',
-  publishTimeRange: [] as string[],
-  updateTimeRange: [] as string[]
+  publishTimesRange: [] as string[],
+  updatedTimesRange: [] as string[]
 }
 
 // 表格引用

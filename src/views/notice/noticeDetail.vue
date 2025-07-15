@@ -41,7 +41,7 @@
               <div class="meta-content">
                 <div class="meta-item">
                   <span class="label">发布时间</span>
-                  <span class="value">{{ noticeData.publishTime || '--' }}</span>
+                  <span class="value">{{ noticeData.publishTimes || '--' }}</span>
                 </div>
                 <div class="meta-item">
                   <span class="label">创建时间</span>
@@ -60,6 +60,10 @@
                 <span>人员信息</span>
               </div>
               <div class="meta-content">
+                <div class="meta-item">
+                  <span class="label">发布人</span>
+                  <span class="value">{{ noticeData.publishUserName || '--' }}</span>
+                </div>
                 <div class="meta-item">
                   <span class="label">创建人</span>
                   <span class="value">{{ noticeData.createUserName || '未知' }}</span>
@@ -162,7 +166,8 @@ const noticeData = reactive({
   contentEn: '',
   linkUrl: '',
   publishStatus: '',
-  publishTime: '',
+  publishTimes: '',
+  publishUserName: '',
   createdTimes: '',
   updatedTimes: '',
   createUserName: '',
