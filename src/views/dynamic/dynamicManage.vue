@@ -1,24 +1,24 @@
 <template>
-  <div class="lab-profile-manage-container common-action-column">
+  <div class="dynamic-manage-container common-action-column">
     <!-- 使用通用表格页面组件 -->
     <TablePage
       ref="tablePageRef"
-      :fetchData="fetchProfileData"
+      :fetchData="fetchDynamicData"
       :initialSearchForm="initialSearchForm"
       @selectionChange="handleSelectionChange"
     >
       <!-- 搜索表单插槽 -->
       <template #search-form="{ form }">
         <el-col :span="6">
-          <el-form-item label="简介标题">
-            <el-input v-model="form.title" placeholder="请输入简介标题" clearable />
+          <el-form-item label="动态标题">
+            <el-input v-model="form.title" placeholder="请输入动态标题" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="类型">
-            <el-select v-model="form.profileType" placeholder="请选择类型" clearable>
+            <el-select v-model="form.dynamicType" placeholder="请选择类型" clearable>
               <el-option
-                v-for="item in introTypeList"
+                v-for="item in dynamicTypeList"
                 :key="item.dictId"
                 :label="item.dictValue"
                 :value="item.dictId"
@@ -30,7 +30,7 @@
           <el-form-item label="发布状态">
             <el-select v-model="form.publishStatus" placeholder="请选择状态" clearable>
               <el-option
-                v-for="item in ProfileStatus.list"
+                v-for="item in DynamicStatus.list"
                 :key="item.dictId"
                 :label="item.dictValue"
                 :value="item.dictId"
@@ -76,7 +76,7 @@
 
       <!-- 操作区域插槽 -->
       <template #operation>
-        <el-tooltip content="新增简介" placement="top">
+        <el-tooltip content="新增动态" placement="top">
           <ThrottleButton size="small" type="primary" @click="handleAdd">
             <el-icon><Plus /></el-icon>
           </ThrottleButton>
@@ -97,29 +97,32 @@
       <el-table-column type="selection" width="50" fixed="left" />
       <el-table-column
         prop="title"
-        label="简介标题"
+        label="动态标题"
         minWidth="200"
         showOverflowTooltip
       />
       <el-table-column
-        prop="profileType"
-        label="简介类型"
+        prop="dynamicType"
+        label="动态类型"
         width="150"
         showOverflowTooltip
       >
         <template #default="scope">
-          {{ getIntroTypeLabel(scope.row.profileType) }}
+          {{ getDynamicTypeLabel(scope.row.dynamicType) }}
         </template>
       </el-table-column>
       <el-table-column
         prop="publishStatus"
-        label="发布状态"
+        label="状态"
         width="100"
-        showOverflowTooltip
+        align="center"
       >
         <template #default="scope">
-          <el-tag :type="ProfileStatus.getTagType(scope.row.publishStatus)">
-            {{ ProfileStatus.getName(scope.row.publishStatus) }}
+          <el-tag
+            :type="DynamicStatus.getTagType(scope.row.publishStatus)"
+            size="small"
+          >
+            {{ DynamicStatus.getName(scope.row.publishStatus) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -127,37 +130,31 @@
         prop="publishUserName"
         label="发布人"
         width="120"
-        showOverflowTooltip
       />
       <el-table-column
         prop="publishTimes"
         label="发布时间"
         minWidth="180"
-        showOverflowTooltip
-      />
-      <el-table-column
-        prop="updateUserName"
-        label="更新人"
-        width="120"
-        showOverflowTooltip
-      />
-      <el-table-column
-        prop="updatedTimes"
-        label="更新时间"
-        minWidth="180"
-        showOverflowTooltip
       />
       <el-table-column
         prop="createUserName"
         label="创建人"
         width="120"
-        showOverflowTooltip
       />
       <el-table-column
         prop="createdTimes"
         label="创建时间"
         minWidth="180"
-        showOverflowTooltip
+      />
+      <el-table-column
+        prop="updateUserName"
+        label="更新人"
+        width="120"
+      />
+      <el-table-column
+        prop="updatedTimes"
+        label="更新时间"
+        minWidth="180"
       />
       <el-table-column label="操作" width="120" fixed="right">
         <template #default="scope">
@@ -176,7 +173,7 @@
 
             <!-- 编辑 - 仅未发布时可编辑 -->
             <el-tooltip
-              :content="scope.row.publishStatus === '1' ? '生效中的简介不可编辑' : '编辑'"
+              :content="scope.row.publishStatus === '1' ? '发布中的动态不可编辑' : '编辑'"
               placement="top"
               :showAfter="1000"
               :hideAfter="0"
@@ -210,7 +207,7 @@
 
             <!-- 删除 -->
             <el-tooltip
-              :content="scope.row.publishStatus === '1' ? '生效中的简介不能删除' : '删除'"
+              :content="scope.row.publishStatus === '1' ? '发布中的动态不能删除' : '删除'"
               placement="top"
               :showAfter="1000"
               :hideAfter="0"
@@ -238,27 +235,31 @@ import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/i
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
-import { ProfileStatus } from '@/dic/statusConfig'
+import { DynamicStatus } from '@/dic/statusConfig'
 import { useDictionary } from '@/hooks/useDictionary'
 
 const router = useRouter()
 
-// 获取简介类型字典数据
-const { dictList: introTypeList, getDictLabel: getIntroTypeLabel } = useDictionary({
-  dictType: 'intro_type',
+// 获取动态类型字典数据
+const { dictList: dynamicTypeList, getDictLabel: getDynamicTypeLabel } = useDictionary({
+  dictType: 'dynamic_type',
   autoLoad: true
 })
 
-interface ProfileItem {
+interface DynamicItem {
   id: number
   title: string
-  profileType: string
+  titleEn: string
+  dynamicType: string
   publishStatus: string
   content: string
-  content_en: string
+  contentEn: string
   publishTimes: string | null
+  publishUserId: string
   publishUserName: string
+  createUserId: string
   createUserName: string
+  updateUserId: string
   updateUserName: string
   createdTimes: string
   updatedTimes: string
@@ -266,7 +267,7 @@ interface ProfileItem {
 
 // 搜索表单初始值
 const initialSearchForm = {
-  profileType: '',
+  dynamicType: '',
   title: '',
   publishStatus: '',
   createUserId: '',
@@ -279,28 +280,28 @@ const initialSearchForm = {
 const tablePageRef = ref<any>(null)
 
 // 表格相关
-const selectedProfiles = ref<ProfileItem[]>([])
+const selectedDynamics = ref<DynamicItem[]>([])
 
 // 计算属性：判断批量删除按钮是否应该禁用
 const isDeleteButtonDisabled = computed(() => {
-  return selectedProfiles.value.length === 0 || selectedProfiles.value.some(item => item.publishStatus === '1')
+  return selectedDynamics.value.length === 0 || selectedDynamics.value.some(item => item.publishStatus === '1')
 })
 
-// 获取简介数据的方法（适配tablePage组件的接口）
-const fetchProfileData = (params: any) => {
-  return service.post('/api/labProfile/list', params)
+// 获取动态数据的方法（适配tablePage组件的接口）
+const fetchDynamicData = (params: any) => {
+  return service.post('/api/dynamic/list', params)
 }
 
 // 处理表格选择变化
-const handleSelectionChange = (selection: ProfileItem[]) => {
-  selectedProfiles.value = selection
+const handleSelectionChange = (selection: DynamicItem[]) => {
+  selectedDynamics.value = selection
 }
 
-// 查看简介
-const handleView = (row: ProfileItem) => {
-  const tabTitle = `简介详情【${row.title}】`
+// 查看动态
+const handleView = (row: DynamicItem) => {
+  const tabTitle = `动态详情【${row.title}】`
   router.push({
-    path: '/labProfileDetail',
+    path: '/dynamicDetail',
     query: {
       id: String(row.id),
       tabTitle: encodeURIComponent(tabTitle)
@@ -308,11 +309,11 @@ const handleView = (row: ProfileItem) => {
   })
 }
 
-// 编辑简介
-const handleEdit = (row: ProfileItem) => {
-  const tabTitle = `编辑简介【${row.title}】`
+// 编辑动态
+const handleEdit = (row: DynamicItem) => {
+  const tabTitle = `编辑动态【${row.title}】`
   router.push({
-    path: '/modifyLabProfile',
+    path: '/modifyDynamic',
     query: {
       mode: 'edit',
       id: String(row.id),
@@ -321,11 +322,11 @@ const handleEdit = (row: ProfileItem) => {
   })
 }
 
-// 新增简介
+// 新增动态
 const handleAdd = () => {
-  const tabTitle = `新增简介`
+  const tabTitle = `新增动态`
   router.push({
-    path: '/modifyLabProfile',
+    path: '/modifyDynamic',
     query: {
       mode: 'add',
       tabTitle: encodeURIComponent(tabTitle)
@@ -333,45 +334,45 @@ const handleAdd = () => {
   })
 }
 
-// 删除简介
-const handleDelete = (row?: ProfileItem) => {
+// 删除动态
+const handleDelete = (row?: DynamicItem) => {
   // 如果传入了row参数，则为单个删除，否则为批量删除
   const isBatchDelete = !row
 
   // 批量删除时检查是否有选中项
-  if (isBatchDelete && selectedProfiles.value.length === 0) {
-    ElMessage.warning('请选择要删除的简介')
+  if (isBatchDelete && selectedDynamics.value.length === 0) {
+    ElMessage.warning('请选择要删除的动态')
     return
   }
 
-  // 检查是否包含已发布的简介
-  if (isBatchDelete && selectedProfiles.value.some(item => item.publishStatus === '1')) {
-    ElMessage.warning('生效中的简介不能删除')
+  // 检查是否包含已发布的动态
+  if (isBatchDelete && selectedDynamics.value.some(item => item.publishStatus === '1')) {
+    ElMessage.warning('发布中的动态不能删除')
     return
   }
 
   // 单个删除时检查是否为已发布状态
   if (!isBatchDelete && row?.publishStatus === '1') {
-    ElMessage.warning('生效中的简介不能删除')
+    ElMessage.warning('发布中的动态不能删除')
     return
   }
 
   // 获取要删除的ID
   const ids = isBatchDelete
-    ? selectedProfiles.value.map(item => item.id)
+    ? selectedDynamics.value.map(item => item.id)
     : row!.id
 
   // 确认提示信息
   const confirmMessage = isBatchDelete
-    ? `确认删除选中的 ${selectedProfiles.value.length} 条简介吗？`
-    : '确认删除该简介吗？'
+    ? `确认删除选中的 ${selectedDynamics.value.length} 条动态信息吗？`
+    : '确认删除该动态信息吗？'
 
   ElMessageBox.confirm(confirmMessage, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    service.post('/api/labProfile/delete', { ids })
+    service.post('/api/dynamic/delete', { ids })
       .then(() => {
         ElMessage.success('删除成功')
         refreshTable(1)
@@ -379,18 +380,17 @@ const handleDelete = (row?: ProfileItem) => {
   }).catch(() => {})
 }
 
-// 处理简介发布状态（发布/下线）
-const handlePublishStatus = (row: ProfileItem, action: 'publish' | 'unpublish') => {
+// 处理动态发布状态（发布/下线）
+const handlePublishStatus = (row: DynamicItem, action: 'publish' | 'unpublish') => {
   const isPublish = action === 'publish'
   const actionText = isPublish ? '发布' : '下线'
-  const confirmMessage = isPublish ? `发布新简介后，当前生效中的【${getIntroTypeLabel(row.profileType)}】简介将会被下线。确定要发布吗？` : '确定要将该简介下线吗？下线后将不再生效'
 
-  ElMessageBox.confirm(confirmMessage, '提示', {
+  ElMessageBox.confirm(`确定要${actionText}该动态吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: isPublish ? 'info' : 'warning'
   }).then(() => {
-    service.post('/api/labProfile/publish', {
+    service.post('/api/dynamic/publish', {
       id: row.id,
       action
     }).then(() => {
@@ -409,7 +409,7 @@ const refreshTable = (pageNum: number) => {
 </script>
 
 <style scoped lang="less">
-.lab-profile-manage-container {
+.dynamic-manage-container {
 }
 
 :deep(.el-table .cell) {

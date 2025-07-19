@@ -59,12 +59,24 @@ export default [
     meta: { title: '简介详情', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "labProfileDetail" */ '@/views/labProfile/labProfileDetail.vue')
   },
-  // {
-  //   path: '/contentManagement',
-  //   name: 'contentManagement',
-  //   meta: { title: '内容管理', tabClosable: true },
-  //   component: () => import(/* webpackChunkName: "contentManagement" */ '@/views/contentManagement.vue')
-  // },
+  {
+    path: '/dynamicManage',
+    name: 'dynamicManage',
+    meta: { title: '动态管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "dynamicManage" */ '@/views/dynamic/dynamicManage.vue')
+  },
+  {
+    path: '/modifyDynamic',
+    name: 'modifyDynamic',
+    meta: { title: '编辑动态', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyDynamic" */ '@/views/dynamic/modifyDynamic.vue')
+  },
+  {
+    path: '/dynamicDetail',
+    name: 'dynamicDetail',
+    meta: { title: '动态详情', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "dynamicDetail" */ '@/views/dynamic/dynamicDetail.vue')
+  },
   {
     path: '/recruitManage',
     name: 'recruitManage',

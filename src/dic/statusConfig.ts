@@ -98,8 +98,7 @@ export const RecruitStatus = createStatusConfig('待发布', '生效中', '已�
  */
 export const ProfileStatus = createStatusConfig('待发布', '生效中', '已存档')
 
-// 兼容旧版本的导出，避免代码修改过多
-export const noticeStatusList = NoticeStatus.list
-export const noticeStatusInfos = NoticeStatus.tags
-export const recruitStatusList = RecruitStatus.list
-export const recruitStatusInfos = RecruitStatus.tags
+/**
+ * 动态信息状态定义
+ */
+export const DynamicStatus = createStatusConfig('待发布', '已发布', '已存档')
