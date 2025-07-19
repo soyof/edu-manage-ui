@@ -176,7 +176,7 @@
         width="180"
         showOverflowTooltip
       />
-      <el-table-column label="操作" width="120" fixed="right">
+      <el-table-column label="操作" width="130" fixed="right">
         <template #default="scope">
           <div class="action-buttons">
             <!-- 查看 -->
