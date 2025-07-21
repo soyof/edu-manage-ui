@@ -77,6 +77,25 @@ export default [
     meta: { title: '动态详情', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "dynamicDetail" */ '@/views/dynamic/dynamicDetail.vue')
   },
+  // 添加论文管理相关路由
+  {
+    path: '/paperManage',
+    name: 'paperManage',
+    meta: { title: '论文管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "paperManage" */ '@/views/paper/paperManage.vue')
+  },
+  {
+    path: '/modifyPaper',
+    name: 'modifyPaper',
+    meta: { title: '编辑论文', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyPaperInfos" */ '@/views/paper/modifyPaperInfos.vue')
+  },
+  {
+    path: '/paperDetail',
+    name: 'paperDetail',
+    meta: { title: '论文详情', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "paperDetail" */ '@/views/paper/paperDetail.vue')
+  },
   {
     path: '/recruitManage',
     name: 'recruitManage',

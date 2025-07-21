@@ -102,3 +102,8 @@ export const ProfileStatus = createStatusConfig('待发布', '生效中', '已�
  * 动态信息状态定义
  */
 export const DynamicStatus = createStatusConfig('待发布', '已发布', '已存档')
+
+/**
+ * 论文管理状态定义
+ */
+export const PaperStatus = createStatusConfig('待发布', '已发布', '已下线')

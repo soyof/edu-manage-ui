@@ -66,12 +66,12 @@
               <el-icon><Collection /></el-icon>
             </div>
             <div class="stats-info">
-              <div class="stats-value">{{ stats.publications }}</div>
+              <div class="stats-value">{{ stats.papers }}</div>
               <div class="stats-label">科研成果</div>
             </div>
             <div class="stats-trend" :class="{ 'up': true }">
               <el-icon><ArrowUp /></el-icon>
-              <span>{{ stats.publicationRate }}%</span>
+              <span>{{ stats.paperRate }}%</span>
             </div>
           </div>
         </el-col>
@@ -201,8 +201,8 @@ const stats = reactive({
   userRate: 8,
   projects: 42,
   projectRate: 15,
-  publications: 78,
-  publicationRate: 20
+  papers: 78,
+  paperRate: 20
 })
 
 // 通知列表
@@ -243,6 +243,7 @@ const shortcuts = [
   { name: '通知管理', icon: 'Bell', path: '/noticeManage' },
   { name: '实验室简介', icon: 'House', path: '/labProfileManage' },
   { name: '招聘管理', icon: 'Briefcase', path: '/recruitManage' },
+  { name: '论文管理', icon: 'Document', path: '/paperManage' },
   { name: '用户管理', icon: 'UserFilled', path: '/userManage' },
   { name: '系统设置', icon: 'Setting', path: '/settings' }
 ]
