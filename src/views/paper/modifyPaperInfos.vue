@@ -1,22 +1,20 @@
 <template>
   <div class="modify-paper-container animate__animated animate__fadeIn">
-    <el-card class="box-card" shadow="hover">
-      <template #header>
-        <div class="card-header">
-          <h2>{{ pageTitle }}</h2>
-          <div v-if="mode !== 'view'" class="header-buttons">
-            <el-tooltip content="保存" placement="top" :showAfter="300">
-              <el-button
-                type="primary"
-                circle
-                :icon="Check"
-                :loading="loading"
-                @click="submitForm"
-              />
-            </el-tooltip>
-          </div>
-        </div>
-      </template>
+    <div class="card-header">
+      <h2>{{ pageTitle }}</h2>
+      <div v-if="mode !== 'view'" class="header-buttons">
+        <el-tooltip content="保存" placement="top" :showAfter="300">
+          <el-button
+            type="primary"
+            circle
+            :icon="Check"
+            :loading="loading"
+            @click="submitForm"
+          />
+        </el-tooltip>
+      </div>
+    </div>
+    <div class="custom-card box-card">
       <div class="card-body">
         <!-- 表单区域 -->
         <el-form
@@ -108,7 +106,7 @@
           </el-form-item>
         </el-form>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -195,7 +193,6 @@ const formRules = {
     { max: 255, message: '标题长度不能超过255个字符', trigger: 'blur' }
   ],
   titleEn: [
-    { required: true, message: '请输入论文英文标题', trigger: 'blur' },
     { max: 255, message: '标题长度不能超过255个字符', trigger: 'blur' }
   ],
   originalUrl: [
@@ -233,9 +230,7 @@ const fetchPaperDetail = () => {
 const submitForm = () => {
   formRef.value?.validate((valid) => {
     if (valid) {
-      const apiUrl = mode.value === 'add'
-        ? '/api/paper/create'
-        : '/api/paper/update'
+      const apiUrl = '/api/paper/save'
       changeLoading(true)
       service.post(apiUrl, formData)
         .then(() => {
@@ -278,29 +273,17 @@ onMounted(() => {
   height: 100%;
   box-sizing: border-box;
 
-  .box-card {
-    transition: all 0.3s ease;
-    border: none;
-    border-radius: 8px;
-
-    &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    }
-  }
-
-  .header-line-wrap {
-    margin-bottom: 12px;
-  }
-
   .card-header {
     position: sticky;
     top: 0;
+    left: 0;
     z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0;
-    padding: 0;
+    padding: 12px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     h2 {
       font-size: 20px;
@@ -312,15 +295,32 @@ onMounted(() => {
       color: transparent;
       font-weight: 600;
     }
+  }
 
-    .header-buttons {
-      display: flex;
-      gap: 10px;
+  .custom-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
   }
 
+  .box-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+  }
+
+  .header-line-wrap {
+    margin-bottom: 12px;
+  }
+
   .card-body {
-    padding-top: 24px;
+    padding-top: 4px;
   }
 
   :deep(.el-form-item__label) {
