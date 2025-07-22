@@ -113,5 +113,24 @@ export default [
     name: 'recruitInfoDetail',
     meta: { title: '招聘信息详情', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "recruitInfoDetail" */ '@/views/recruit/recruitInfoDetail.vue')
+  },
+  // 添加专利管理相关路由
+  {
+    path: '/patentManage',
+    name: 'patentManage',
+    meta: { title: '专利管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "patentManage" */ '@/views/patent/patentManage.vue')
+  },
+  {
+    path: '/modifyPatent',
+    name: 'modifyPatent',
+    meta: { title: '编辑专利', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyPatentInfos" */ '@/views/patent/modifyPatentInfos.vue')
+  },
+  {
+    path: '/patentDetail',
+    name: 'patentDetail',
+    meta: { title: '专利详情', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "patentDetail" */ '@/views/patent/patentDetail.vue')
   }
 ]

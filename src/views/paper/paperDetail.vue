@@ -301,7 +301,7 @@ onMounted(() => {
 
       .header-banner {
         position: relative;
-        padding: 32px 40px;
+        padding: 32px 16px;
         background: linear-gradient(135deg,
           color-mix(in srgb, var(--menuBgColor) 15%, white) 0%,
           color-mix(in srgb, var(--menuBgColor) 30%, white) 100%);
@@ -350,7 +350,7 @@ onMounted(() => {
       .meta-card {
         display: flex;
         justify-content: space-between;
-        padding: 16px 40px;
+        padding: 16px;
         background-color: color-mix(in srgb, var(--menuBgColor) 5%, white);
         border-bottom: 1px solid color-mix(in srgb, var(--menuBgColor) 15%, white);
 
@@ -400,7 +400,7 @@ onMounted(() => {
     .section-heading {
       font-size: 20px;
       font-weight: 600;
-      margin: 24px 40px 16px;
+      margin: 16px 0;
       color: var(--el-text-color-primary);
       border-left: 4px solid var(--primaryColor);
       padding-left: 12px;
@@ -419,7 +419,7 @@ onMounted(() => {
     }
 
     .abstract-section {
-      margin: 20px 40px;
+      margin: 16px;
 
       .abstract-content {
         padding: 16px;
@@ -431,14 +431,13 @@ onMounted(() => {
     }
 
     .original-url-section {
-      margin: 20px 40px;
+      margin: 16px;
 
       .link-url {
         margin-top: 16px;
         padding: 16px;
         background-color: color-mix(in srgb, var(--menuBgColor) 5%, white);
         border-radius: 8px;
-        text-align: center;
         transition: all 0.3s ease;
 
         &:hover {
@@ -452,7 +451,7 @@ onMounted(() => {
           text-decoration: none;
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           word-break: break-all;
 
           .external-icon {
@@ -467,7 +466,7 @@ onMounted(() => {
     }
 
     .paper-body {
-      margin: 20px 40px 40px;
+      margin: 16px;
 
       :deep(.el-tabs__header) {
         margin: 0;
