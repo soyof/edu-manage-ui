@@ -100,8 +100,8 @@
             <el-col :span="24">
               <el-form-item label="是否职务专利" prop="isServicePatent">
                 <el-radio-group v-model="formData.isServicePatent">
-                  <el-radio label="1">是</el-radio>
-                  <el-radio label="0">否</el-radio>
+                  <el-radio label="1" value="1">是</el-radio>
+                  <el-radio label="0" value="0">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -256,7 +256,9 @@ const savePatent = () => {
     .then(() => {
       ElMessage.success('保存成功')
       // 获取当前路径，用于关闭当前标签页
-      const currentPath = route.path
+      const currentPath = route.fullPath
+      console.log(currentPath)
+
       // 返回专利管理列表页
       tabsStore.delCurTab(currentPath, router, '/patentManage')
     })

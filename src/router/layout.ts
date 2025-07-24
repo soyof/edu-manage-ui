@@ -132,5 +132,24 @@ export default [
     name: 'patentDetail',
     meta: { title: '专利详情', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "patentDetail" */ '@/views/patent/patentDetail.vue')
+  },
+  // 添加仪器管理相关路由
+  {
+    path: '/instrumentManage',
+    name: 'instrumentManage',
+    meta: { title: '仪器管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "instrumentManage" */ '@/views/instrument/instrumentManage.vue')
+  },
+  {
+    path: '/modifyInstrument',
+    name: 'modifyInstrument',
+    meta: { title: '编辑仪器', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyInstrumentInfos" */ '@/views/instrument/modifyInstrumentInfos.vue')
+  },
+  {
+    path: '/instrumentDetail',
+    name: 'instrumentDetail',
+    meta: { title: '仪器详情', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "instrumentDetail" */ '@/views/instrument/instrumentDetail.vue')
   }
 ]

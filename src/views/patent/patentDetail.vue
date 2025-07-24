@@ -365,6 +365,10 @@ onMounted(() => {
   .abstract-section {
     padding: 0 30px;
     margin-bottom: 20px;
+
+    .custom-tabs {
+      margin-top: 15px;
+    }
   }
 
   .abstract-content {
@@ -380,7 +384,11 @@ onMounted(() => {
   }
 
   .patent-body {
-    padding: 0 20px 30px;
+    padding: 0 30px 30px;
+
+    .custom-tabs {
+      margin-top: 15px;
+    }
 
     .content-wrapper {
       padding: 0;
@@ -390,7 +398,7 @@ onMounted(() => {
 
       .rich-text-content {
         line-height: 1.8;
-        padding: 15px;
+        padding: 15px 20px;
 
         :deep(img) {
           max-width: 100%;
@@ -445,10 +453,11 @@ onMounted(() => {
       .el-tabs__nav {
         border: none;
         display: flex;
+        margin-left: 20px;
       }
     }
 
-    .el-tabs__item {
+    :deep(.el-tabs__item) {
       height: 40px;
       line-height: 40px;
       font-size: 15px;
@@ -501,7 +510,7 @@ onMounted(() => {
     }
 
     .el-tabs__content {
-      padding: 20px;
+      padding: 24px;
       background-color: #fff;
       border-bottom-left-radius: 4px;
       border-bottom-right-radius: 4px;

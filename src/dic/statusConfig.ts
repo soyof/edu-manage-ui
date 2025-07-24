@@ -40,7 +40,7 @@ export enum StatusEnum {
  * @param archivedLabel 存档状态的标签文本
  * @returns 状态配置对象
  */
-const createStatusConfig = (
+export const createStatusConfig = (
   pendingLabel: string = '待发布',
   activeLabel: string = '已发布',
   archivedLabel: string = '已存档'
