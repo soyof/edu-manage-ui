@@ -48,55 +48,29 @@
           </el-select>
         </el-form-item>
 
-        <!-- 内容区域 -->
-        <div class="tabs-container">
-          <div class="tabs-header">
-            <div
-              class="tab-item"
-              :class="{ active: activeTab === 'zh' }"
-              @click="activeTab = 'zh'"
-            >
-              中文内容
-            </div>
-            <div
-              class="tab-item"
-              :class="{ active: activeTab === 'en' }"
-              @click="activeTab = 'en'"
-            >
-              英文内容
-            </div>
-          </div>
+        <!-- 中文内容 -->
+        <el-form-item prop="content" required>
+          <template #label>
+            <span class="required-label">中文内容</span>
+          </template>
+          <TinyMceEditor
+            v-model="formData.content"
+            :height="450"
+            :placeholder="'请输入中文内容'"
+          />
+        </el-form-item>
 
-          <div class="tabs-content">
-            <!-- 中文内容 -->
-            <div v-show="activeTab === 'zh'">
-              <el-form-item prop="content" required class="content-item">
-                <template #label>
-                  <span class="required-label">中文内容</span>
-                </template>
-                <TinyMceEditor
-                  v-model="formData.content"
-                  :height="450"
-                  :placeholder="'请输入中文内容'"
-                />
-              </el-form-item>
-            </div>
-
-            <!-- 英文内容 -->
-            <div v-show="activeTab === 'en'">
-              <el-form-item prop="contentEn" class="content-item">
-                <template #label>
-                  <span class="label">英文内容</span>
-                </template>
-                <TinyMceEditor
-                  v-model="formData.contentEn"
-                  :height="450"
-                  :placeholder="'请输入英文内容（选填）'"
-                />
-              </el-form-item>
-            </div>
-          </div>
-        </div>
+        <!-- 英文内容 -->
+        <el-form-item prop="contentEn">
+          <template #label>
+            <span class="label">英文内容</span>
+          </template>
+          <TinyMceEditor
+            v-model="formData.contentEn"
+            :height="450"
+            :placeholder="'请输入英文内容（选填）'"
+          />
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -115,7 +89,6 @@ import pinia from '@/stores'
 import { useDictInfo } from '@/hooks/useDictionary'
 
 const tabsStore = useTabsStore(pinia)
-const activeTab = ref('zh')
 
 const { changeLoading, closeLoading, loading } = useLoading()
 
@@ -299,52 +272,6 @@ onMounted(() => {
             }
           }
         }
-      }
-    }
-
-    .tabs-container {
-      margin-top: 15px;
-      margin-bottom: 25px;
-      background-color: #fafafa;
-      border-radius: 8px;
-      padding: 16px;
-
-      .tabs-header {
-        display: flex;
-        border-bottom: 1px solid #dcdfe6;
-        margin-bottom: 15px;
-
-        .tab-item {
-          padding: 10px 20px;
-          font-size: 14px;
-          cursor: pointer;
-          color: #606266;
-          margin-right: 10px;
-          border: 1px solid transparent;
-          border-bottom: none;
-          border-radius: 6px 6px 0 0;
-          transition: all 0.3s;
-
-          &:hover {
-            color: #3370ff;
-          }
-
-          &.active {
-            color: #3370ff;
-            background-color: #fff;
-            border-color: #dcdfe6;
-            border-bottom-color: #fff;
-            margin-bottom: -1px;
-            font-weight: 500;
-          }
-        }
-      }
-
-      .content-item {
-        margin-bottom: 0;
-        background-color: #fff;
-        padding: 16px;
-        border-radius: 6px;
       }
     }
   }

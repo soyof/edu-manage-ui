@@ -36,7 +36,19 @@
             <el-date-picker
               v-model="form.applicationDateRange"
               type="daterange"
-              rangeSeparator="至"
+              rangeSeparator="~"
+              startPlaceholder="开始日期"
+              endPlaceholder="结束日期"
+              valueFormat="YYYY-MM-DD"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="授权日期">
+            <el-date-picker
+              v-model="form.authorizationDateRange"
+              type="daterange"
+              rangeSeparator="~"
               startPlaceholder="开始日期"
               endPlaceholder="结束日期"
               valueFormat="YYYY-MM-DD"
@@ -127,6 +139,18 @@
         showOverflowTooltip
       />
       <el-table-column
+        prop="publishUserName"
+        label="发布人"
+        width="120"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="publishTimes"
+        label="发布时间"
+        width="180"
+        showOverflowTooltip
+      />
+      <el-table-column
         prop="updateUserName"
         label="更新人"
         width="100"
@@ -135,7 +159,19 @@
       <el-table-column
         prop="updatedTimes"
         label="更新时间"
-        width="160"
+        width="180"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="createUserName"
+        label="创建人"
+        width="120"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="createdTimes"
+        label="创建时间"
+        width="180"
         showOverflowTooltip
       />
       <el-table-column label="操作" width="130" fixed="right">
@@ -242,7 +278,7 @@ const initialSearchForm = {
   applicationNum: '',
   publishStatus: '',
   applicationDateRange: [] as string[],
-  updatedTimesRange: [] as string[]
+  authorizationDateRange: [] as string[]
 }
 
 // 表格页面组件引用
@@ -283,7 +319,7 @@ const handleView = (row: PatentItem) => {
 const handleEdit = (row: PatentItem) => {
   const tabTitle = `编辑专利【${row.title}】`
   router.push({
-    path: '/modifyPatent',
+    path: '/modifyPatentInfos',
     query: {
       mode: 'edit',
       id: String(row.id),
@@ -296,7 +332,7 @@ const handleEdit = (row: PatentItem) => {
 const handleAdd = () => {
   const tabTitle = `新增专利`
   router.push({
-    path: '/modifyPatent',
+    path: '/modifyPatentInfos',
     query: {
       mode: 'add',
       tabTitle: encodeURIComponent(tabTitle)

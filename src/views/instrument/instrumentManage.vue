@@ -46,7 +46,7 @@
             <el-date-picker
               v-model="form.publishTimesRange"
               type="daterange"
-              rangeSeparator="至"
+              rangeSeparator="~"
               startPlaceholder="开始日期"
               endPlaceholder="结束日期"
               valueFormat="YYYY-MM-DD"
@@ -115,6 +115,18 @@
       <el-table-column
         prop="publishTimes"
         label="发布时间"
+        width="180"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="updateUserName"
+        label="更新人"
+        width="120"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="updatedTimes"
+        label="更新时间"
         width="180"
         showOverflowTooltip
       />
@@ -204,7 +216,7 @@ import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/i
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
-import { createStatusConfig, StatusEnum } from '@/dic/statusConfig'
+import { createStatusConfig } from '@/dic/statusConfig'
 
 // 创建仪器状态配置
 const InstrumentStatus = createStatusConfig('待发布', '已发布', '已下线')
@@ -275,7 +287,7 @@ const handleView = (row: InstrumentItem) => {
 const handleEdit = (row: InstrumentItem) => {
   const tabTitle = `编辑仪器【${row.instName}】`
   router.push({
-    path: '/modifyInstrument',
+    path: '/modifyInstrumentInfos',
     query: {
       mode: 'edit',
       id: String(row.id),
@@ -288,7 +300,7 @@ const handleEdit = (row: InstrumentItem) => {
 const handleAdd = () => {
   const tabTitle = `新增仪器`
   router.push({
-    path: '/modifyInstrument',
+    path: '/modifyInstrumentInfos',
     query: {
       mode: 'add',
       tabTitle: encodeURIComponent(tabTitle)

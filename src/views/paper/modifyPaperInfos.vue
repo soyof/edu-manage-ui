@@ -1,5 +1,5 @@
 <template>
-  <div class="modify-paper-container animate__animated animate__fadeIn">
+  <div class="modify-paper-container">
     <div class="card-header">
       <h2>{{ pageTitle }}</h2>
       <div v-if="mode !== 'view'" class="header-buttons">
@@ -67,42 +67,58 @@
 
           <!-- 摘要信息 -->
           <HeaderLine title="摘要信息" :icon="ChatLineRound" />
-          <el-form-item label="中文摘要" prop="abstract">
-            <el-input
-              v-model="formData.abstract"
-              type="textarea"
-              :rows="6"
-              placeholder="请输入中文摘要"
-              resize="none"
-            />
-          </el-form-item>
-          <el-form-item label="英文摘要" prop="abstractEn">
-            <el-input
-              v-model="formData.abstractEn"
-              type="textarea"
-              :rows="6"
-              placeholder="请输入英文摘要"
-              resize="none"
-            />
+          <el-form-item label="摘要" prop="abstract" class="content-form-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <div class="textarea-wrapper">
+                  <el-input
+                    v-model="formData.abstract"
+                    type="textarea"
+                    :rows="6"
+                    placeholder="请输入中文摘要"
+                    resize="none"
+                  />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <div class="textarea-wrapper">
+                  <el-input
+                    v-model="formData.abstractEn"
+                    type="textarea"
+                    :rows="6"
+                    placeholder="请输入英文摘要"
+                    resize="none"
+                  />
+                </div>
+              </el-tab-pane>
+            </el-tabs>
           </el-form-item>
 
           <!-- 论文内容 -->
           <HeaderLine title="论文内容" :icon="Reading" />
-          <el-form-item label="中文内容" prop="content">
-            <TinyMceEditor
-              v-model="formData.content"
-              :placeholder="'请输入论文内容（中文）'"
-              :height="500"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="英文内容" prop="contentEn">
-            <TinyMceEditor
-              v-model="formData.contentEn"
-              :placeholder="'请输入论文内容（英文）'"
-              :height="500"
-              :disabled="mode === 'view'"
-            />
+          <el-form-item label="内容" prop="content" class="content-form-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <div class="editor-wrapper">
+                  <TinyMceEditor
+                    v-model="formData.content"
+                    :placeholder="'请输入论文内容（中文）'"
+                    :height="500"
+                    :disabled="mode === 'view'"
+                  />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <div class="editor-wrapper">
+                  <TinyMceEditor
+                    v-model="formData.contentEn"
+                    :placeholder="'请输入论文内容（英文）'"
+                    :height="500"
+                    :disabled="mode === 'view'"
+                  />
+                </div>
+              </el-tab-pane>
+            </el-tabs>
           </el-form-item>
         </el-form>
       </div>
@@ -343,8 +359,98 @@ onMounted(() => {
     border-radius: 6px;
   }
 
-  :deep(.el-form-item) {
-    margin-bottom: 24px;
+  .content-form-item {
+    :deep(.el-form-item__label) {
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .textarea-wrapper, .editor-wrapper {
+      width: 100%;
+
+      :deep(.el-textarea) {
+        width: 100%;
+        .el-textarea__inner {
+          width: 100%;
+          padding: 12px;
+          font-size: 14px;
+          color: #333;
+        }
+      }
+    }
+
+    :deep(.simple-tabs) {
+      box-shadow: none;
+      border: none;
+      width: 100%;
+
+      .el-tabs__header {
+        background: #fff;
+        border: none;
+        margin-bottom: 4px;
+        border: 1px solid var(--el-border-color);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .el-tabs__content {
+        padding: 0;
+        border: none;
+        background: #fff;
+      }
+
+      .el-tabs__nav-wrap {
+        &::after {
+          display: none;
+        }
+      }
+
+      .el-tabs__nav {
+        border: none !important;
+      }
+
+      .el-tabs__item {
+        height: 40px;
+        line-height: 40px;
+        font-size: 15px;
+        color: #606266;
+        border: none !important;
+        position: relative;
+        transition: all 0.2s;
+
+        &.is-active {
+          color: var(--el-color-primary);
+          font-weight: 500;
+          background: transparent;
+
+          &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--el-color-primary);
+          }
+        }
+
+        &:hover {
+          color: var(--el-color-primary);
+        }
+      }
+    }
+  }
+
+  .textarea-wrapper {
+    .el-input {
+      border-radius: 6px;
+    }
+  }
+
+  .editor-wrapper {
+    .tiny-mce-editor {
+      border-radius: 6px;
+    }
   }
 }
 </style>

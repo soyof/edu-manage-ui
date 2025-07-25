@@ -1,104 +1,78 @@
 <template>
   <div class="modify-lab-profile-container">
     <!-- 页面头部 -->
-    <div class="header">
-      <div class="left">
-        <div class="blue-bar"></div>
-        <span class="title">新增简介</span>
-      </div>
-      <div class="right">
-        <el-button :loading="loading" type="primary" @click="submitForm">
-          保存
-        </el-button>
+    <div class="card-header">
+      <h2>{{ mode === 'edit' ? '编辑简介' : '新增简介' }}</h2>
+      <div class="header-buttons">
+        <el-tooltip content="保存" placement="top" :showAfter="300">
+          <el-button
+            type="primary"
+            circle
+            :loading="loading"
+            @click="submitForm"
+          >
+            <el-icon><Check /></el-icon>
+          </el-button>
+        </el-tooltip>
       </div>
     </div>
 
     <!-- 表单内容 -->
-    <div class="form-container">
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        labelWidth="100px"
-        class="lab-profile-form"
-      >
-        <!-- 标题 -->
-        <el-form-item label="简介标题" prop="title" required>
-          <el-input
-            v-model="formData.title"
-            placeholder="请输入简介标题"
-            maxlength="100"
-            showWordLimit
-          />
-        </el-form-item>
-
-        <!-- 简介类型 -->
-        <el-form-item label="类型" prop="profileType" required>
-          <el-select
-            v-model="formData.profileType"
-            placeholder="请选择类型"
-            :disabled="mode === 'edit'"
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in introTypeList"
-              :key="item.dictId"
-              :label="item.dictValue"
-              :value="item.dictId"
+    <div class="custom-card box-card">
+      <div class="card-body">
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          labelWidth="100px"
+          class="lab-profile-form"
+        >
+          <!-- 标题 -->
+          <el-form-item label="简介标题" prop="title" required>
+            <el-input
+              v-model="formData.title"
+              placeholder="请输入简介标题"
+              maxlength="100"
+              showWordLimit
             />
-          </el-select>
-        </el-form-item>
+          </el-form-item>
 
-        <!-- 内容区域 -->
-        <div class="tabs-container">
-          <div class="tabs-header">
-            <div
-              class="tab-item"
-              :class="{ active: activeTab === 'zh' }"
-              @click="activeTab = 'zh'"
+          <!-- 简介类型 -->
+          <el-form-item label="类型" prop="profileType" required>
+            <el-select
+              v-model="formData.profileType"
+              placeholder="请选择类型"
+              :disabled="mode === 'edit'"
+              style="width: 100%"
             >
-              中文内容
-            </div>
-            <div
-              class="tab-item"
-              :class="{ active: activeTab === 'en' }"
-              @click="activeTab = 'en'"
-            >
-              英文内容
-            </div>
-          </div>
+              <el-option
+                v-for="item in introTypeList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
+          </el-form-item>
 
-          <div class="tabs-content">
-            <!-- 中文内容 -->
-            <div v-show="activeTab === 'zh'">
-              <el-form-item prop="content" required class="content-item">
-                <template #label>
-                  <span class="required-label">中文内容</span>
-                </template>
-                <TinyMceEditor
-                  v-model="formData.content"
-                  :height="380"
-                  :placeholder="'请输入中文简介内容'"
-                />
-              </el-form-item>
-            </div>
+          <!-- 中文内容 -->
+          <el-form-item label="中文内容" prop="content" required>
+            <TinyMceEditor
+              v-model="formData.content"
+              :height="380"
+              :placeholder="'请输入中文简介内容'"
+            />
+          </el-form-item>
 
-            <!-- 英文内容 -->
-            <div v-show="activeTab === 'en'">
-              <el-form-item prop="contentEn" class="content-item">
-                <template #label>
-                  <span>英文内容</span>
-                </template>
-                <TinyMceEditor
-                  v-model="formData.contentEn"
-                  :height="380"
-                  :placeholder="'请输入英文简介内容'"
-                />
-              </el-form-item>
-            </div>
-          </div>
-        </div>
-      </el-form>
+          <!-- 英文内容 -->
+          <el-form-item label="英文内容" prop="contentEn">
+            <TinyMceEditor
+              v-model="formData.contentEn"
+              :height="380"
+              :placeholder="'请输入英文简介内容'"
+            />
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -107,6 +81,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Check } from '@element-plus/icons-vue'
 import TinyMceEditor from '@/components/global/tinyMceEditor.vue'
 import service from '@/utils/services'
 import useLoading from '@/hooks/useLoading'
@@ -115,7 +90,6 @@ import { useDictionary } from '@/hooks/useDictionary'
 import pinia from '@/stores'
 
 const tabsStore = useTabsStore(pinia)
-const activeTab = ref('zh')
 
 // 获取简介类型字典数据
 const { dictList: introTypeList } = useDictionary({
@@ -230,12 +204,11 @@ onMounted(() => {
 .modify-lab-profile-container {
   position: relative;
   width: 100%;
-  background-color: #fff;
-  padding: 8px;
+  height: 100%;
   box-sizing: border-box;
-  min-height: @contentHeight;
+  background-color: #f5f7fa;
 
-  .header {
+  .card-header {
     position: sticky;
     top: 0;
     left: 0;
@@ -243,84 +216,62 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ebeef5;
+    padding: 12px 20px;
     background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    .left {
-      display: flex;
-      align-items: center;
-
-      .blue-bar {
-        width: 3px;
-        height: 16px;
-        background-color: #3370ff;
-        margin-right: 8px;
-      }
-
-      .title {
-        font-size: 14px;
-        color: #303133;
-        font-weight: 500;
-      }
+    h2 {
+      font-size: 20px;
+      margin: 0;
+      padding: 0;
+      background-image: linear-gradient(90deg, var(--el-color-primary), #409eff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 600;
     }
 
-    .right {
+    .header-buttons {
       .el-button {
-        padding: 9px 15px;
+        padding: 10px;
+        border-radius: 50%;
+        font-weight: 500;
+        transition: all 0.3s;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(51, 112, 255, 0.2);
+        }
       }
     }
   }
 
-  .form-container {
-    padding: 15px;
+  .custom-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    margin-top: 12px;
 
-    :deep(.el-form-item) {
-      &.is-error {
-        .tox-tinymce {
-          border-color: #f56c6c;
-        }
-      }
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
+  }
 
-    .lab-profile-form {
-      .el-form-item {
-        margin-bottom: 22px;
-      }
-    }
+  .box-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+  }
 
-    .tabs-container {
-      margin-top: 10px;
+  .card-body {
+    padding-top: 4px;
+  }
 
-      .tabs-header {
-        display: flex;
-        border-bottom: 1px solid #dcdfe6;
-        margin-bottom: 15px;
-
-        .tab-item {
-          padding: 8px 16px;
-          font-size: 14px;
-          cursor: pointer;
-          color: #606266;
-          margin-right: 10px;
-          border: 1px solid transparent;
-          border-bottom: none;
-          border-radius: 4px 4px 0 0;
-
-          &.active {
-            color: #3370ff;
-            background-color: #fff;
-            border-color: #dcdfe6;
-            border-bottom-color: #fff;
-            margin-bottom: -1px;
-          }
-        }
-      }
-
-      .content-item {
-        margin-bottom: 0;
-      }
-    }
+  :deep(.el-input__wrapper),
+  :deep(.el-textarea__inner) {
+    border-radius: 6px;
   }
 }
 </style>

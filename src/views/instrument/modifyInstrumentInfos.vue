@@ -1,5 +1,5 @@
 <template>
-  <div class="modify-instrument-container animate__animated animate__fadeIn">
+  <div class="modify-instrument-container">
     <div class="card-header">
       <h2>{{ pageTitle }}</h2>
       <div v-if="mode !== 'view'" class="header-buttons">
@@ -59,75 +59,8 @@
             </el-col>
           </el-row>
 
-          <!-- 技术信息 -->
-          <HeaderLine title="技术信息" :icon="Setting" />
-          <el-form-item label="工作原理（中文）" prop="workingPrinciple">
-            <TinyMceEditor
-              v-model="formData.workingPrinciple"
-              :placeholder="'请输入工作原理（中文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="工作原理（英文）" prop="workingPrincipleEn">
-            <TinyMceEditor
-              v-model="formData.workingPrincipleEn"
-              :placeholder="'请输入工作原理（英文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="应用范围（中文）" prop="applicationScope">
-            <TinyMceEditor
-              v-model="formData.applicationScope"
-              :placeholder="'请输入应用范围（中文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="应用范围（英文）" prop="applicationScopeEn">
-            <TinyMceEditor
-              v-model="formData.applicationScopeEn"
-              :placeholder="'请输入应用范围（英文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="性能特点（中文）" prop="performanceFeatures">
-            <TinyMceEditor
-              v-model="formData.performanceFeatures"
-              :placeholder="'请输入性能特点（中文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="性能特点（英文）" prop="performanceFeaturesEn">
-            <TinyMceEditor
-              v-model="formData.performanceFeaturesEn"
-              :placeholder="'请输入性能特点（英文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="其它说明（中文）" prop="otherInfo">
-            <TinyMceEditor
-              v-model="formData.otherInfo"
-              :placeholder="'请输入其它说明（中文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="其它说明（英文）" prop="otherInfoEn">
-            <TinyMceEditor
-              v-model="formData.otherInfoEn"
-              :placeholder="'请输入其它说明（英文）'"
-              :height="300"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-
-          <!-- 图片信息 -->
-          <HeaderLine title="图片信息" :icon="Picture" />
+          <!-- 仪器图片 -->
+          <HeaderLine title="仪器图片" :icon="Picture" />
           <el-form-item label="仪器图片" prop="imageFiles">
             <ImageUpload
               v-model="formData.imageFiles"
@@ -135,14 +68,101 @@
               :limit="5"
               :disabled="mode === 'view'"
               accept="image/*"
-              :file-size="5"
-              list-type="picture-card"
+              :fileSize="5"
+              listType="picture-card"
             />
             <div class="upload-tip">
               <el-text type="info" size="small">
                 支持jpg、png、gif格式，单个文件不超过5MB，最多上传5张图片
               </el-text>
             </div>
+          </el-form-item>
+
+          <!-- 技术信息 -->
+          <HeaderLine title="技术信息" :icon="Setting" />
+
+          <el-form-item label="工作原理" prop="workingPrinciple" class="tech-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <TinyMceEditor
+                  v-model="formData.workingPrinciple"
+                  :placeholder="'请输入工作原理（中文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <TinyMceEditor
+                  v-model="formData.workingPrincipleEn"
+                  :placeholder="'请输入工作原理（英文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+            </el-tabs>
+          </el-form-item>
+
+          <el-form-item label="应用范围" prop="applicationScope" class="tech-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <TinyMceEditor
+                  v-model="formData.applicationScope"
+                  :placeholder="'请输入应用范围（中文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <TinyMceEditor
+                  v-model="formData.applicationScopeEn"
+                  :placeholder="'请输入应用范围（英文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+            </el-tabs>
+          </el-form-item>
+
+          <el-form-item label="性能特点" prop="performanceFeatures" class="tech-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <TinyMceEditor
+                  v-model="formData.performanceFeatures"
+                  :placeholder="'请输入性能特点（中文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <TinyMceEditor
+                  v-model="formData.performanceFeaturesEn"
+                  :placeholder="'请输入性能特点（英文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+            </el-tabs>
+          </el-form-item>
+
+          <el-form-item label="其它说明" prop="otherInfo" class="tech-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <TinyMceEditor
+                  v-model="formData.otherInfo"
+                  :placeholder="'请输入其它说明（中文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <TinyMceEditor
+                  v-model="formData.otherInfoEn"
+                  :placeholder="'请输入其它说明（英文）'"
+                  :height="300"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+            </el-tabs>
           </el-form-item>
         </el-form>
       </div>
@@ -383,8 +403,131 @@ onMounted(() => {
     border-radius: 6px;
   }
 
-  :deep(.el-form-item) {
-    margin-bottom: 24px;
+  // 内容标签页样式
+  :deep(.content-tabs) {
+    .el-tabs__header {
+      margin-bottom: 16px;
+      border-bottom: 1px solid #E4E7ED;
+    }
+
+    .el-tabs__nav-wrap {
+      &::after {
+        display: none;
+      }
+    }
+
+    .el-tabs__nav {
+      border: none;
+    }
+
+    .el-tabs__item {
+      height: 40px;
+      line-height: 40px;
+      padding: 0 20px;
+      font-size: 14px;
+      border: none;
+      position: relative;
+      transition: all 0.3s;
+      color: #606266;
+      background: transparent;
+      margin-right: 30px;
+
+      &.is-active {
+        color: var(--el-color-primary);
+        font-weight: 500;
+        background: transparent;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: var(--el-color-primary);
+          border-radius: 1px;
+        }
+      }
+
+      &:hover {
+        color: var(--el-color-primary);
+      }
+    }
+
+    .el-tabs__content {
+      overflow: visible;
+      padding: 0 5px;
+    }
+  }
+
+  // 简约标签页样式
+  :deep(.simple-tabs) {
+    box-shadow: none;
+    border: none;
+
+    .el-tabs__header {
+      background: #fff;
+      border: none;
+      margin-bottom: 4px;
+      border: 1px solid var(--el-border-color);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .el-tabs__content {
+      padding: 0;
+      border: none;
+      background: #fff;
+    }
+
+    .el-tabs__nav-wrap {
+      &::after {
+        display: none;
+      }
+    }
+
+    .el-tabs__item {
+      height: 40px;
+      line-height: 40px;
+      font-size: 15px;
+      color: #606266;
+      border: none !important;
+      position: relative;
+      transition: all 0.2s;
+
+      &.is-active {
+        color: var(--el-color-primary);
+        font-weight: 500;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 2px;
+          background-color: var(--el-color-primary);
+        }
+      }
+
+      &:hover {
+        color: var(--el-color-primary);
+      }
+    }
+
+    .el-tabs__nav {
+      border: none !important;
+    }
+  }
+
+  // 技术信息表单项样式
+  .tech-item {
+    margin-bottom: 30px;
+
+    :deep(.el-form-item__label) {
+      height: 40px;
+      line-height: 40px;
+    }
   }
 }
 </style>

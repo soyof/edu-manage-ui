@@ -26,12 +26,25 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <!-- 文献发布时间 -->
+        <el-col :span="6">
+          <el-form-item label="文献发布时间">
+            <el-date-picker
+              v-model="form.paperPublishTimesRange"
+              type="daterange"
+              rangeSeparator="~"
+              startPlaceholder="开始日期"
+              endPlaceholder="结束日期"
+              valueFormat="YYYY-MM-DD"
+            />
+          </el-form-item>
+        </el-col>
         <el-col :span="6">
           <el-form-item label="发布时间">
             <el-date-picker
               v-model="form.publishTimesRange"
               type="daterange"
-              rangeSeparator="至"
+              rangeSeparator="~"
               startPlaceholder="开始日期"
               endPlaceholder="结束日期"
               valueFormat="YYYY-MM-DD"
@@ -43,7 +56,7 @@
             <el-date-picker
               v-model="form.updatedTimesRange"
               type="daterange"
-              rangeSeparator="至"
+              rangeSeparator="~"
               startPlaceholder="开始日期"
               endPlaceholder="结束日期"
               valueFormat="YYYY-MM-DD"
@@ -94,7 +107,7 @@
       <el-table-column
         prop="paperPublishTimes"
         label="文献发布时间"
-        width="180"
+        width="120"
         showOverflowTooltip
       />
       <el-table-column
@@ -207,37 +220,7 @@ import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/i
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
-import { StatusEnum } from '@/dic/statusConfig'
-
-// 创建论文状态配置
-const PaperStatus = {
-  list: [
-    { dictId: StatusEnum.PENDING, dictValue: '待发布' },
-    { dictId: StatusEnum.ACTIVE, dictValue: '已发布' },
-    { dictId: StatusEnum.ARCHIVED, dictValue: '已下线' }
-  ],
-  tags: {
-    [StatusEnum.PENDING]: {
-      type: 'info',
-      label: '待发布'
-    },
-    [StatusEnum.ACTIVE]: {
-      type: 'success',
-      label: '已发布'
-    },
-    [StatusEnum.ARCHIVED]: {
-      type: 'warning',
-      label: '已下线'
-    }
-  } as Record<string, { type: string; label: string }>,
-  getTagType: (status: string): string => {
-    return PaperStatus.tags[status]?.type || ''
-  },
-  getName: (status: string): string => {
-    const option = PaperStatus.list.find(item => item.dictId === status)
-    return option ? option.dictValue : status
-  }
-}
+import { PaperStatus } from '@/dic/statusConfig'
 
 const router = useRouter()
 
@@ -260,6 +243,7 @@ const initialSearchForm = {
   title: '',
   titleEn: '',
   publishStatus: '',
+  paperPublishTimesRange: [] as string[],
   publishTimesRange: [] as string[],
   updatedTimesRange: [] as string[]
 }
@@ -302,7 +286,7 @@ const handleView = (row: PaperItem) => {
 const handleEdit = (row: PaperItem) => {
   const tabTitle = `编辑论文【${row.title}】`
   router.push({
-    path: '/modifyPaper',
+    path: '/modifyPaperInfos',
     query: {
       mode: 'edit',
       id: String(row.id),
@@ -315,7 +299,7 @@ const handleEdit = (row: PaperItem) => {
 const handleAdd = () => {
   const tabTitle = `新增论文`
   router.push({
-    path: '/modifyPaper',
+    path: '/modifyPaperInfos',
     query: {
       mode: 'add',
       tabTitle: encodeURIComponent(tabTitle)

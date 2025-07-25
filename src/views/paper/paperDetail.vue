@@ -1,6 +1,6 @@
 <template>
   <div class="paper-detail-container">
-    <div class="paper-content-wrapper animate__animated animate__fadeIn animate__faster">
+    <div class="paper-content-wrapper">
       <!-- 论文不存在或加载失败 -->
       <el-empty v-if="!paperData.id && !loading" description="未找到论文内容" />
 
@@ -138,44 +138,13 @@ import { useRoute } from 'vue-router'
 import { TopRight, Calendar, User } from '@element-plus/icons-vue'
 import service from '@/utils/services'
 import useLoading from '@/hooks/useLoading'
-import { StatusEnum } from '@/dic/statusConfig'
-import 'animate.css'
+import { PaperStatus } from '@/dic/statusConfig'
 
 const { changeLoading, closeLoading, loading } = useLoading()
 
 // 路由相关
 const route = useRoute()
 const paperId = ref(route.query.id as string)
-
-// 创建论文状态配置
-const PaperStatus = {
-  list: [
-    { dictId: StatusEnum.PENDING, dictValue: '待发布' },
-    { dictId: StatusEnum.ACTIVE, dictValue: '已发布' },
-    { dictId: StatusEnum.ARCHIVED, dictValue: '已下线' }
-  ],
-  tags: {
-    [StatusEnum.PENDING]: {
-      type: 'info',
-      label: '待发布'
-    },
-    [StatusEnum.ACTIVE]: {
-      type: 'success',
-      label: '已发布'
-    },
-    [StatusEnum.ARCHIVED]: {
-      type: 'warning',
-      label: '已下线'
-    }
-  } as Record<string, { type: string; label: string }>,
-  getTagType: (status: string): string => {
-    return PaperStatus.tags[status]?.type || ''
-  },
-  getName: (status: string): string => {
-    const option = PaperStatus.list.find(item => item.dictId === status)
-    return option ? option.dictValue : status
-  }
-}
 
 // 论文数据
 const paperData = reactive({
@@ -422,7 +391,6 @@ onMounted(() => {
       margin: 16px;
 
       .abstract-content {
-        padding: 16px;
         white-space: pre-line;
         font-size: 15px;
         line-height: 1.8;

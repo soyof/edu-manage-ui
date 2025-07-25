@@ -1,6 +1,6 @@
 <template>
   <div class="patent-detail-container">
-    <div class="patent-content-wrapper animate__animated animate__fadeIn animate__faster">
+    <div class="patent-content-wrapper">
       <!-- 专利不存在或加载失败 -->
       <el-empty v-if="!patentData.id && !loading" description="未找到专利内容" />
 
@@ -108,13 +108,13 @@
         <div class="abstract-section animate__animated animate__fadeIn animate__delay-2s">
           <h3 class="section-heading">摘要</h3>
           <el-tabs class="custom-tabs">
-            <el-tab-pane label="中文摘要">
+            <el-tab-pane label="中文内容">
               <div v-if="patentData.abstract" class="abstract-content">
                 {{ patentData.abstract }}
               </div>
               <el-empty v-else description="暂无中文摘要" />
             </el-tab-pane>
-            <el-tab-pane v-if="hasEnglishContent" label="英文摘要">
+            <el-tab-pane label="英文内容">
               <div v-if="patentData.abstractEn" class="abstract-content">
                 {{ patentData.abstractEn }}
               </div>
@@ -137,7 +137,7 @@
                 <el-empty v-else description="暂无中文内容" />
               </div>
             </el-tab-pane>
-            <el-tab-pane v-if="hasEnglishContent" label="英文内容">
+            <el-tab-pane label="英文内容">
               <div class="content-wrapper">
                 <div
                   v-if="patentData.contentEn"
@@ -377,10 +377,8 @@ onMounted(() => {
     white-space: pre-wrap;
     color: #303133;
     font-size: 14px;
-    border: 1px solid #ebeef5;
     border-radius: 4px;
-    padding: 15px;
-    background-color: #fafafa;
+    padding: 0 12px;
   }
 
   .patent-body {
@@ -391,33 +389,8 @@ onMounted(() => {
     }
 
     .content-wrapper {
-      padding: 0;
-      background-color: #fafafa;
-      border: 1px solid #ebeef5;
+      padding: 8px 12px;
       border-radius: 4px;
-
-      .rich-text-content {
-        line-height: 1.8;
-        padding: 15px 20px;
-
-        :deep(img) {
-          max-width: 100%;
-        }
-
-        :deep(table) {
-          border-collapse: collapse;
-          width: 100%;
-
-          td, th {
-            border: 1px solid #dcdfe6;
-            padding: 8px;
-          }
-
-          th {
-            background-color: #f5f7fa;
-          }
-        }
-      }
     }
   }
 
@@ -430,10 +403,11 @@ onMounted(() => {
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    width: 100%;
 
     .el-tabs__header {
       margin-bottom: 0;
-      background-color: #f5f7fa;
+      background-color: #fff;
       border-bottom: 1px solid #dcdfe6;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
@@ -447,13 +421,13 @@ onMounted(() => {
 
       .el-tabs__nav-scroll {
         display: flex;
-        padding: 10px 0 0;
+        padding: 0;
       }
 
       .el-tabs__nav {
         border: none;
         display: flex;
-        margin-left: 20px;
+        margin-left: 0;
       }
     }
 
@@ -467,50 +441,37 @@ onMounted(() => {
       color: #606266;
       position: relative;
       text-align: center;
-      border: 1px solid #dcdfe6;
-      border-bottom: none;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-      background-color: #f5f7fa;
-      margin-bottom: -1px;
+      border: none;
+      background-color: transparent;
+      margin-bottom: 0;
 
       &.is-active {
-        color: #409EFF;
-        font-weight: bold;
-        background-color: #fff;
-        border-bottom: none;
+        color: var(--el-color-primary);
+        font-weight: 500;
+        background-color: transparent;
 
         &::after {
           content: '';
           position: absolute;
           bottom: 0;
           left: 0;
-          right: 0;
+          width: 100%;
           height: 2px;
-          background-color: #fff;
+          background-color: var(--el-color-primary);
         }
 
         &::before {
-          content: '';
-          position: absolute;
-          top: -1px;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background-color: #409EFF;
-          border-top-left-radius: 3px;
-          border-top-right-radius: 3px;
+          display: none;
         }
       }
 
-      &:not(.is-active):hover {
-        color: #409EFF;
-        background-color: #ecf5ff;
+      &:hover {
+        color: var(--el-color-primary);
       }
     }
 
     .el-tabs__content {
-      padding: 24px;
+      padding: 20px;
       background-color: #fff;
       border-bottom-left-radius: 4px;
       border-bottom-right-radius: 4px;
@@ -520,7 +481,6 @@ onMounted(() => {
 
 .abstract-content, .content-wrapper {
   background-color: #fff;
-  border: 1px solid #ebeef5;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   padding: 15px 20px;

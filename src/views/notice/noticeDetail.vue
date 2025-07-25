@@ -1,6 +1,6 @@
 <template>
   <div class="notice-detail-container">
-    <div class="notice-content-wrapper animate__animated animate__fadeIn animate__faster">
+    <div class="notice-content-wrapper">
       <!-- 通知不存在或加载失败 -->
       <el-empty v-if="!noticeData.id && !loading" description="未找到通知内容" />
 

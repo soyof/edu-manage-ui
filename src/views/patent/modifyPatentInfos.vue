@@ -1,5 +1,5 @@
 <template>
-  <div class="modify-patent-container animate__animated animate__fadeIn">
+  <div class="modify-patent-container">
     <div class="card-header">
       <h2>{{ pageTitle }}</h2>
       <div v-if="mode !== 'view'" class="header-buttons">
@@ -109,42 +109,54 @@
 
           <!-- 摘要信息 -->
           <HeaderLine title="摘要信息" :icon="ChatLineRound" />
-          <el-form-item label="中文摘要" prop="abstract">
-            <el-input
-              v-model="formData.abstract"
-              type="textarea"
-              :rows="6"
-              placeholder="请输入中文摘要"
-              resize="none"
-            />
-          </el-form-item>
-          <el-form-item label="英文摘要" prop="abstractEn">
-            <el-input
-              v-model="formData.abstractEn"
-              type="textarea"
-              :rows="6"
-              placeholder="请输入英文摘要"
-              resize="none"
-            />
+          <el-form-item label="摘要" prop="abstract" class="content-form-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <div class="textarea-wrapper">
+                  <el-input
+                    v-model="formData.abstract"
+                    type="textarea"
+                    :rows="6"
+                    placeholder="请输入中文摘要"
+                    resize="none"
+                  />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <div class="textarea-wrapper">
+                  <el-input
+                    v-model="formData.abstractEn"
+                    type="textarea"
+                    :rows="6"
+                    placeholder="请输入英文摘要"
+                    resize="none"
+                  />
+                </div>
+              </el-tab-pane>
+            </el-tabs>
           </el-form-item>
 
           <!-- 专利内容 -->
           <HeaderLine title="专利内容" :icon="Reading" />
-          <el-form-item label="中文内容" prop="content">
-            <TinyMceEditor
-              v-model="formData.content"
-              :placeholder="'请输入专利内容（中文）'"
-              :height="500"
-              :disabled="mode === 'view'"
-            />
-          </el-form-item>
-          <el-form-item label="英文内容" prop="contentEn">
-            <TinyMceEditor
-              v-model="formData.contentEn"
-              :placeholder="'请输入专利内容（英文）'"
-              :height="500"
-              :disabled="mode === 'view'"
-            />
+          <el-form-item label="内容" prop="content" class="content-form-item">
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <TinyMceEditor
+                  v-model="formData.content"
+                  :placeholder="'请输入专利内容（中文）'"
+                  :height="500"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <TinyMceEditor
+                  v-model="formData.contentEn"
+                  :placeholder="'请输入专利内容（英文）'"
+                  :height="500"
+                  :disabled="mode === 'view'"
+                />
+              </el-tab-pane>
+            </el-tabs>
           </el-form-item>
         </el-form>
       </div>
@@ -236,8 +248,6 @@ const submitForm = () => {
   formRef.value.validate((valid) => {
     if (valid) {
       savePatent()
-    } else {
-      return false
     }
   })
 }
@@ -352,6 +362,80 @@ onMounted(() => {
       :deep(.el-form-item__label) {
         font-weight: 500;
       }
+    }
+  }
+
+  // 内容表单项样式
+  .content-form-item {
+    :deep(.el-form-item__label) {
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .textarea-wrapper {
+      width: 100%;
+    }
+  }
+
+  // 简约标签页样式
+  :deep(.simple-tabs) {
+    width: 100%;
+    box-shadow: none;
+    border: none;
+
+    .el-tabs__header {
+      background: #fff;
+      border: none;
+      margin-bottom: 4px;
+      border: 1px solid var(--el-border-color);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .el-tabs__content {
+      padding: 0;
+      border: none;
+      background: #fff;
+    }
+
+    .el-tabs__nav-wrap {
+      &::after {
+        display: none;
+      }
+    }
+
+    .el-tabs__item {
+      height: 40px;
+      line-height: 40px;
+      font-size: 15px;
+      color: #606266;
+      border: none !important;
+      position: relative;
+      transition: all 0.2s;
+
+      &.is-active {
+        color: var(--el-color-primary);
+        font-weight: 500;
+        background-color: transparent;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 2px;
+          background-color: var(--el-color-primary);
+        }
+      }
+
+      &:hover {
+        color: var(--el-color-primary);
+      }
+    }
+
+    .el-tabs__nav {
+      border: none !important;
     }
   }
 }

@@ -226,7 +226,7 @@ onMounted(() => {
 
       .profile-divider {
         height: 16px;
-        background-color: #f5f7fa;
+        background-color: #fff;
         border-top: 1px solid #ebeef5;
         border-bottom: 1px solid #ebeef5;
       }

@@ -1,6 +1,6 @@
 <template>
   <div class="dynamic-detail-container">
-    <div class="dynamic-detail-wrapper animate__animated animate__fadeIn">
+    <div class="dynamic-detail-wrapper">
       <div v-if="dynamicData" class="dynamic-content-wrapper">
         <!-- 动态标题和状态 - 修复标题过长挤压右侧问题 -->
         <div class="dynamic-header animate__animated animate__fadeInDown">
@@ -408,7 +408,7 @@ onMounted(() => {
     .content-wrapper {
       background-color: #fff;
       border-radius: 8px;
-      padding: 20px;
+      padding: 0 20px;
       min-height: 300px;
     }
 

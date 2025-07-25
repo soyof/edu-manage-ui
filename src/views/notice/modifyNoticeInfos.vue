@@ -1,86 +1,95 @@
 <template>
   <div class="modify-notice-container">
-    <div class="page-header">
+    <div class="card-header">
       <h2>{{ pageTitle }}</h2>
-      <div class="header-actions">
-        <el-tooltip content="保存" placement="bottom">
-          <el-button type="primary" circle @click="submitForm">
+      <div class="header-buttons">
+        <el-tooltip content="保存" placement="top" :showAfter="300">
+          <el-button
+            type="primary"
+            circle
+            :loading="false"
+            @click="submitForm"
+          >
             <el-icon><Check /></el-icon>
           </el-button>
         </el-tooltip>
       </div>
     </div>
 
-    <el-form
-      ref="formRef"
-      :model="formData"
-      :rules="formRules"
-      :labelWidth="120"
-    >
-      <!-- 通知标题 - 中文 -->
-      <el-form-item label="通知标题(中)" prop="title">
-        <el-input v-model="formData.title" placeholder="请输入中文通知标题" />
-      </el-form-item>
+    <div class="custom-card box-card">
+      <div class="card-body">
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          :labelWidth="120"
+        >
+          <!-- 通知标题 - 中文 -->
+          <el-form-item label="通知标题(中)" prop="title">
+            <el-input v-model="formData.title" placeholder="请输入中文通知标题" />
+          </el-form-item>
 
-      <!-- 通知标题 - 英文 -->
-      <el-form-item label="通知标题(英)" prop="titleEn">
-        <el-input v-model="formData.titleEn" placeholder="请输入英文通知标题" />
-      </el-form-item>
+          <!-- 通知标题 - 英文 -->
+          <el-form-item label="通知标题(英)" prop="titleEn">
+            <el-input v-model="formData.titleEn" placeholder="请输入英文通知标题" />
+          </el-form-item>
 
-      <!-- 通知类型 -->
-      <el-form-item label="通知类型" prop="noticeType">
-        <el-select v-model="formData.noticeType" placeholder="请选择通知类型" @change="handleTypeChange">
-          <el-option
-            v-for="item in noticeTypeList"
-            :key="item.dictId"
-            :label="item.dictValue"
-            :value="item.dictId"
-          />
-        </el-select>
-      </el-form-item>
+          <!-- 通知类型 -->
+          <el-form-item label="通知类型" prop="noticeType">
+            <el-select v-model="formData.noticeType" placeholder="请选择通知类型" @change="handleTypeChange">
+              <el-option
+                v-for="item in noticeTypeList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
+          </el-form-item>
 
-      <!-- 重要程度 -->
-      <el-form-item label="重要程度" prop="importance">
-        <el-select v-model="formData.importance" placeholder="请选择重要程度">
-          <el-option
-            v-for="item in importanceList"
-            :key="item.dictId"
-            :label="item.dictValue"
-            :value="item.dictId"
-          />
-        </el-select>
-      </el-form-item>
+          <!-- 重要程度 -->
+          <el-form-item label="重要程度" prop="importance">
+            <el-select v-model="formData.importance" placeholder="请选择重要程度">
+              <el-option
+                v-for="item in importanceList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
+          </el-form-item>
 
-      <!-- 文本类型的通知内容 -->
-      <template v-if="isTextType">
-        <!-- 通知内容 - 中文 -->
-        <el-form-item label="通知内容(中)" prop="content" required>
-          <TinyMceEditor
-            v-model="formData.content"
-            :height="350"
-            :placeholder="'请输入中文通知内容'"
-          />
-        </el-form-item>
+          <!-- 文本类型的通知内容 -->
+          <template v-if="isTextType">
+            <!-- 通知内容 - 中文 -->
+            <el-form-item label="通知内容(中)" prop="content" required>
+              <TinyMceEditor
+                v-model="formData.content"
+                :height="350"
+                :placeholder="'请输入中文通知内容'"
+              />
+            </el-form-item>
 
-        <!-- 通知内容 - 英文 -->
-        <el-form-item label="通知内容(英)" prop="contentEn">
-          <TinyMceEditor
-            v-model="formData.contentEn"
-            :height="350"
-            :placeholder="'请输入英文通知内容'"
-          />
-        </el-form-item>
-      </template>
+            <!-- 通知内容 - 英文 -->
+            <el-form-item label="通知内容(英)" prop="contentEn">
+              <TinyMceEditor
+                v-model="formData.contentEn"
+                :height="350"
+                :placeholder="'请输入英文通知内容'"
+              />
+            </el-form-item>
+          </template>
 
-      <!-- 超链接类型的通知内容 -->
-      <template v-else>
-        <!-- 超链接地址 -->
-        <el-form-item label="链接地址" prop="linkUrl" required>
-          <el-input v-model="formData.linkUrl" placeholder="请输入超链接地址" />
-          <div class="form-tip">链接地址需要以http://或https://开头的完整URL</div>
-        </el-form-item>
-      </template>
-    </el-form>
+          <!-- 超链接类型的通知内容 -->
+          <template v-else>
+            <!-- 超链接地址 -->
+            <el-form-item label="链接地址" prop="linkUrl" required>
+              <el-input v-model="formData.linkUrl" placeholder="请输入超链接地址" />
+              <div class="form-tip">链接地址需要以http://或https://开头的完整URL</div>
+            </el-form-item>
+          </template>
+        </el-form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -317,32 +326,70 @@ onMounted(() => {
 <style scoped lang="less">
 .modify-notice-container {
   position: relative;
-  padding: 8px 16px;
-  background-color: @pageBgColor;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: #f5f7fa;
 
-    .page-header {
+  .card-header {
     position: sticky;
     top: 0;
     left: 0;
+    z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    background-color: @pageBgColor;
-    z-index: 11;
+    padding: 12px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     h2 {
+      font-size: 20px;
       margin: 0;
+      padding: 0;
+      background-image: linear-gradient(90deg, var(--el-color-primary), #409eff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 600;
     }
 
-    .header-actions {
-      display: flex;
-      gap: 10px;
+    .header-buttons {
+      .el-button {
+        padding: 10px;
+        border-radius: 50%;
+        font-weight: 500;
+        transition: all 0.3s;
 
-      .el-button.is-circle {
-        margin-left: 0;
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(51, 112, 255, 0.2);
+        }
       }
     }
+  }
+
+  .custom-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    margin-top: 12px;
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .box-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+  }
+
+  .card-body {
+    padding-top: 4px;
   }
 
   .form-tip {
@@ -352,17 +399,9 @@ onMounted(() => {
     line-height: 1.2;
   }
 
-  // 非必填项标签样式
-  :deep(.el-form-item) {
-    margin-bottom: 22px;
-
-    &.is-required {
-      .el-form-item__label::before {
-        content: '*';
-        color: var(--el-color-danger);
-        margin-right: 4px;
-      }
-    }
+  :deep(.el-input__wrapper),
+  :deep(.el-textarea__inner) {
+    border-radius: 6px;
   }
 }
 </style>

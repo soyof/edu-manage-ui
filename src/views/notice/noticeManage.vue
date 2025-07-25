@@ -55,7 +55,7 @@
             <el-date-picker
               v-model="form.publishTimesRange"
               type="daterange"
-              rangeSeparator="至"
+              rangeSeparator="~"
               startPlaceholder="开始日期"
               endPlaceholder="结束日期"
               valueFormat="YYYY-MM-DD"
@@ -67,7 +67,7 @@
             <el-date-picker
               v-model="form.updatedTimesRange"
               type="daterange"
-              rangeSeparator="至"
+              rangeSeparator="~"
               startPlaceholder="开始日期"
               endPlaceholder="结束日期"
               valueFormat="YYYY-MM-DD"

@@ -1,4 +1,4 @@
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import { ref, onMounted, nextTick, onBeforeUnmount, onActivated } from 'vue'
 import type { Ref } from 'vue'
 
 interface AutoTableOptions {
@@ -113,6 +113,11 @@ export const useAutoTable = (options: AutoTableOptions) => {
       calculateTableHeight()
       window.addEventListener('resize', handleResize)
     }, delay)
+  })
+
+  // 组件激活后重新计算表格高度
+  onActivated(() => {
+    calculateTableHeight()
   })
 
   // 组件卸载前移除监听并清理定时器

@@ -85,8 +85,8 @@ export default [
     component: () => import(/* webpackChunkName: "paperManage" */ '@/views/paper/paperManage.vue')
   },
   {
-    path: '/modifyPaper',
-    name: 'modifyPaper',
+    path: '/modifyPaperInfos',
+    name: 'modifyPaperInfos',
     meta: { title: '编辑论文', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "modifyPaperInfos" */ '@/views/paper/modifyPaperInfos.vue')
   },
@@ -122,8 +122,8 @@ export default [
     component: () => import(/* webpackChunkName: "patentManage" */ '@/views/patent/patentManage.vue')
   },
   {
-    path: '/modifyPatent',
-    name: 'modifyPatent',
+    path: '/modifyPatentInfos',
+    name: 'modifyPatentInfos',
     meta: { title: '编辑专利', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "modifyPatentInfos" */ '@/views/patent/modifyPatentInfos.vue')
   },
@@ -141,8 +141,8 @@ export default [
     component: () => import(/* webpackChunkName: "instrumentManage" */ '@/views/instrument/instrumentManage.vue')
   },
   {
-    path: '/modifyInstrument',
-    name: 'modifyInstrument',
+    path: '/modifyInstrumentInfos',
+    name: 'modifyInstrumentInfos',
     meta: { title: '编辑仪器', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "modifyInstrumentInfos" */ '@/views/instrument/modifyInstrumentInfos.vue')
   },
