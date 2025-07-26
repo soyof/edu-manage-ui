@@ -2,8 +2,34 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import layoutRoutes from '@/router/layout'
 
-// 提取layout中定义的所有路由路径
-const validRoutes = layoutRoutes.map(route => route.path)
+// 定义路由项的接口
+interface RouteItem {
+  path: string
+  name: string
+  meta: Record<string, any>
+  component?: any
+  children?: RouteItem[]
+}
+
+// 递归提取layout中定义的所有路由路径，包括子路由
+const collectRoutePaths = (routes: RouteItem[]): string[] => {
+  let paths: string[] = []
+
+  routes.forEach((route: RouteItem) => {
+    // 添加当前路由路径
+    paths.push(route.path)
+
+    // 如果存在子路由，递归提取
+    if (route.children && route.children.length > 0) {
+      paths = [...paths, ...collectRoutePaths(route.children)]
+    }
+  })
+
+  return paths
+}
+
+// 提取layout中定义的所有路由路径，包括子路由
+const validRoutes: string[] = collectRoutePaths(layoutRoutes)
 
 export interface TabItem {
   path: string

@@ -7,13 +7,19 @@
     router
     class="custom-menu"
   >
-    <el-menu-item
-      v-for="(item, ids) in menuInfos"
-      :key="`${item.path}_${ids}`"
-      :index="item.path"
-    >
-      {{ item?.meta?.title }}
-    </el-menu-item>
+    <template v-for="(item, ids) in menuInfos" :key="`${item.path}_${ids}`">
+      <!-- 有子菜单的情况 -->
+      <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.path">
+        <template #title>{{ item?.meta?.title }}</template>
+        <!-- 递归组件渲染子菜单 -->
+        <MenuItemRecursive :menuList="item.children" />
+      </el-sub-menu>
+
+      <!-- 无子菜单的情况 -->
+      <el-menu-item v-else :index="item.path">
+        {{ item?.meta?.title }}
+      </el-menu-item>
+    </template>
   </el-menu>
 </template>
 
@@ -21,19 +27,11 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import layoutRouter from '@/router/layout.ts'
-import { useThemeStore } from '@/stores/theme'
+import MenuItemRecursive from './menuItemRecursive.vue'
 
+// 过滤掉隐藏的菜单
 const menuInfos = ref<any>(layoutRouter.filter(item => !item.meta.isHidden))
 const routeInfo = useRoute()
-const themeStore = useThemeStore()
-
-// 获取当前主题
-const currentTheme = computed(() => themeStore.currentTheme)
-
-// 菜单样式变量
-const menuBgColor = computed(() => {
-  return `var(--menuBgColor)`
-})
 
 const menuTextColor = computed(() => {
   return `var(--menuTextColor)`
