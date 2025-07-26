@@ -383,17 +383,17 @@ watch(() => route.fullPath, () => {
 // 路由过渡动画
 .fade-transform-enter-active,
 .fade-transform-leave-active {
-  transition: all 0.2s;
+  transition: all 0.1s;
 }
 
 .fade-transform-enter-from {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(-30px);
 }
 
 .fade-transform-leave-to {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateX(30px);
 }
 
 /* 添加路由组件包装器样式 */

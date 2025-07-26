@@ -3,7 +3,12 @@
     <div class="card-header">
       <h2>{{ pageTitle }}</h2>
       <div v-if="mode !== 'view'" class="header-buttons">
-        <el-tooltip content="保存" placement="top" :showAfter="300">
+        <el-tooltip
+          content="保存"
+          placement="top"
+          :showAfter="200"
+          :hideAfter="0"
+        >
           <el-button
             type="primary"
             circle

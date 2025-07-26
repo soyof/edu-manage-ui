@@ -151,5 +151,24 @@ export default [
     name: 'instrumentDetail',
     meta: { title: '仪器详情', isHidden: true, tabClosable: true },
     component: () => import(/* webpackChunkName: "instrumentDetail" */ '@/views/instrument/instrumentDetail.vue')
+  },
+  // 添加开源工具管理相关路由
+  {
+    path: '/toolManage',
+    name: 'toolManage',
+    meta: { title: '开源工具管理', tabClosable: true },
+    component: () => import(/* webpackChunkName: "toolManage" */ '@/views/tool/toolManage.vue')
+  },
+  {
+    path: '/modifyToolInfos',
+    name: 'modifyToolInfos',
+    meta: { title: '编辑工具', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "modifyToolInfos" */ '@/views/tool/modifyToolInfos.vue')
+  },
+  {
+    path: '/toolDetail',
+    name: 'toolDetail',
+    meta: { title: '工具详情', isHidden: true, tabClosable: true },
+    component: () => import(/* webpackChunkName: "toolDetail" */ '@/views/tool/toolDetail.vue')
   }
 ]

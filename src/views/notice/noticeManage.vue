@@ -78,12 +78,22 @@
 
       <!-- 操作区域插槽 -->
       <template #operation>
-        <el-tooltip content="新增通知" placement="top">
+        <el-tooltip
+          content="新增通知"
+          placement="top"
+          :showAfter="200"
+          :hideAfter="0"
+        >
           <ThrottleButton size="small" type="primary" @click="handleAdd">
             <el-icon><Plus /></el-icon>
           </ThrottleButton>
         </el-tooltip>
-        <el-tooltip content="批量删除" placement="top">
+        <el-tooltip
+          content="批量删除"
+          placement="top"
+          :showAfter="200"
+          :hideAfter="0"
+        >
           <ThrottleButton
             size="small"
             type="danger"
@@ -183,7 +193,7 @@
             <el-tooltip
               content="查看"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span class="action-icon-wrapper" @click="handleView(scope.row)">
@@ -195,7 +205,7 @@
             <el-tooltip
               :content="scope.row.publishStatus === '1' ? '已发布通知不可编辑' : '编辑'"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span
@@ -211,7 +221,7 @@
             <el-tooltip
               :content="scope.row.publishStatus === '1' ? '下线' : '发布'"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span
@@ -226,7 +236,12 @@
             </el-tooltip>
 
             <!-- 删除 -->
-            <el-tooltip :content="scope.row.publishStatus === '1' ? '已发布通知不能删除' : '删除'" placement="top">
+            <el-tooltip
+              :content="scope.row.publishStatus === '1' ? '已发布通知不能删除' : '删除'"
+              placement="top"
+              :showAfter="200"
+              :hideAfter="0"
+            >
               <span
                 class="action-icon-wrapper"
                 :class="{'disabled-wrapper': scope.row.publishStatus === '1'}"

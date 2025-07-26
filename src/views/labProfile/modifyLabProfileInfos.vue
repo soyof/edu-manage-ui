@@ -4,7 +4,12 @@
     <div class="card-header">
       <h2>{{ mode === 'edit' ? '编辑简介' : '新增简介' }}</h2>
       <div class="header-buttons">
-        <el-tooltip content="保存" placement="top" :showAfter="300">
+        <el-tooltip
+          content="保存"
+          placement="top"
+          :showAfter="200"
+          :hideAfter="0"
+        >
           <el-button
             type="primary"
             circle

@@ -68,7 +68,12 @@
         </el-col>
       </template>
       <template #operation>
-        <el-tooltip content="新增用户" placement="top">
+        <el-tooltip
+          content="新增用户"
+          placement="top"
+          :showAfter="200"
+          :hideAfter="0"
+        >
           <ThrottleButton size="small" type="primary" @click="handleAdd">
             <el-icon><Plus /></el-icon>
           </ThrottleButton>
@@ -174,7 +179,7 @@
             <el-tooltip
               content="查看"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span class="action-icon-wrapper" @click="handleView(scope.row)">
@@ -186,7 +191,7 @@
             <el-tooltip
               content="基本信息编辑"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span class="action-icon-wrapper" @click="handleEdit(scope.row)">
@@ -198,7 +203,7 @@
             <el-tooltip
               content="学术档案"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span class="action-icon-wrapper" @click="handleEditOther(scope.row)">
@@ -210,7 +215,7 @@
             <el-tooltip
               :content="scope.row.status ? '禁用' : '启用'"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span class="action-icon-wrapper" @click="handleToggleStatus(scope.row)">
@@ -224,7 +229,7 @@
             <el-tooltip
               content="删除"
               placement="top"
-              :showAfter="1000"
+              :showAfter="200"
               :hideAfter="0"
             >
               <span class="action-icon-wrapper" @click="handleDelete(scope.row)">

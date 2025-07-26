@@ -7,7 +7,12 @@
         <span class="title">{{ mode === 'add' ? '新增招聘信息' : '编辑招聘信息' }}</span>
       </div>
       <div class="right">
-        <el-tooltip content="保存" placement="top">
+        <el-tooltip
+          content="保存"
+          placement="top"
+          :showAfter="200"
+          :hideAfter="0"
+        >
           <el-button
             :loading="loading"
             type="primary"

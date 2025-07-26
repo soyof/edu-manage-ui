@@ -33,7 +33,6 @@ import { ref } from 'vue'
 import ModifyUserBaseInfo from '@/components/user/modifyUserBaseInfo.vue'
 import OtherUserInfo from '@/components/user/otherUserInfo.vue'
 import ModifyPassword from '@/components/user/modifyPassword.vue'
-import 'animate.css'
 
 // 当前激活的标签页
 const activeTab = ref('baseInfo')
