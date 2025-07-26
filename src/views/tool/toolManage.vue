@@ -27,11 +27,6 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="工具地址">
-            <el-input v-model="form.toolUrl" placeholder="请输入工具地址" clearable />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
           <el-form-item label="发布状态">
             <el-select v-model="form.publishStatus" placeholder="请选择发布状态" clearable>
               <el-option
@@ -44,8 +39,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="创建人">
-            <el-input v-model="form.createUserId" placeholder="请输入创建人" clearable />
+          <el-form-item label="发布人">
+            <el-input v-model="form.publishUserId" placeholder="请输入发布人" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -134,18 +129,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="createUserName"
-        label="创建人"
-        width="120"
-        showOverflowTooltip
-      />
-      <el-table-column
-        prop="createdTimes"
-        label="创建时间"
-        width="180"
-        showOverflowTooltip
-      />
-      <el-table-column
         prop="publishUserName"
         label="发布人"
         width="120"
@@ -154,6 +137,30 @@
       <el-table-column
         prop="publishTimes"
         label="发布时间"
+        width="180"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="updateUserName"
+        label="更新人"
+        width="120"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="updatedTimes"
+        label="更新时间"
+        width="180"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="createUserName"
+        label="创建人"
+        width="120"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="createdTimes"
+        label="创建时间"
         width="180"
         showOverflowTooltip
       />
@@ -280,9 +287,8 @@ interface ToolItem {
 const initialSearchForm = {
   title: '',
   toolType: '',
-  toolUrl: '',
   publishStatus: '',
-  createUserId: '',
+  publishUserId: '',
   publishTimesRange: [] as string[]
 }
 

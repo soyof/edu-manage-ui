@@ -8,13 +8,14 @@
       <template #search-form="{ form }">
         <el-col :span="6">
           <el-form-item label="用户名" prop="username">
-            <el-input v-model="form.username" autocomplete="off" />
+            <el-input v-model="form.username" placeholder="请输入用户名" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="邮箱" prop="email">
             <el-input
               v-model="form.email"
+              placeholder="请输入邮箱"
               autocomplete="off"
             />
           </el-form-item>
@@ -34,11 +35,6 @@
                 :value="item.dictId"
               />
             </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="手机号" prop="phone">
-            <el-input v-model="form.phone" />
           </el-form-item>
         </el-col>
         <el-col :span="6">

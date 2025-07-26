@@ -16,7 +16,7 @@
 }
 
 /* Tooltip样式，跟随主题变化 */
-.el-popper {
+.el-tooltip {
   /* 深色主题 tooltip */
   &.is-dark {
     --el-tooltip-bg-color: var(--primaryColor) !important;
@@ -27,17 +27,6 @@
     
     .el-popper__arrow::before {
       background-color: var(--primaryColor) !important;
-      border-color: var(--primaryColor) !important;
-    }
-  }
-  
-  /* 浅色主题 tooltip */
-  &.is-light {
-    --el-tooltip-bg-color: #fff !important;
-    --el-tooltip-border-color: var(--primaryColor) !important;
-    border-color: var(--primaryColor) !important;
-    line-height: 1.8 !important;
-    .el-popper__arrow::before {
       border-color: var(--primaryColor) !important;
     }
   }
