@@ -3,14 +3,22 @@
   <template v-for="(item, index) in filteredMenuList" :key="`${item.path}_${index}`">
     <!-- 有子菜单的情况 -->
     <el-sub-menu v-if="item.children && getVisibleChildren(item.children).length > 0" :index="item.path">
-      <template #title>{{ item?.meta?.title }}</template>
+      <template #title>
+        <el-icon v-if="item?.meta?.icon">
+          <component :is="item.meta.icon" />
+        </el-icon>
+        <span>{{ item?.meta?.title }}</span>
+      </template>
       <!-- 递归调用自身组件，传递过滤后的子菜单列表 -->
       <menu-item-recursive :menuList="getVisibleChildren(item.children)" />
     </el-sub-menu>
 
     <!-- 无子菜单的情况 -->
     <el-menu-item v-else :index="item.path">
-      {{ item?.meta?.title }}
+      <el-icon v-if="item?.meta?.icon">
+        <component :is="item.meta.icon" />
+      </el-icon>
+      <span>{{ item?.meta?.title }}</span>
     </el-menu-item>
   </template>
 </template>
@@ -26,6 +34,7 @@ interface MenuItem {
     title: string
     isHidden?: boolean
     tabClosable?: boolean
+    icon?: string
   }
   children?: MenuItem[]
 }
@@ -48,4 +57,10 @@ const getVisibleChildren = (children: MenuItem[]) => {
 
 <style lang="less" scoped>
 /* 递归组件样式可以继承父组件的样式 */
+.el-icon {
+  margin-right: 8px;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
 </style>

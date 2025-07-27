@@ -112,3 +112,8 @@ export const PaperStatus = createStatusConfig('待发布', '已发布', '已存�
  * 专利管理状态定义
  */
 export const PatentStatus = createStatusConfig('待发布', '已发布', '已存档')
+
+/**
+ * 著作管理状态定义
+ */
+export const BookStatus = createStatusConfig('待发布', '已发布', '已存档')

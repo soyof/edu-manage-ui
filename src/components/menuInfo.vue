@@ -10,14 +10,22 @@
     <template v-for="(item, ids) in menuInfos" :key="`${item.path}_${ids}`">
       <!-- 有子菜单的情况 -->
       <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.path">
-        <template #title>{{ item?.meta?.title }}</template>
+        <template #title>
+          <el-icon v-if="item?.meta?.icon">
+            <component :is="item.meta.icon" />
+          </el-icon>
+          <span>{{ item?.meta?.title }}</span>
+        </template>
         <!-- 递归组件渲染子菜单 -->
         <MenuItemRecursive :menuList="item.children" />
       </el-sub-menu>
 
       <!-- 无子菜单的情况 -->
       <el-menu-item v-else :index="item.path">
-        {{ item?.meta?.title }}
+        <el-icon v-if="item?.meta?.icon">
+          <component :is="item.meta.icon" />
+        </el-icon>
+        <span>{{ item?.meta?.title }}</span>
       </el-menu-item>
     </template>
   </el-menu>
@@ -28,9 +36,10 @@ import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import layoutRouter from '@/router/layout.ts'
 import MenuItemRecursive from './menuItemRecursive.vue'
+import { HomeFilled, Setting, User, Collection, Document } from '@element-plus/icons-vue'
 
 // 过滤掉隐藏的菜单
-const menuInfos = ref<any>(layoutRouter.filter(item => !item.meta.isHidden))
+const menuInfos = ref<any>(layoutRouter.filter((item: any) => !item.meta.isHidden))
 const routeInfo = useRoute()
 
 const menuTextColor = computed(() => {
@@ -79,6 +88,13 @@ const menuActiveTextColor = computed(() => {
     transition: all 0.3s;
     font-weight: 500;
     background-color: transparent !important;
+
+    .el-icon {
+      margin-right: 8px;
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+    }
 
     &:hover {
       color: #fff !important;

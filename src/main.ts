@@ -16,6 +16,12 @@ import { useThemeStore } from './stores/theme'
 
 // 创建应用实例
 const app = createApp(App)
+import { menuIconMap } from '@/utils/menuIcon'
+for (const [key, component] of Object.entries(menuIconMap)) {
+  console.log(key, component)
+
+  app.component(key, component)
+}
 
 // 使用插件
 app.use(pinia)
