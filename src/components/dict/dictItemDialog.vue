@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, defineProps, defineEmits } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { FormInstance } from 'element-plus'
 import type { DictCode, DictType, DictApiFields } from '../types'
 import { ElMessage } from 'element-plus'

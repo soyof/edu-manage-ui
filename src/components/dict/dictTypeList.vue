@@ -28,7 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
 import { Collection } from '@element-plus/icons-vue'
 import type { DictType } from '../types'
 

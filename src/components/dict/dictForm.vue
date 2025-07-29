@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, watch, reactive } from 'vue'
+import { ref, watch, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import type { DictCode, DictApiFields } from '../types'
 import { ElMessage } from 'element-plus'
