@@ -1,49 +1,68 @@
-/**
- * 字典数据类型定义
- */
-
-/**
- * 字典项接口
- */
-export interface DictItem {
-  dictId: string; // 字典ID
+// 字典API所需字段接口
+export interface DictApiFields {
+  dictId?: string; // 字典ID，如果提供则为更新
   dictType: string; // 字典类型编码
   dictTypeName: string; // 字典类型名称
-  dictCode: string; // 字典编码
   dictValue: string; // 字典值(中文)
   dictValueEn?: string; // 字典值(英文)
-  sortOrder?: number; // 排序字段
+  sortOrder?: number; // 排序
   remark?: string; // 备注
-  status: string; // 状态(1:启用,0:禁用)
-  createUserId?: string; // 创建人(用户编号)
-  updateUserId?: string; // 更新人(用户编号)
-  createUserName?: string; // 创建人姓名
-  updateUserName?: string; // 更新人姓名
-  createdTimes?: string; // 创建时间
-  updatedTimes?: string; // 更新时间
+  status?: number; // 状态(1:启用,0:禁用)，默认为1
 }
 
-/**
- * 字典查询参数
- */
-export interface DictQueryParams {
-  pageNum: number;
-  pageSize: number;
-  dictType?: string;
-  dictTypeName?: string;
-  dictCode?: string;
+// 字典类型接口定义
+export interface DictType {
+  id: string;
+  dictId: string;
+  dictType: string;
+  dictTypeName: string;
+  dictValue: string;
+  dictValueEn?: string;
+  sortOrder: number;
+  status: number;
+  isType: boolean;
+  createUserId?: string;
+  createdTimes?: string;
+  updateUserId?: string;
+  updatedTimes?: string;
+  [key: string]: any;
+}
+
+// 字典项接口定义
+export interface DictCode {
+  id: string;
+  dictId: string;
+  dictType: string;
+  dictTypeName: string;
+  dictValue: string;
+  dictValueEn?: string;
+  sortOrder: number;
+  remark?: string;
+  status: number;
+  createUserId?: string;
+  createdTimes?: string;
+  updateUserId?: string;
+  updatedTimes?: string;
+  isType?: boolean;
+  [key: string]: any;
+}
+
+// 树形字典数据接口定义
+export interface TreeDictItem {
+  id: string;
+  dictId: string;
+  dictType: string;
+  dictTypeName: string;
   dictValue?: string;
-  status?: string;
-  createdTimesRange?: string[];
-}
-
-/**
- * 字典分页结果
- */
-export interface DictPageResult {
-  total: number;
-  list: DictItem[];
-  pageNum: number;
-  pageSize: number;
-  pages: number;
+  dictValueEn?: string;
+  sortOrder: number;
+  remark?: string;
+  status: number;
+  createUserId?: string;
+  createdTimes?: string;
+  updateUserId?: string;
+  updatedTimes?: string;
+  isType?: boolean;
+  children?: TreeDictItem[];
+  [key: string]: any;
 }

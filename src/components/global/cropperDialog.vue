@@ -4,6 +4,7 @@
     :title="title"
     width="600px"
     destroyOnClose
+    draggable
     :closeOnClickModal="false"
     :closeOnPressEscape="false"
     @close="handleDialogClose"

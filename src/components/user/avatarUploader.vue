@@ -25,6 +25,7 @@
       v-model="showUploadDialog"
       title="上传头像"
       width="520px"
+      draggable
       :closeOnClickModal="false"
       :closeOnPressEscape="false"
       :destroyOnClose="true"

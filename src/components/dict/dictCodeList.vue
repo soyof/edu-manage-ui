@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { Plus, Delete } from '@element-plus/icons-vue'
-import type { DictType, DictCode, DictApiFields } from '../types'
+import type { DictType, DictCode } from '@/types/dict'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import service from '@/utils/services'
 
@@ -102,13 +102,25 @@ const handleAdd = () => {
 // 处理状态变更
 const handleStatusChange = (item: DictCode, status: number) => {
   const statusText = status === 1 ? '启用' : '禁用'
+  const originalStatus = status === 1 ? 0 : 1
 
-  // 调用API保存状态
-  service.post(`/dict/status/${item.dictId}`, {
-    status: status === 1 ? 0 : 1
+  ElMessageBox.confirm(`确认${statusText}该字典项吗？`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
   }).then(() => {
-    ElMessage.success(`${statusText}成功`)
-    emit('statusChange', { ...item, status })
+    // 调用API保存状态
+    service.put(`/api/dict/status/${item.dictId}`, {
+      status: status === 1 ? 0 : 1
+    }).then(() => {
+      ElMessage.success(`${statusText}成功`)
+      emit('statusChange', { ...item, status })
+    }).catch(() => {
+    // 接口报错时回退状态
+      item.status = originalStatus
+    })
+  }).catch(() => {
+    item.status = originalStatus
   })
 }
 

@@ -4,6 +4,8 @@
     title="新增字典项"
     width="500px"
     destroyOnClose
+    draggable
+    :closeOnClickModal="false"
     appendToBody
     @close="handleClose"
   >
@@ -57,7 +59,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { FormInstance } from 'element-plus'
-import type { DictCode, DictType, DictApiFields } from '../types'
+import type { DictCode, DictType, DictApiFields } from '@/types/dict'
 import { ElMessage } from 'element-plus'
 import service from '@/utils/services'
 

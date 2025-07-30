@@ -18,8 +18,6 @@ import { useThemeStore } from './stores/theme'
 const app = createApp(App)
 import { menuIconMap } from '@/utils/menuIcon'
 for (const [key, component] of Object.entries(menuIconMap)) {
-  console.log(key, component)
-
   app.component(key, component)
 }
 

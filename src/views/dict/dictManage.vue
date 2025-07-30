@@ -65,7 +65,7 @@ import DictTypeList from '@/components/dict/dictTypeList.vue'
 import DictCodeList from '@/components/dict/dictCodeList.vue'
 import DictForm from '@/components/dict/dictForm.vue'
 import DictItemDialog from '@/components/dict/dictItemDialog.vue'
-import type { DictType, DictCode, TreeDictItem } from './types'
+import type { DictType, DictCode, TreeDictItem } from '@/types/dict'
 
 // 当前选中的字典类型和字典项
 const currentDictType = ref<DictType | null>(null)

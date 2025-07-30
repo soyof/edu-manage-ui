@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { Collection } from '@element-plus/icons-vue'
-import type { DictType } from '../types'
+import type { DictType } from '@/types/dict'
 
 // 组件属性
 const props = defineProps<{

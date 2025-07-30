@@ -5,6 +5,7 @@
       :title="dialogTitle"
       width="600px"
       appendToBody
+      draggable
       :closeOnClickModal="false"
       @close="handleClose"
     >

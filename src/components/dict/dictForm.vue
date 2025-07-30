@@ -129,7 +129,7 @@
 <script setup lang="ts">
 import { ref, watch, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
-import type { DictCode, DictApiFields } from '../types'
+import type { DictCode, DictApiFields } from '@/types/dict'
 import { ElMessage } from 'element-plus'
 import { Edit, Check, Close } from '@element-plus/icons-vue'
 import service from '@/utils/services'
