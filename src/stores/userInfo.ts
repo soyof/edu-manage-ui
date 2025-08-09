@@ -22,6 +22,12 @@ export const useUserInfoStore = defineStore('userInfo', {
     },
     getToken: (state) => {
       return computed(() => state.token || localStorage.getItem('token'))
+    },
+    isAdmin: (state) => {
+      return computed(() => {
+        const userInfo = state.userInfo
+        return userInfo?.role === 'admin' || userInfo?.role === '管理员'
+      })
     }
   },
   actions: {

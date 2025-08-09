@@ -4,7 +4,7 @@
     <div class="layout-top">
       <div class="logo-wrap">
         <div class="logo-animation-container">
-          <span class="logo-text">合成生物研究所</span>
+          <span class="logo-text">合成生物学研究所</span>
           <div class="logo-particles"></div>
           <div class="logo-glow"></div>
         </div>

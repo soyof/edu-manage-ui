@@ -87,13 +87,27 @@
       </template>
 
       <!-- 表格列插槽 -->
-      <el-table-column type="selection" width="50" fixed="left" />
+      <el-table-column
+        type="selection"
+        width="50"
+        fixed="left"
+      />
       <el-table-column
         prop="title"
         label="专利名称"
         minWidth="180"
         showOverflowTooltip
-      />
+      >
+        <template #default="scope">
+          <span
+            class="clickable-title"
+            :title="scope.row.title"
+            @click="handleView(scope.row)"
+          >
+            {{ scope.row.title }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="applicationNum"
         label="申请号"
@@ -184,23 +198,16 @@
         width="180"
         showOverflowTooltip
       />
-      <el-table-column label="操作" width="130" fixed="right">
+      <el-table-column
+        label="操作"
+        width="110"
+        fixed="right"
+      >
         <template #default="scope">
           <div class="action-buttons">
-            <!-- 查看 -->
+            <!-- 编辑 - 仅管理员可见且未发布时可编辑 -->
             <el-tooltip
-              content="查看"
-              placement="top"
-              :showAfter="200"
-              :hideAfter="0"
-            >
-              <span class="action-icon-wrapper" @click="handleView(scope.row)">
-                <el-icon class="action-icon view-icon"><View /></el-icon>
-              </span>
-            </el-tooltip>
-
-            <!-- 编辑 - 仅未发布时可编辑 -->
-            <el-tooltip
+              v-if="isAdmin"
               :content="scope.row.publishStatus === '1' ? '已发布专利不可编辑' : '编辑'"
               placement="top"
               :showAfter="200"
@@ -215,8 +222,9 @@
               </span>
             </el-tooltip>
 
-            <!-- 发布/下线 -->
+            <!-- 发布/下线 - 仅管理员可见 -->
             <el-tooltip
+              v-if="isAdmin"
               :content="scope.row.publishStatus === '1' ? '下线' : '发布'"
               placement="top"
               :showAfter="200"
@@ -233,7 +241,7 @@
               </span>
             </el-tooltip>
 
-            <!-- 删除 -->
+            <!-- 删除 - 管理员可删除所有，非管理员只能删除自己待发布的数据 -->
             <el-tooltip
               :content="scope.row.publishStatus === '1' ? '已发布专利不能删除' : '删除'"
               placement="top"
@@ -259,13 +267,18 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
+import { useUserInfoStore } from '@/stores/userInfo'
+import { EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
 import { PatentStatus } from '@/dic/statusConfig'
 
 const router = useRouter()
+const userInfoStore = useUserInfoStore()
+
+// 获取管理员权限状态
+const isAdmin = userInfoStore.isAdmin
 
 interface PatentItem {
   id: number
@@ -359,6 +372,7 @@ const handleAdd = () => {
 const handleDelete = (row?: PatentItem) => {
   // 如果传入了row参数，则为单个删除，否则为批量删除
   const isBatchDelete = !row
+  const currentUser = userInfoStore.getUserInfo.value
 
   // 批量删除时检查是否有选中项
   if (isBatchDelete && selectedPatents.value.length === 0) {
@@ -376,6 +390,20 @@ const handleDelete = (row?: PatentItem) => {
   if (!isBatchDelete && row?.publishStatus === '1') {
     ElMessage.warning('已发布的专利不能删除')
     return
+  }
+
+  // 非管理员只能删除自己创建的数据
+  if (!isAdmin.value) {
+    if (isBatchDelete) {
+      const hasOthersData = selectedPatents.value.some(item => item.createUserName !== currentUser?.username)
+      if (hasOthersData) {
+        ElMessage.warning('您只能删除自己创建的专利')
+        return
+      }
+    } else if (row && row.createUserName !== currentUser?.username) {
+      ElMessage.warning('您只能删除自己创建的专利')
+      return
+    }
   }
 
   // 获取要删除的ID

@@ -196,7 +196,7 @@ const passwordRules = {
     { min: 8, message: '密码长度不能少于8位', trigger: 'change' },
     { max: 32, message: '密码长度不能超过32位', trigger: 'change' },
     {
-      validator: (rule: any, value: string, callback: any) => {
+      validator: (_rule: any, _value: string, callback: any) => {
         checkPasswordStrength()
         // 只检查中文字符和长度要求
         if (passwordChecks.hasChinese || passwordChecks.hasChineseSymbol) {
@@ -211,7 +211,7 @@ const passwordRules = {
   confirmPassword: [
     { required: true, message: '请再次输入新密码', trigger: 'blur' },
     {
-      validator: (rule: any, value: string, callback: any) => {
+      validator: (_rule: any, value: string, callback: any) => {
         if (value !== passwordForm.newPassword) {
           callback(new Error('两次输入的密码不一致'))
         } else {
@@ -224,10 +224,10 @@ const passwordRules = {
 }
 
 // 修改密码
-const changePassword = async() => {
+const changePassword = () => {
   if (!pwdFormRef.value) return
 
-  await pwdFormRef.value.validate(async(valid) => {
+  pwdFormRef.value.validate((valid) => {
     if (valid) {
       changeLoading(true, { text: '修改中...' })
 
@@ -236,37 +236,42 @@ const changePassword = async() => {
 
       if (!userId) {
         ElMessage.error('获取用户信息失败')
+        changeLoading(false)
         return
       }
 
       // 调用修改密码API
-      const res: any = await service.post('/api/changePassword', {
+      service.post('/api/changePassword', {
         userId,
         oldPassword: encodePwByMd5(passwordForm.oldPassword),
         newPassword: encodePwByMd5(passwordForm.newPassword)
-      })
+      }).then((res: any) => {
+        if (res) {
+          ElMessage.success('密码修改成功')
+          resetPasswordForm()
 
-      if (res) {
-        ElMessage.success('密码修改成功')
-        resetPasswordForm()
-
-        // 询问是否要重新登录
-        ElMessageBox.confirm(
-          '密码已修改成功，是否立即退出并重新登录？',
-          '提示',
-          {
-            confirmButtonText: '是',
-            cancelButtonText: '否',
-            type: 'info'
-          }
-        ).then(() => {
-          userInfoStore.logout().then(() => {
-            window.location.href = '/login'
+          // 询问是否要重新登录
+          ElMessageBox.confirm(
+            '密码已修改成功，是否立即退出并重新登录？',
+            '提示',
+            {
+              confirmButtonText: '是',
+              cancelButtonText: '否',
+              type: 'info'
+            }
+          ).then(() => {
+            userInfoStore.logout().then(() => {
+              window.location.href = '/login'
+            })
+          }).finally(() => {
+            changeLoading(false)
           })
-        }).finally(() => {
+        } else {
           changeLoading(false)
-        })
-      }
+        }
+      }).finally(() => {
+        changeLoading(false)
+      })
     }
   })
 }

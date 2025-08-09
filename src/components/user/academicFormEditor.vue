@@ -10,22 +10,37 @@
     >
       <!-- 必须显示的部分 -->
       <el-collapse v-model="activeCollapse">
-        <template v-for="(section, sectionIndex) in requiredSections" :key="sectionIndex">
+        <template v-for="section in requiredSections" :key="section.title">
           <el-collapse-item :name="section.title">
             <template #title>
               <span class="section-title">{{ section.title }}</span>
             </template>
 
-            <template v-for="(field, fieldIndex) in section.fields" :key="`${sectionIndex}-${fieldIndex}`">
-              <el-form-item :label="field.label" :prop="field.prop">
-                <TinyMceEditor
-                  v-model="(userInfoForm[field.prop as keyof typeof userInfoForm] as string)"
-                  :disabled="isDisabled"
-                  :placeholder="field.placeholder"
-                  :height="500"
-                />
-              </el-form-item>
-            </template>
+            <!-- 按组合成中英文tab -->
+            <el-form-item :label="section.title" class="content-form-item">
+              <el-tabs type="border-card" class="simple-tabs">
+                <el-tab-pane label="中文内容">
+                  <div class="editor-wrapper">
+                    <TinyMceEditor
+                      v-model="(userInfoForm[section.fields[0].prop as keyof typeof userInfoForm] as string)"
+                      :disabled="isDisabled"
+                      :placeholder="section.fields[0].placeholder"
+                      :height="500"
+                    />
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="英文内容">
+                  <div class="editor-wrapper">
+                    <TinyMceEditor
+                      v-model="(userInfoForm[section.fields[1].prop as keyof typeof userInfoForm] as string)"
+                      :disabled="isDisabled"
+                      :placeholder="section.fields[1].placeholder"
+                      :height="500"
+                    />
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
+            </el-form-item>
           </el-collapse-item>
         </template>
       </el-collapse>
@@ -47,7 +62,7 @@
 
       <!-- 可选部分内容 -->
       <el-collapse v-model="activeOptionalCollapse">
-        <template v-for="(section, sectionIndex) in optionalSections" :key="`opt-${sectionIndex}`">
+        <template v-for="section in optionalSections" :key="`opt-${section.key}`">
           <el-collapse-item
             v-if="userInfoForm.sections[section.key]"
             :name="section.key"
@@ -56,16 +71,31 @@
               <span class="section-title">{{ section.title }}</span>
             </template>
 
-            <template v-for="(field, fieldIndex) in section.fields" :key="`${sectionIndex}-${fieldIndex}`">
-              <el-form-item :label="field.label" :prop="field.prop">
-                <TinyMceEditor
-                  v-model="(userInfoForm[field.prop as keyof typeof userInfoForm] as string)"
-                  :disabled="isDisabled"
-                  :placeholder="field.placeholder"
-                  :height="500"
-                />
-              </el-form-item>
-            </template>
+            <!-- 按组合成中英文tab -->
+            <el-form-item :label="section.title" class="content-form-item">
+              <el-tabs type="border-card" class="simple-tabs">
+                <el-tab-pane label="中文内容">
+                  <div class="editor-wrapper">
+                    <TinyMceEditor
+                      v-model="(userInfoForm[section.fields[0].prop as keyof typeof userInfoForm] as string)"
+                      :disabled="isDisabled"
+                      :placeholder="section.fields[0].placeholder"
+                      :height="500"
+                    />
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="英文内容">
+                  <div class="editor-wrapper">
+                    <TinyMceEditor
+                      v-model="(userInfoForm[section.fields[1].prop as keyof typeof userInfoForm] as string)"
+                      :disabled="isDisabled"
+                      :placeholder="section.fields[1].placeholder"
+                      :height="500"
+                    />
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
+            </el-form-item>
           </el-collapse-item>
         </template>
       </el-collapse>
@@ -622,6 +652,83 @@ defineExpose({
     justify-content: flex-start;
     gap: 10px;
     margin-top: 20px;
+  }
+
+  // 内容编辑表单项样式
+  .content-form-item {
+    :deep(.el-form-item__label) {
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .editor-wrapper {
+      width: 100%;
+
+      .tiny-mce-editor {
+        border-radius: 6px;
+      }
+    }
+
+    :deep(.simple-tabs) {
+      box-shadow: none;
+      border: none;
+      width: 100%;
+
+      .el-tabs__header {
+        background: #fff;
+        border: none;
+        margin-bottom: 4px;
+        border: 1px solid var(--el-border-color);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .el-tabs__content {
+        padding: 0;
+        border: none;
+        background: #fff;
+      }
+
+      .el-tabs__nav-wrap {
+        &::after {
+          display: none;
+        }
+      }
+
+      .el-tabs__nav {
+        border: none !important;
+      }
+
+      .el-tabs__item {
+        height: 40px !important;
+        line-height: 40px !important;
+        font-size: 15px;
+        color: #606266;
+        border: none !important;
+        position: relative;
+        transition: all 0.2s;
+
+        &.is-active {
+          color: var(--el-color-primary);
+          font-weight: 500;
+          background: transparent;
+
+          &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--el-color-primary);
+          }
+        }
+
+        &:hover {
+          color: var(--el-color-primary);
+        }
+      }
+    }
   }
 }
 </style>

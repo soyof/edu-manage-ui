@@ -32,25 +32,6 @@
           <div class="status-dot" :class="'status-' + instrumentData.publishStatus"></div>
           <span class="status-text">{{ InstrumentStatus.getName(instrumentData.publishStatus) }}</span>
         </div>
-        <el-tooltip content="编辑" placement="top" :showAfter="300">
-          <el-button
-            class="action-button"
-            type="primary"
-            circle
-            :icon="EditPen"
-            :disabled="instrumentData.publishStatus === '1'"
-            @click="handleEdit"
-          />
-        </el-tooltip>
-        <el-tooltip :content="instrumentData.publishStatus === '1' ? '下线' : '发布'" placement="top" :showAfter="300">
-          <el-button
-            class="action-button"
-            :type="instrumentData.publishStatus === '1' ? 'warning' : 'success'"
-            circle
-            :icon="instrumentData.publishStatus === '1' ? CircleClose : Check"
-            @click="handlePublishStatus"
-          />
-        </el-tooltip>
       </div>
     </div>
 
@@ -246,12 +227,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import {
   EditPen,
   Check,
-  CircleClose,
   Document,
   Setting,
   Picture,
@@ -263,7 +243,6 @@ import { createStatusConfig } from '@/dic/statusConfig'
 import useLoading from '@/hooks/useLoading'
 
 const route = useRoute()
-const router = useRouter()
 const { loading, changeLoading, closeLoading } = useLoading()
 
 // 创建仪器状态配置
@@ -345,45 +324,6 @@ const fetchInstrumentDetail = () => {
   }).finally(() => {
     closeLoading()
   })
-}
-
-// 编辑仪器
-const handleEdit = () => {
-  if (instrumentData.publishStatus === '1') {
-    ElMessage.warning('已发布的仪器不可编辑')
-    return
-  }
-
-  const tabTitle = `编辑仪器【${instrumentData.instName}】`
-  router.push({
-    path: '/modifyInstrumentInfos',
-    query: {
-      mode: 'edit',
-      id: instrumentId.value,
-      tabTitle: encodeURIComponent(tabTitle)
-    }
-  })
-}
-
-// 处理发布状态
-const handlePublishStatus = () => {
-  const isPublish = instrumentData.publishStatus !== '1'
-  const actionText = isPublish ? '发布' : '下线'
-
-  ElMessageBox.confirm(`确认${actionText}该仪器吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: isPublish ? 'info' : 'warning'
-  }).then(() => {
-    service.post('/api/instrument/publish', {
-      id: instrumentData.id,
-      action: isPublish ? 'publish' : 'unpublish'
-    }).then(() => {
-      ElMessage.success(`${actionText}成功`)
-      // 重新获取数据
-      fetchInstrumentDetail()
-    })
-  }).catch(() => {})
 }
 
 // 页面初始化

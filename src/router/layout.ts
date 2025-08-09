@@ -3,38 +3,38 @@ export default [
   {
     path: '/homePage',
     name: 'homePage',
-    meta: { title: '首页', tabClosable: false, icon: 'HomeFilled' },
+    meta: { title: '首页', tabClosable: false, icon: 'HomeFilled', roles: ['admin', 'user'] },
     component: () => import(/* webpackChunkName: "homePage" */ '@/views/home/homePage.vue')
   },
   // 系统管理
   {
     path: '/systemManage',
     name: 'systemManage',
-    meta: { title: '系统管理', tabClosable: true, icon: 'Setting' },
+    meta: { title: '系统管理', tabClosable: true, icon: 'Setting', roles: ['admin'] },
     children: [
       {
         path: '/userManage',
         name: 'userManage',
-        meta: { title: '用户管理', tabClosable: true, icon: 'User' },
+        meta: { title: '用户管理', tabClosable: true, icon: 'User', roles: ['admin'] },
         component: () => import(/* webpackChunkName: "userManage" */ '@/views/user/userManage.vue')
       },
       {
         path: '/dictManage',
         name: 'dictManage',
-        meta: { title: '字典管理', tabClosable: true, icon: 'Collection' },
+        meta: { title: '字典管理', tabClosable: true, icon: 'Collection', roles: ['admin'] },
         component: () => import(/* webpackChunkName: "dictManage" */ '@/views/dict/dictManage.vue')
       },
       // 隐藏路由
       {
         path: '/userCenter',
         name: 'userCenter',
-        meta: { title: '个人中心', isHidden: true, tabClosable: true, icon: 'UserFilled' },
+        meta: { title: '个人中心', isHidden: true, tabClosable: true, icon: 'UserFilled', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "userCenter" */ '@/views/user/userCenter.vue')
       },
       {
         path: '/modifyUserOtherInfos',
         name: 'modifyUserOtherInfos',
-        meta: { title: '学术档案', isHidden: true, tabClosable: true, icon: 'Document' },
+        meta: { title: '学术档案', isHidden: true, tabClosable: true, icon: 'Document', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "modifyUserInfos" */ '@/views/user/modifyUserOtherInfos.vue')
       }
     ]
@@ -44,24 +44,24 @@ export default [
   {
     path: '/contentManage',
     name: 'contentManage',
-    meta: { title: '内容管理', tabClosable: true, icon: 'Document' },
+    meta: { title: '内容管理', tabClosable: true, icon: 'Document', roles: ['admin', 'user'] },
     children: [
       {
         path: '/noticeManage',
         name: 'noticeManage',
-        meta: { title: '通知管理', tabClosable: true, icon: 'Bell' },
+        meta: { title: '通知管理', tabClosable: true, icon: 'Bell', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "noticeManage" */ '@/views/notice/noticeManage.vue')
       },
       {
         path: '/labProfileManage',
         name: 'labProfileManage',
-        meta: { title: '简介管理', tabClosable: true, icon: 'Memo' },
+        meta: { title: '简介管理', tabClosable: true, icon: 'Memo', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "labProfileManage" */ '@/views/labProfile/labProfileManage.vue')
       },
       {
         path: '/dynamicManage',
         name: 'dynamicManage',
-        meta: { title: '动态管理', tabClosable: true, icon: 'Notification' },
+        meta: { title: '动态管理', tabClosable: true, icon: 'Notification', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "dynamicManage" */ '@/views/dynamic/dynamicManage.vue')
       },
       // 隐藏路由
@@ -74,7 +74,7 @@ export default [
       {
         path: '/noticeDetail',
         name: 'noticeDetail',
-        meta: { title: '通知详情', isHidden: true, tabClosable: true, icon: 'View' },
+        meta: { title: '通知详情', isHidden: true, tabClosable: true, icon: 'View', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "noticeDetail" */ '@/views/notice/noticeDetail.vue')
       },
       {
@@ -86,7 +86,7 @@ export default [
       {
         path: '/labProfileDetail',
         name: 'labProfileDetail',
-        meta: { title: '简介详情', isHidden: true, tabClosable: true, icon: 'View' },
+        meta: { title: '简介详情', isHidden: true, tabClosable: true, icon: 'View', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "labProfileDetail" */ '@/views/labProfile/labProfileDetail.vue')
       },
       {
@@ -98,7 +98,7 @@ export default [
       {
         path: '/dynamicDetail',
         name: 'dynamicDetail',
-        meta: { title: '动态详情', isHidden: true, tabClosable: true, icon: 'View' },
+        meta: { title: '动态详情', isHidden: true, tabClosable: true, icon: 'View', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "dynamicDetail" */ '@/views/dynamic/dynamicDetail.vue')
       }
     ]
@@ -108,13 +108,13 @@ export default [
   {
     path: '/researchAchievements',
     name: 'researchAchievements',
-    meta: { title: '科研成果', tabClosable: true, icon: 'Trophy' },
+    meta: { title: '科研成果', tabClosable: true, icon: 'Trophy', roles: ['admin', 'user'] },
     children: [
       // 论文管理相关路由
       {
         path: '/paperManage',
         name: 'paperManage',
-        meta: { title: '论文管理', tabClosable: true, icon: 'Document' },
+        meta: { title: '论文管理', tabClosable: true, icon: 'Document', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "paperManage" */ '@/views/paper/paperManage.vue')
       },
       {
@@ -133,7 +133,7 @@ export default [
       {
         path: '/patentManage',
         name: 'patentManage',
-        meta: { title: '专利管理', tabClosable: true, icon: 'Medal' },
+        meta: { title: '专利管理', tabClosable: true, icon: 'Medal', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "patentManage" */ '@/views/patent/patentManage.vue')
       },
       {
@@ -152,7 +152,7 @@ export default [
       {
         path: '/bookManage',
         name: 'bookManage',
-        meta: { title: '著作管理', tabClosable: true, icon: 'Reading' },
+        meta: { title: '著作管理', tabClosable: true, icon: 'Reading', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "bookManage" */ '@/views/book/bookManage.vue')
       },
       {
@@ -174,24 +174,24 @@ export default [
   {
     path: '/resourceManage',
     name: 'resourceManage',
-    meta: { title: '资源管理', tabClosable: true, icon: 'Box' },
+    meta: { title: '资源管理', tabClosable: true, icon: 'Box', roles: ['admin', 'user'] },
     children: [
       {
         path: '/recruitManage',
         name: 'recruitManage',
-        meta: { title: '招聘信息管理', tabClosable: true, icon: 'UserFilled' },
+        meta: { title: '招聘信息管理', tabClosable: true, icon: 'UserFilled', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "recruitManage" */ '@/views/recruit/recruitManage.vue')
       },
       {
         path: '/instrumentManage',
         name: 'instrumentManage',
-        meta: { title: '仪器管理', tabClosable: true, icon: 'Suitcase' },
+        meta: { title: '仪器管理', tabClosable: true, icon: 'Suitcase', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "instrumentManage" */ '@/views/instrument/instrumentManage.vue')
       },
       {
         path: '/toolManage',
         name: 'toolManage',
-        meta: { title: '开源工具管理', tabClosable: true, icon: 'Tools' },
+        meta: { title: '开源工具管理', tabClosable: true, icon: 'Tools', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "toolManage" */ '@/views/tool/toolManage.vue')
       },
       // 隐藏路由
@@ -204,7 +204,7 @@ export default [
       {
         path: '/recruitInfoDetail',
         name: 'recruitInfoDetail',
-        meta: { title: '招聘信息详情', isHidden: true, tabClosable: true, icon: 'View' },
+        meta: { title: '招聘信息详情', isHidden: true, tabClosable: true, icon: 'View', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "recruitInfoDetail" */ '@/views/recruit/recruitInfoDetail.vue')
       },
       {
@@ -216,7 +216,7 @@ export default [
       {
         path: '/instrumentDetail',
         name: 'instrumentDetail',
-        meta: { title: '仪器详情', isHidden: true, tabClosable: true, icon: 'View' },
+        meta: { title: '仪器详情', isHidden: true, tabClosable: true, icon: 'View', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "instrumentDetail" */ '@/views/instrument/instrumentDetail.vue')
       },
       {
@@ -228,7 +228,7 @@ export default [
       {
         path: '/toolDetail',
         name: 'toolDetail',
-        meta: { title: '工具详情', isHidden: true, tabClosable: true, icon: 'View' },
+        meta: { title: '工具详情', isHidden: true, tabClosable: true, icon: 'View', roles: ['admin', 'user'] },
         component: () => import(/* webpackChunkName: "toolDetail" */ '@/views/tool/toolDetail.vue')
       }
     ]

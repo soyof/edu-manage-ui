@@ -32,15 +32,52 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useUserInfoStore } from '@/stores/userInfo'
 import layoutRouter from '@/router/layout.ts'
 import MenuItemRecursive from './menuItemRecursive.vue'
-import { HomeFilled, Setting, User, Collection, Document } from '@element-plus/icons-vue'
 
-// 过滤掉隐藏的菜单
-const menuInfos = ref<any>(layoutRouter.filter((item: any) => !item.meta.isHidden))
 const routeInfo = useRoute()
+const userInfoStore = useUserInfoStore()
+
+// 获取当前用户角色和管理员状态
+const userRole = computed(() => {
+  const userInfo = userInfoStore.getUserInfo.value
+  return userInfo?.role || 'user'
+})
+const isAdmin = userInfoStore.isAdmin
+
+// 检查用户是否有访问权限
+const hasPermission = (roles: string[] | undefined): boolean => {
+  if (!roles || roles.length === 0) return true
+  return roles.includes(userRole.value) || (roles.includes('admin') && isAdmin.value)
+}
+
+// 递归过滤菜单权限
+const filterMenuByPermission = (menus: any[]): any[] => {
+  return menus.filter(menu => {
+    // 检查当前菜单是否有权限
+    if (!hasPermission(menu.meta?.roles)) {
+      return false
+    }
+
+    // 如果有子菜单，递归过滤子菜单
+    if (menu.children && menu.children.length > 0) {
+      menu.children = filterMenuByPermission(menu.children)
+      // 如果过滤后没有可见的子菜单，则隐藏父菜单
+      return menu.children.length > 0
+    }
+
+    return true
+  })
+}
+
+// 过滤掉隐藏的菜单和没有权限的菜单
+const menuInfos = computed(() => {
+  const visibleMenus = layoutRouter.filter((item: any) => !item.meta.isHidden)
+  return filterMenuByPermission(visibleMenus)
+})
 
 const menuTextColor = computed(() => {
   return `var(--menuTextColor)`

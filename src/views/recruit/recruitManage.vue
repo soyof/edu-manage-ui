@@ -23,7 +23,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col v-if="isAdmin" :span="6">
           <el-form-item label="状态">
             <el-select v-model="form.status" placeholder="请选择状态" clearable>
               <el-option
@@ -78,39 +78,52 @@
 
       <!-- 操作区域插槽 -->
       <template #operation>
-        <el-tooltip
-          content="新增招聘信息"
-          placement="top"
-          :showAfter="200"
-          :hideAfter="0"
-        >
-          <ThrottleButton size="small" type="primary" @click="addRecruitInfo">
-            <el-icon><Plus /></el-icon>
-          </ThrottleButton>
-        </el-tooltip>
-        <el-tooltip
-          content="批量删除"
-          placement="top"
-          :showAfter="200"
-          :hideAfter="0"
-        >
-          <ThrottleButton
-            size="small"
-            type="danger"
-            :disabled="isDeleteButtonDisabled"
-            @click="batchDelete"
+        <template v-if="isAdmin">
+          <el-tooltip
+            content="新增招聘信息"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
           >
-            <el-icon><Delete /></el-icon>
-          </ThrottleButton>
-        </el-tooltip>
+            <ThrottleButton size="small" type="primary" @click="addRecruitInfo">
+              <el-icon><Plus /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+          <el-tooltip
+            content="批量删除"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
+          >
+            <ThrottleButton
+              size="small"
+              type="danger"
+              :disabled="isDeleteButtonDisabled"
+              @click="batchDelete"
+            >
+              <el-icon><Delete /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+        </template>
       </template>
 
       <!-- 表格列插槽 -->
-      <el-table-column type="selection" width="50" fixed="left" />
+      <el-table-column
+        v-if="isAdmin"
+        type="selection"
+        width="50"
+        fixed="left"
+      />
       <el-table-column prop="id" label="ID" width="50" />
       <el-table-column label="招聘类型" minWidth="180">
         <template #default="scope">
-          {{ getRecruitTypeLabel(scope.row.recruitmentType) }}
+          <span
+            class="clickable-title"
+            :title="getRecruitTypeLabel(scope.row.recruitmentType)"
+            @click="viewRecruitInfo(scope.row)"
+          >
+            {{ getRecruitTypeLabel(scope.row.recruitmentType) }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="状态" width="120">
@@ -156,21 +169,14 @@
         minWidth="180"
         showOverflowTooltip
       />
-      <el-table-column label="操作" width="130" fixed="right">
+      <el-table-column
+        v-if="isAdmin"
+        label="操作"
+        width="110"
+        fixed="right"
+      >
         <template #default="scope">
           <div class="action-buttons">
-            <!-- 查看 -->
-            <el-tooltip
-              content="查看"
-              placement="top"
-              :showAfter="200"
-              :hideAfter="0"
-            >
-              <span class="action-icon-wrapper" @click="viewRecruitInfo(scope.row)">
-                <el-icon class="action-icon view-icon"><View /></el-icon>
-              </span>
-            </el-tooltip>
-
             <!-- 编辑 - 仅未发布和已存档状态可编辑 -->
             <el-tooltip
               :content="scope.row.status === '1' ? '生效中的信息不可编辑' : '编辑'"
@@ -231,7 +237,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
+import { useUserInfoStore } from '@/stores/userInfo'
+import { EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
@@ -239,6 +246,10 @@ import { useDictInfo } from '@/hooks/useDictionary'
 import { RecruitStatus } from '@/dic/statusConfig'
 
 const router = useRouter()
+const userInfoStore = useUserInfoStore()
+
+// 获取管理员权限状态
+const isAdmin = userInfoStore.isAdmin
 
 // 使用字典获取招聘类型选项
 const { dictList: recruitTypeList, loading: recruitTypeLoading, getDictLabel: getRecruitTypeLabel } = useDictInfo('recruitment_type', true)
@@ -249,11 +260,11 @@ interface RecruitListData {
   total: number
 }
 
-// 分页数据结构
-interface PageData<T> {
-  list: T[]
-  total: number
-}
+// 分页数据结构（未使用，但保留以备将来使用）
+// interface PageData<T> {
+//   list: T[]
+//   total: number
+// }
 
 // 招聘信息类型定义
 interface RecruitItem {

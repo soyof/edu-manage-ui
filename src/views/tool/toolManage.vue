@@ -26,7 +26,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col v-if="isAdmin" :span="6">
           <el-form-item label="发布状态">
             <el-select v-model="form.publishStatus" placeholder="请选择发布状态" clearable>
               <el-option
@@ -38,7 +38,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col v-if="isAdmin" :span="6">
           <el-form-item label="发布人">
             <el-input v-model="form.publishUserId" placeholder="请输入发布人" clearable />
           </el-form-item>
@@ -59,41 +59,55 @@
 
       <!-- 操作区域插槽 -->
       <template #operation>
-        <el-tooltip
-          content="新增工具"
-          placement="top"
-          :showAfter="200"
-          :hideAfter="0"
-        >
-          <ThrottleButton size="small" type="primary" @click="handleAdd">
-            <el-icon><Plus /></el-icon>
-          </ThrottleButton>
-        </el-tooltip>
-        <el-tooltip
-          content="批量删除"
-          placement="top"
-          :showAfter="200"
-          :hideAfter="0"
-        >
-          <ThrottleButton
-            size="small"
-            type="danger"
-            :disabled="isDeleteButtonDisabled"
-            @click="handleDelete()"
+        <template v-if="isAdmin">
+          <el-tooltip
+            content="新增工具"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
           >
-            <el-icon><Delete /></el-icon>
-          </ThrottleButton>
-        </el-tooltip>
+            <ThrottleButton size="small" type="primary" @click="handleAdd">
+              <el-icon><Plus /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+          <el-tooltip
+            content="批量删除"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
+          >
+            <ThrottleButton
+              size="small"
+              type="danger"
+              :disabled="isDeleteButtonDisabled"
+              @click="handleDelete()"
+            >
+              <el-icon><Delete /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+        </template>
       </template>
 
       <!-- 表格列插槽 -->
-      <el-table-column type="selection" width="50" fixed="left" />
+      <el-table-column v-if="isAdmin" type="selection" width="50"
+        fixed="left"
+      />
       <el-table-column
         prop="title"
         label="工具标题(中文)"
         minWidth="180"
         showOverflowTooltip
-      />
+      >
+        <template #default="scope">
+          <span
+            class="clickable-title"
+            :title="scope.row.title"
+            @click="handleView(scope.row)"
+          >
+            {{ scope.row.title }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="titleEn"
         label="工具标题(英文)"
@@ -165,25 +179,14 @@
         showOverflowTooltip
       />
       <el-table-column
+        v-if="isAdmin"
         fixed="right"
         label="操作"
-        width="130"
+        width="110"
         className="action-column"
       >
         <template #default="scope">
           <div class="action-column-container">
-            <!-- 查看按钮 -->
-            <el-tooltip
-              content="查看"
-              placement="top"
-              :showAfter="200"
-              :hideAfter="0"
-            >
-              <span class="action-icon-wrapper" @click="handleView(scope.row)">
-                <el-icon class="action-icon view-icon"><View /></el-icon>
-              </span>
-            </el-tooltip>
-
             <!-- 编辑按钮 -->
             <el-tooltip
               :content="scope.row.publishStatus === '1' ? '已发布工具不能编辑' : '编辑'"
@@ -249,7 +252,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
+import { useUserInfoStore } from '@/stores/userInfo'
+import { EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
@@ -266,6 +270,10 @@ const ToolTypeDict = useDictionary({
 })
 
 const router = useRouter()
+const userInfoStore = useUserInfoStore()
+
+// 获取管理员权限状态
+const isAdmin = userInfoStore.isAdmin
 
 interface ToolItem {
   id: number

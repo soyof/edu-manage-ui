@@ -26,7 +26,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col v-if="isAdmin" :span="6">
           <el-form-item label="发布状态">
             <el-select v-model="form.publishStatus" placeholder="请选择状态" clearable>
               <el-option
@@ -76,41 +76,55 @@
 
       <!-- 操作区域插槽 -->
       <template #operation>
-        <el-tooltip
-          content="新增简介"
-          placement="top"
-          :showAfter="200"
-          :hideAfter="0"
-        >
-          <ThrottleButton size="small" type="primary" @click="handleAdd">
-            <el-icon><Plus /></el-icon>
-          </ThrottleButton>
-        </el-tooltip>
-        <el-tooltip
-          content="批量删除"
-          placement="top"
-          :showAfter="200"
-          :hideAfter="0"
-        >
-          <ThrottleButton
-            size="small"
-            type="danger"
-            :disabled="isDeleteButtonDisabled"
-            @click="handleDelete()"
+        <template v-if="isAdmin">
+          <el-tooltip
+            content="新增简介"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
           >
-            <el-icon><Delete /></el-icon>
-          </ThrottleButton>
-        </el-tooltip>
+            <ThrottleButton size="small" type="primary" @click="handleAdd">
+              <el-icon><Plus /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+          <el-tooltip
+            content="批量删除"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
+          >
+            <ThrottleButton
+              size="small"
+              type="danger"
+              :disabled="isDeleteButtonDisabled"
+              @click="handleDelete()"
+            >
+              <el-icon><Delete /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+        </template>
       </template>
 
       <!-- 表格列插槽 -->
-      <el-table-column type="selection" width="50" fixed="left" />
+      <el-table-column v-if="isAdmin" type="selection" width="50"
+        fixed="left"
+      />
       <el-table-column
         prop="title"
         label="简介标题"
         minWidth="200"
         showOverflowTooltip
-      />
+      >
+        <template #default="scope">
+          <span
+            class="clickable-title"
+            :title="scope.row.title"
+            @click="handleView(scope.row)"
+          >
+            {{ scope.row.title }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="profileType"
         label="简介类型"
@@ -169,21 +183,14 @@
         minWidth="180"
         showOverflowTooltip
       />
-      <el-table-column label="操作" width="130" fixed="right">
+      <el-table-column
+        v-if="isAdmin"
+        label="操作"
+        width="110"
+        fixed="right"
+      >
         <template #default="scope">
           <div class="action-buttons">
-            <!-- 查看 -->
-            <el-tooltip
-              content="查看"
-              placement="top"
-              :showAfter="200"
-              :hideAfter="0"
-            >
-              <span class="action-icon-wrapper" @click="handleView(scope.row)">
-                <el-icon class="action-icon view-icon"><View /></el-icon>
-              </span>
-            </el-tooltip>
-
             <!-- 编辑 - 仅未发布时可编辑 -->
             <el-tooltip
               :content="scope.row.publishStatus === '1' ? '生效中的简介不可编辑' : '编辑'"
@@ -244,7 +251,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { View, EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
+import { useUserInfoStore } from '@/stores/userInfo'
+import { EditPen, Delete, Check, CircleClose, Plus } from '@element-plus/icons-vue'
 import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
@@ -252,6 +260,10 @@ import { ProfileStatus } from '@/dic/statusConfig'
 import { useDictionary } from '@/hooks/useDictionary'
 
 const router = useRouter()
+const userInfoStore = useUserInfoStore()
+
+// 获取管理员权限状态
+const isAdmin = userInfoStore.isAdmin
 
 // 获取简介类型字典数据
 const { dictList: introTypeList, getDictLabel: getIntroTypeLabel } = useDictionary({
@@ -420,6 +432,7 @@ const refreshTable = (pageNum: number) => {
 
 <style scoped lang="less">
 .lab-profile-manage-container {
+  position: relative;
 }
 
 :deep(.el-table .cell) {

@@ -1,3 +1,4 @@
-export { default as LatestNotices } from './LatestNotices.vue'
-export { default as LatestDynamics } from './LatestDynamics.vue'
-export { default as LatestResearch } from './LatestResearch.vue'
+export { default as LatestNotices } from './latestNotices.vue'
+export { default as LatestDynamics } from './latestDynamics.vue'
+export { default as LatestResearch } from './latestResearch.vue'
+export { default as QuickShortcuts } from './quickShortcuts.vue'

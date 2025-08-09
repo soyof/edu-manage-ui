@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useUserInfoStore } from '@/stores/userInfo'
 
 // 定义菜单项类型
 interface MenuItem {
@@ -35,6 +36,7 @@ interface MenuItem {
     isHidden?: boolean
     tabClosable?: boolean
     icon?: string
+    roles?: string[]
   }
   children?: MenuItem[]
 }
@@ -44,14 +46,48 @@ const props = defineProps<{
   menuList: MenuItem[]
 }>()
 
-// 过滤出不需要隐藏的菜单项
+const userInfoStore = useUserInfoStore()
+
+// 获取当前用户角色和管理员状态
+const userRole = computed(() => {
+  const userInfo = userInfoStore.getUserInfo.value
+  return userInfo?.role || 'user'
+})
+const isAdmin = userInfoStore.isAdmin
+
+// 检查用户是否有访问权限
+const hasPermission = (roles: string[] | undefined): boolean => {
+  if (!roles || roles.length === 0) return true
+  return roles.includes(userRole.value) || (roles.includes('admin') && isAdmin.value)
+}
+
+// 递归过滤菜单权限
+const filterMenuByPermission = (menus: MenuItem[]): MenuItem[] => {
+  return menus.filter(menu => {
+    // 检查当前菜单是否有权限和是否隐藏
+    if (menu.meta.isHidden || !hasPermission(menu.meta?.roles)) {
+      return false
+    }
+
+    // 如果有子菜单，递归过滤子菜单
+    if (menu.children && menu.children.length > 0) {
+      menu.children = filterMenuByPermission(menu.children)
+      // 如果过滤后没有可见的子菜单，则隐藏父菜单
+      return menu.children.length > 0
+    }
+
+    return true
+  })
+}
+
+// 过滤出不需要隐藏且有权限的菜单项
 const filteredMenuList = computed(() => {
-  return props.menuList.filter(item => !item.meta.isHidden)
+  return filterMenuByPermission(props.menuList)
 })
 
-// 获取可见的子菜单项
+// 获取可见且有权限的子菜单项
 const getVisibleChildren = (children: MenuItem[]) => {
-  return children.filter(child => !child.meta.isHidden)
+  return filterMenuByPermission(children)
 }
 </script>
 

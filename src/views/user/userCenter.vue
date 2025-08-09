@@ -63,6 +63,9 @@ const handleTabClick = () => {
 }
 
 .user-center {
+  width: 100%;
+  height: @contentHeight;
+  overflow: hidden;
   animation: fadeIn 0.4s ease-out;
 
   .user-info-card {
