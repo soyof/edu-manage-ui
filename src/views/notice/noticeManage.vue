@@ -51,6 +51,14 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
+          <el-form-item label="是否置顶">
+            <el-select v-model="form.isTop" placeholder="请选择是否置顶" clearable>
+              <el-option label="否" :value="0" />
+              <el-option label="是" :value="1" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="发布时间">
             <el-date-picker
               v-model="form.publishTimesRange"
@@ -164,6 +172,21 @@
             :effect="scope.row.importance === '3003' ? 'dark' : 'light'"
           >
             {{ translateImportance(scope.row.importance.toString()) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="isTop"
+        label="是否置顶"
+        width="100"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          <el-tag
+            :type="scope.row.isTop === 1 ? 'success' : 'info'"
+            :effect="scope.row.isTop === 1 ? 'dark' : 'plain'"
+          >
+            {{ scope.row.isTop === 1 ? '是' : '否' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -304,6 +327,7 @@ const initialSearchForm = {
   noticeType: '',
   publishStatus: '',
   importance: '',
+  isTop: '',
   publishTimesRange: [] as string[],
   updatedTimesRange: [] as string[]
 }

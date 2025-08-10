@@ -58,6 +58,14 @@
             </el-select>
           </el-form-item>
 
+          <!-- 是否置顶 -->
+          <el-form-item label="是否置顶" prop="isTop">
+            <el-radio-group v-model="formData.isTop">
+              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">是</el-radio>
+            </el-radio-group>
+          </el-form-item>
+
           <!-- 文本类型的通知内容 -->
           <template v-if="isTextType">
             <!-- 通知内容 - 中文 -->
@@ -120,6 +128,7 @@ interface NoticeData {
   contentEn: string
   linkUrl?: string
   status: number
+  isTop: number
   [key: string]: any
 }
 
@@ -167,6 +176,7 @@ const formData = reactive<{
   contentEn: string
   linkUrl: string
   status?: number
+  isTop: number
 }>({
   id: '',
   title: '', // 中文标题
@@ -176,7 +186,8 @@ const formData = reactive<{
   content: '', // 中文内容
   contentEn: '', // 英文内容
   linkUrl: '', // 链接地址
-  status: 0 // 状态：0-未发布，1-已发布
+  status: 0, // 状态：0-未发布，1-已发布
+  isTop: 0 // 是否置顶：0-否，1-是
 })
 
 // 验证URL地址格式
@@ -258,6 +269,7 @@ const fetchNoticeDetail = () => {
       formData.titleEn = noticeData.titleEn
       formData.noticeType = noticeData.noticeType
       formData.importance = noticeData.importance
+      formData.isTop = noticeData.isTop || 0
 
       // 根据通知类型设置对应的内容字段
       if (String(noticeData.noticeType) === '2002') {
@@ -289,7 +301,8 @@ const submitForm = () => {
       title: formData.title,
       titleEn: formData.titleEn,
       noticeType: formData.noticeType,
-      importance: formData.importance
+      importance: formData.importance,
+      isTop: formData.isTop
       // status字段不需要提交
     }
 

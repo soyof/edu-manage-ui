@@ -29,6 +29,15 @@
               >
                 {{ NoticeStatus.getName(noticeData.publishStatus) }}
               </el-tag>
+              <el-tag
+                v-if="noticeData.isTop === 1"
+                size="small"
+                type="success"
+                effect="dark"
+                class="top-tag"
+              >
+                置顶
+              </el-tag>
             </div>
           </div>
 
@@ -338,7 +347,8 @@ onMounted(() => {
           margin-top: 12px;
 
           .importance-tag,
-          .status-tag {
+          .status-tag,
+          .top-tag {
             padding: 0 12px;
             height: 24px;
             line-height: 22px;
@@ -350,6 +360,11 @@ onMounted(() => {
               transform: translateY(-2px) scale(1.05);
               box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
+          }
+
+          .top-tag {
+            background: linear-gradient(135deg, #67c23a, #85ce61);
+            border: none;
           }
         }
       }
