@@ -33,16 +33,6 @@ export default defineConfig({
     }
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'tinymce': ['tinymce']
-        }
-      }
-    },
     sourcemap: true
-  },
-  optimizeDeps: {
-    include: ['tinymce']
   }
 })

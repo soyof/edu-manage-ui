@@ -30,7 +30,7 @@ export const componentWrap = (component: any, key: string) => {
   const wrappedComponent = defineComponent({
     name: key,
 
-    setup(props, { attrs, slots }) {
+    setup(_props, { attrs, slots }) {
       const instance: any = getCurrentInstance()!
       let innerComponent: ComponentInstance | null = null
 

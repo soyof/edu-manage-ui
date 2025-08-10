@@ -222,9 +222,9 @@ const toolDetail = ref({
 })
 
 // 获取状态对应的标签类型
-const getStatusTagType = (status: string) => {
-  return ToolStatus.getTagType(status)
-}
+// const getStatusTagType = (status: string) => {
+//   return ToolStatus.getTagType(status)
+// }
 
 // 获取状态名称
 const getStatusName = (status: string) => {

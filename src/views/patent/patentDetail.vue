@@ -155,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { Calendar, User, Document } from '@element-plus/icons-vue'
 import service from '@/utils/services'
@@ -194,9 +194,9 @@ const patentData = reactive({
 })
 
 // 是否有英文内容
-const hasEnglishContent = computed(() => {
-  return Boolean(patentData.titleEn || patentData.abstractEn || patentData.contentEn)
-})
+// const hasEnglishContent = computed(() => {
+//   return Boolean(patentData.titleEn || patentData.abstractEn || patentData.contentEn)
+// })
 
 // 动画准备状态
 const animationReady = ref(false)

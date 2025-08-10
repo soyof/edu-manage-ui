@@ -180,7 +180,8 @@ const noticeData = reactive({
   createdTimes: '',
   updatedTimes: '',
   createUserName: '',
-  updateUserName: ''
+  updateUserName: '',
+  isTop: 0
 })
 
 // 是否为文本类型通知

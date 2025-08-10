@@ -178,7 +178,7 @@ const closeMenu = () => {
 }
 
 // 处理全局点击事件
-const handleGlobalClick = (event: MouseEvent) => {
+const handleGlobalClick = () => {
   // 如果菜单显示，点击其他地方时关闭
   if (props.visible) {
     closeMenu()

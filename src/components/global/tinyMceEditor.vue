@@ -100,7 +100,7 @@ const editorConfig = computed(() => {
     height: props.height,
     placeholder: props.placeholder,
     ...props.customConfig,
-    init_instance_callback: (editor: any) => {
+    init_instance_callback: (_editor: any) => {
       isCompletedEditor.value = true
     }
   }

@@ -203,7 +203,7 @@ const formData = reactive({
 })
 
 // 验证URL地址格式
-const validateUrl = (rule: any, value: string, callback: any) => {
+const validateUrl = (_rule: any, value: string, callback: any) => {
   if (!value || value === '') {
     callback()
     return

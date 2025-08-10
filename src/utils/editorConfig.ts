@@ -2,7 +2,7 @@ import { getRandom } from './utils'
 import services from '@/utils/services'
 
 // 图片上传处理函数
-export const imageUploadFn = (blobInfo: any, progress: any) => new Promise((resolve, reject) => {
+export const imageUploadFn = (blobInfo: any, _progress: any) => new Promise((resolve, reject) => {
   const formData = new FormData()
   formData.append('image', blobInfo.blob())
   services.upload('/api/uploadImage', formData).then((res: any) => {

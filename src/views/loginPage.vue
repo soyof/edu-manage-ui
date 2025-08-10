@@ -349,7 +349,7 @@ const rules = {
   ],
   verifySuccess: [
     {
-      validator: (rule: any, value: any, callback: any) => {
+      validator: (_rule: any, _value: any, callback: any) => {
         if (sliderState.success) {
           callback()
         } else {

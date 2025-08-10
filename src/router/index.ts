@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
   routerBeforeEach(to, from, next)
 })
 
-router.afterEach((to, from) => {
+router.afterEach((to, _from) => {
   store?.addTabList(to)
   store?.changeCurTabInfo(to.fullPath)
 })

@@ -178,7 +178,7 @@ const formData = reactive({
 })
 
 // 验证URL地址格式
-const validateUrl = (rule: any, value: string, callback: any) => {
+const validateUrl = (_rule: any, value: string, callback: any) => {
   if (!value || value === '') {
     callback()
     return
@@ -194,7 +194,7 @@ const validateUrl = (rule: any, value: string, callback: any) => {
   } catch (e) {
     // 如果没有协议，尝试添加协议再验证
     try {
-      const url = new URL('http://' + value)
+      new URL('http://' + value)
       callback()
     } catch (e) {
       callback(new Error('请输入有效的网址格式'))

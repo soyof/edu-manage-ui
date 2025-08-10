@@ -179,7 +179,7 @@ export const removeSpace = (info: any): any => {
 export const underlineToHump = (s: any): any => {
   if (typeof s !== 'string') return s
   if (s.indexOf('_') <= 0) return s
-  return s.replace(/_(\w)/g, (all, letter) => {
+  return s.replace(/_(\w)/g, (_all, letter) => {
     return letter.toUpperCase()
   })
 }

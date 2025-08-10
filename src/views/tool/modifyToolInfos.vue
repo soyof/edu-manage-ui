@@ -103,7 +103,7 @@ import { useDictionary } from '@/hooks/useDictionary'
 
 // URL验证相关
 const URL_REGEX = /^(https?:\/\/)([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/[a-zA-Z0-9._~:/?#[\]@!$&'()*+,;=]*)?$/
-const validateUrl = (rule: any, value: string, callback: (error?: Error) => void) => {
+const validateUrl = (_rule: any, value: string, callback: (error?: Error) => void) => {
   if (!value) {
     callback(new Error('请输入工具地址'))
     return

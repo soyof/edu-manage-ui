@@ -132,7 +132,7 @@ const formRules = {
 const submitForm = () => {
   if (!formRef.value) return
 
-  formRef.value.validate((valid: boolean, fields: any) => {
+  formRef.value.validate((valid: boolean, _fields: any) => {
     if (valid) {
       // 显示加载状态
       changeLoading(true)
