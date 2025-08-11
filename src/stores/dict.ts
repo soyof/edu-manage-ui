@@ -55,9 +55,9 @@ export const useDictStore = defineStore('dict', {
   },
   actions: {
     // 获取指定类型的字典数据
-    async getDictByType(dictType: string) {
-      // 如果已有数据，直接返回
-      if (this.dictInfo[dictType]) {
+    async getDictByType(dictType: string, forceLoad = false) {
+      // 如果已有数据且不为空数组，且不是强制加载，直接返回
+      if (!forceLoad && this.dictInfo[dictType] && this.dictInfo[dictType].length > 0) {
         return Promise.resolve(this.dictInfo[dictType])
       }
 

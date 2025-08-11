@@ -79,12 +79,12 @@ const props = defineProps({
   // 输出图片大小比例
   outputSize: {
     type: Number,
-    default: 1
+    default: 0.5
   },
   // 输出图片格式
   outputType: {
     type: String,
-    default: 'png'
+    default: 'jpeg'
   },
   // 是否显示原图按钮
   showFull: {

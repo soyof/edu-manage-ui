@@ -52,22 +52,36 @@ export const useDictionary = (options: DictionaryOptions) => {
 
   // 字典数据列表
   const dictList = computed(() => {
+    let result: DictItem[] = []
+
     if (isBuiltInDict(dictType)) {
       // 内置字典走store
-      return dictStore.getDictList(dictType).value
+      result = dictStore.getDictList(dictType).value
+    } else {
+      // 自定义字典走缓存
+      result = dictCache[dictType] || []
     }
-    // 自定义字典走缓存
-    return dictCache[dictType] || []
+
+    // 不再在computed中触发重新加载，避免无限循环请求
+
+    return result
   })
 
   // 字典映射对象
   const dictMapping = computed(() => {
+    let result: Record<string, string> = {}
+
     if (isBuiltInDict(dictType)) {
       // 内置字典走store
-      return dictStore.getDictObj(dictType).value
+      result = dictStore.getDictObj(dictType).value
+    } else {
+      // 自定义字典走缓存
+      result = dictMapCache[dictType] || {}
     }
-    // 自定义字典走缓存
-    return dictMapCache[dictType] || {}
+
+    // 不再在computed中触发重新加载，避免无限循环请求
+
+    return result
   })
 
   // 加载状态
@@ -82,16 +96,25 @@ export const useDictionary = (options: DictionaryOptions) => {
 
   /**
    * 加载字典数据
+   * @param forceLoad 是否强制加载，即使已有数据
    */
-  const loadDictData = async() => {
+  const loadDictData = async(forceLoad = false) => {
     // 避免重复加载
     if (loadingState[dictType]) return
+
+    // 检查是否已有数据且不为空数组
+    const existingData = isBuiltInDict(dictType)
+      ? dictStore.getDictList(dictType).value
+      : dictCache[dictType]
+
+    // 如果已有数据且不为空数组，且不是强制加载，则不需要重新加载
+    if (!forceLoad && existingData && existingData.length > 0) return
 
     loadingState[dictType] = true
     try {
       if (isBuiltInDict(dictType)) {
-        // 内置字典直接使用store的方法加载
-        await dictStore.getDictByType(dictType)
+        // 内置字典直接使用store的方法加载，传递forceLoad参数
+        await dictStore.getDictByType(dictType, forceLoad)
       } else {
         // 自定义字典处理
         if (customLoader) {
@@ -142,10 +165,17 @@ export const useDictionary = (options: DictionaryOptions) => {
   const getDictLabel = (code: string, defaultValue: string = code): string => {
     if (!code) return defaultValue
 
+    let result: string
+
     if (isBuiltInDict(dictType)) {
-      return dictStore.getDictNameByCode(dictType, code) || defaultValue
+      result = dictStore.getDictNameByCode(dictType, code) || defaultValue
+    } else {
+      result = dictMapping.value[code] || defaultValue
     }
-    return dictMapping.value[code] || defaultValue
+
+    // 不再在方法调用中触发重新加载，避免无限循环请求
+
+    return result
   }
 
   /**
@@ -156,12 +186,23 @@ export const useDictionary = (options: DictionaryOptions) => {
       // 内置字典先清除缓存再重新加载
       dictStore.clearDictCache(dictType)
     }
-    loadDictData()
+    // 强制重新加载
+    loadDictData(true)
   }
 
   // 如果设置了自动加载，在hooks创建时加载数据
   if (autoLoad) {
     loadDictData()
+  }
+
+  /**
+   * 检查字典是否为空
+   */
+  const isDictEmpty = (): boolean => {
+    const data = isBuiltInDict(dictType)
+      ? dictStore.getDictList(dictType).value
+      : dictCache[dictType]
+    return !data || data.length === 0
   }
 
   return {
@@ -170,7 +211,8 @@ export const useDictionary = (options: DictionaryOptions) => {
     loading,
     loadDictData,
     getDictLabel,
-    refreshDict
+    refreshDict,
+    isDictEmpty
   }
 }
 
