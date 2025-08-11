@@ -108,8 +108,8 @@
     </div>
 
     <div class="login-content">
-      <!-- 左侧装饰区域 -->
-      <div class="login-decoration">
+      <!-- 左侧装饰区域 - 在小屏幕上隐藏 -->
+      <div v-show="!isMobileView" class="login-decoration">
         <!-- 科技图形装饰 -->
         <div class="tech-graphic">
           <div class="pulse-container">
@@ -206,7 +206,7 @@
                 <div
                   ref="sliderBtnRef"
                   class="slider-button"
-                  :style="{ left: sliderState.left + 'px' }"
+                  :style="{ transform: `translateX(${sliderState.left}px)` }"
                   @mousedown="handleSliderMouseDown"
                   @touchstart="handleSliderTouchStart"
                 >
@@ -257,6 +257,12 @@ const primaryColor = computed(() => themeStore.themeConfig.primaryColor)
 const primaryGradient = computed(() => themeStore.themeConfig.headerBgGradient)
 const bgBaseColor = computed(() => themeStore.themeConfig.headerBgColor)
 
+// 响应式布局相关
+const isMobileView = ref(false)
+const checkScreenSize = () => {
+  isMobileView.value = window.innerWidth < 768
+}
+
 // 辅助函数，用于生成带透明度的颜色
 const getColorWithOpacity = (color: string, opacity: number) => {
   // 将十六进制转为rgba
@@ -290,10 +296,25 @@ watch(() => themeStore.currentTheme, () => {
   updateCssVariables()
 })
 
-// 组件挂载时初始化CSS变量
+// 组件挂载时初始化CSS变量和响应式布局
 onMounted(() => {
   themeStore.initTheme()
   updateCssVariables()
+
+  // 初始检查屏幕尺寸
+  checkScreenSize()
+
+  // 添加窗口大小变化监听
+  window.addEventListener('resize', resizeHandler)
+
+  // 在窗口大小变化时，确保滑块位置正确
+  window.addEventListener('resize', resetSliderPositionOnResize)
+})
+
+// 组件卸载时移除事件监听
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeHandler)
+  window.removeEventListener('resize', resetSliderPositionOnResize)
 })
 
 // 防抖函数
@@ -309,6 +330,29 @@ const debounce = <T extends (...args: any[]) => any>(fn: T, delay: number): ((..
     }, delay)
   }
 }
+
+// 创建一个固定的防抖处理函数实例
+const resizeHandler = debounce(checkScreenSize, 200)
+
+// 窗口大小变化时重置滑块位置
+const resetSliderPositionOnResize = debounce(() => {
+  if (sliderState.success) {
+    // 如果已经验证成功，重新计算最大偏移量并设置滑块位置
+    const sliderBg = sliderBgRef.value
+    if (sliderBg) {
+      const buttonWidth = sliderBtnRef.value?.offsetWidth || 40
+      const maxOffset = sliderBg.clientWidth - buttonWidth
+      sliderState.left = maxOffset
+      sliderBg.style.setProperty('--slider-track-width', `${sliderBg.clientWidth}px`)
+      if (sliderBtnRef.value) {
+        sliderBtnRef.value.style.transform = `translateX(${maxOffset}px)`
+      }
+    }
+  } else {
+    // 如果未验证成功，重置滑块位置
+    resetSlider()
+  }
+}, 200)
 
 const loginFormRef = ref<FormInstance | null>(null)
 const loginForm = reactive({
@@ -374,7 +418,18 @@ const handleSliderMouseDown = (e: MouseEvent) => {
   // }
   if (sliderState.success) return
   sliderState.isMoving = true
-  sliderState.startX = e.clientX
+
+  // 获取滑块容器的位置信息
+  const sliderBg = sliderBgRef.value
+  if (sliderBg) {
+    const sliderRect = sliderBg.getBoundingClientRect()
+    // 计算鼠标在滑块容器内的相对位置
+    const relativeX = e.clientX - sliderRect.left
+    sliderState.startX = e.clientX
+  } else {
+    sliderState.startX = e.clientX
+  }
+
   document.addEventListener('mousemove', handleMouseMove)
   document.addEventListener('mouseup', handleMouseUp)
 
@@ -422,7 +477,18 @@ const handleSliderTouchStart = (e: TouchEvent) => {
   if (sliderState.success) return
   e.preventDefault()
   sliderState.isMoving = true
-  sliderState.startX = e.touches[0].clientX
+
+  // 获取滑块容器的位置信息
+  const sliderBg = sliderBgRef.value
+  if (sliderBg) {
+    const sliderRect = sliderBg.getBoundingClientRect()
+    // 计算触摸点在滑块容器内的相对位置
+    const relativeX = e.touches[0].clientX - sliderRect.left
+    sliderState.startX = e.touches[0].clientX
+  } else {
+    sliderState.startX = e.touches[0].clientX
+  }
+
   document.addEventListener('touchmove', handleTouchMove)
   document.addEventListener('touchend', handleTouchEnd)
 }
@@ -432,9 +498,15 @@ const handleMouseMove = (e: MouseEvent) => {
   const sliderBg = sliderBgRef.value
   if (!sliderBg) return
 
+  // 获取滑块容器的位置信息
+  const sliderRect = sliderBg.getBoundingClientRect()
+
+  // 计算鼠标在滑块容器内的相对位置
+  const relativeX = e.clientX - sliderRect.left
   const offsetX = e.clientX - sliderState.startX
   const maxOffset = sliderBg.clientWidth - (sliderBtnRef.value?.offsetWidth || 40)
 
+  // 确保滑块不会超出边界
   sliderState.left = Math.min(Math.max(0, sliderState.left + offsetX), maxOffset)
   sliderState.startX = e.clientX
 
@@ -452,11 +524,20 @@ const handleTouchMove = (e: TouchEvent) => {
   const sliderBg = sliderBgRef.value
   if (!sliderBg) return
 
+  // 获取滑块容器的位置信息
+  const sliderRect = sliderBg.getBoundingClientRect()
+
+  // 计算触摸点在滑块容器内的相对位置
+  const relativeX = e.touches[0].clientX - sliderRect.left
   const offsetX = e.touches[0].clientX - sliderState.startX
   const maxOffset = sliderBg.clientWidth - (sliderBtnRef.value?.offsetWidth || 40)
 
+  // 确保滑块不会超出边界
   sliderState.left = Math.min(Math.max(0, sliderState.left + offsetX), maxOffset)
   sliderState.startX = e.touches[0].clientX
+
+  // 阻止页面滚动
+  e.preventDefault()
 
   // 更新滑动轨迹宽度
   updateSliderTrack()
@@ -530,9 +611,14 @@ const sliderSuccess = () => {
     // 需要减去滑块的宽度，确保滑块完全在滑动区域内
     const buttonWidth = sliderBtnRef.value?.offsetWidth || 40
     const maxOffset = sliderBg.clientWidth - buttonWidth
-    sliderState.left = maxOffset + 1 // 将滑块位置设置为最大偏移量
+    sliderState.left = maxOffset // 将滑块位置设置为最大偏移量
     // 确保滑动轨迹也是100%
     sliderBg.style.setProperty('--slider-track-width', `${sliderBg.clientWidth}px`)
+
+    // 直接设置滑块按钮的位置
+    if (sliderBtnRef.value) {
+      sliderBtnRef.value.style.transform = `translateX(${sliderState.left}px)`
+    }
   }
   document.removeEventListener('mousemove', handleMouseMove)
   document.removeEventListener('mouseup', handleMouseUp)
@@ -546,6 +632,11 @@ const resetSlider = () => {
   const sliderBg = sliderBgRef.value
   if (sliderBg) {
     sliderBg.style.setProperty('--slider-track-width', '0px')
+  }
+
+  // 直接设置滑块按钮的位置
+  if (sliderBtnRef.value) {
+    sliderBtnRef.value.style.transform = 'translateX(0)'
   }
 }
 
@@ -575,6 +666,11 @@ const updateSliderTrack = () => {
 
   // 使用样式设置轨迹宽度
   sliderBg.style.setProperty('--slider-track-width', `${trackWidth}px`)
+
+  // 确保滑块按钮位置正确
+  if (sliderBtnRef.value) {
+    sliderBtnRef.value.style.transform = `translateX(${sliderState.left}px)`
+  }
 }
 
 // 原始表单提交方法

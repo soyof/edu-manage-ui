@@ -278,17 +278,19 @@
   }
 
   .login-content {
-    display: flex;
-    width: 1000px;
-    height: 600px;
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-    z-index: 10;
-    /* 修改边框样式 */
-    border: none;
-    box-shadow: 0 0 25px var(--login-primary-color);
-    /* 去除之前的边角装饰，使用新的科技感边框 */
+  display: flex;
+  width: 90%;
+  max-width: 1000px;
+  height: 90%;
+  max-height: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  /* 修改边框样式 */
+  border: none;
+  box-shadow: 0 0 25px var(--login-primary-color);
+  /* 去除之前的边角装饰，使用新的科技感边框 */
     &::before {
       content: '';
       position: absolute;
@@ -363,15 +365,21 @@
   }
 
   .login-form-container {
-    flex: 4;
-      padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    z-index: 2;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
+  flex: 4;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    flex: 1;
+    border-radius: 20px; /* 在小屏幕上四个角都是圆角 */
   }
+}
 
   .login-header {
     margin-bottom: 40px;
@@ -527,26 +535,27 @@
   }
 
   .slider-container {
-    width: 100%;
-    height: 50px;
-    margin: 8px 0;
-  }
-  
-  .slider-bg {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 25px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    transition: background-color 0.3s;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    --slider-track-width: 0px;
-  
-    /* 添加滑动轨迹效果 */
+  width: 100%;
+  height: 50px;
+  margin: 8px 0;
+  position: relative;
+}
+
+.slider-bg {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: background-color 0.3s;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  --slider-track-width: 0px;
+
+  /* 添加滑动轨迹效果 */
     &::before {
       content: '';
       position: absolute;
@@ -595,46 +604,52 @@
   }
   
   .slider-button {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 50px;
-    height: 50px;
-    background: var(--login-primary-gradient);
-    border-radius: 50%;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), 0 0 15px var(--login-primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-    z-index: 3;
-    transition: transform 0.2s, box-shadow 0.3s;
-  
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), 0 0 20px var(--login-primary-color);
-    }
-  
-    &:active {
-      transform: scale(0.98);
-    }
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50px;
+  height: 50px;
+  background: var(--login-primary-gradient);
+  border-radius: 50%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), 0 0 15px var(--login-primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.2s, box-shadow 0.3s;
+  touch-action: none; /* 防止触摸设备上的滚动干扰 */
+  transform: translateX(0); /* 使用transform替代left属性 */
+
+  &:hover {
+    transform: translateX(0) scale(1.05);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), 0 0 20px var(--login-primary-color);
   }
+
+  &:active {
+    transform: translateX(0) scale(0.98);
+  }
+}
   
   /* 右侧装饰区域的新样式 */
-  .login-decoration {
-    flex: 5;
-    background-color: rgba(0, 0, 0, 0.25);
-    position: relative;
-    overflow: hidden;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 30px;
-    color: white;
+.login-decoration {
+  flex: 5;
+  background-color: rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px;
+  color: white;
+  
+  @media (max-width: 768px) {
+    display: none; /* 在小屏幕上完全隐藏装饰区域 */
   }
+}
   
   /* 科技图形装饰 - 同心圆脉冲效果 */
   .tech-graphic {
