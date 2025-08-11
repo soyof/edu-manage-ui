@@ -422,9 +422,7 @@ const handleSliderMouseDown = (e: MouseEvent) => {
   // 获取滑块容器的位置信息
   const sliderBg = sliderBgRef.value
   if (sliderBg) {
-    const sliderRect = sliderBg.getBoundingClientRect()
     // 计算鼠标在滑块容器内的相对位置
-    const relativeX = e.clientX - sliderRect.left
     sliderState.startX = e.clientX
   } else {
     sliderState.startX = e.clientX
@@ -481,9 +479,6 @@ const handleSliderTouchStart = (e: TouchEvent) => {
   // 获取滑块容器的位置信息
   const sliderBg = sliderBgRef.value
   if (sliderBg) {
-    const sliderRect = sliderBg.getBoundingClientRect()
-    // 计算触摸点在滑块容器内的相对位置
-    const relativeX = e.touches[0].clientX - sliderRect.left
     sliderState.startX = e.touches[0].clientX
   } else {
     sliderState.startX = e.touches[0].clientX
@@ -498,11 +493,6 @@ const handleMouseMove = (e: MouseEvent) => {
   const sliderBg = sliderBgRef.value
   if (!sliderBg) return
 
-  // 获取滑块容器的位置信息
-  const sliderRect = sliderBg.getBoundingClientRect()
-
-  // 计算鼠标在滑块容器内的相对位置
-  const relativeX = e.clientX - sliderRect.left
   const offsetX = e.clientX - sliderState.startX
   const maxOffset = sliderBg.clientWidth - (sliderBtnRef.value?.offsetWidth || 40)
 
@@ -524,11 +514,6 @@ const handleTouchMove = (e: TouchEvent) => {
   const sliderBg = sliderBgRef.value
   if (!sliderBg) return
 
-  // 获取滑块容器的位置信息
-  const sliderRect = sliderBg.getBoundingClientRect()
-
-  // 计算触摸点在滑块容器内的相对位置
-  const relativeX = e.touches[0].clientX - sliderRect.left
   const offsetX = e.touches[0].clientX - sliderState.startX
   const maxOffset = sliderBg.clientWidth - (sliderBtnRef.value?.offsetWidth || 40)
 
