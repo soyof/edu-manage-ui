@@ -62,6 +62,14 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col :span="6">
+          <el-form-item label="门户展示" prop="isDisplay">
+            <el-select v-model="form.isDisplay" clearable placeholder="请选择门户展示状态">
+              <el-option label="展示" value="1" />
+              <el-option label="不展示" value="0" />
+            </el-select>
+          </el-form-item>
+        </el-col>
       </template>
       <template #operation>
         <el-tooltip
@@ -107,6 +115,18 @@
         <template #default="scope">
           <el-tag :type="scope.row.status ? 'success' : 'danger'">
             {{ scope.row.status ? '已启用' : '已禁用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="isDisplay"
+        label="门户展示"
+        width="100"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          <el-tag :type="scope.row.isDisplay ? 'primary' : 'info'">
+            {{ scope.row.isDisplay ? '已展示' : '未展示' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -165,7 +185,7 @@
       <el-table-column
         prop="opera"
         label="操作"
-        width="140"
+        width="160"
         fixed="right"
         showOverflowTooltip
       >
@@ -173,13 +193,13 @@
           <div class="action-buttons">
             <!-- 查看 -->
             <el-tooltip
-              content="查看"
+              content="查看详情"
               placement="top"
               :showAfter="200"
               :hideAfter="0"
             >
               <span class="action-icon-wrapper" @click="handleView(scope.row)">
-                <el-icon class="action-icon view-icon"><View /></el-icon>
+                <el-icon class="action-icon info-icon"><InfoFilled /></el-icon>
               </span>
             </el-tooltip>
 
@@ -221,6 +241,20 @@
               </span>
             </el-tooltip>
 
+            <!-- 门户展示/不展示 -->
+            <el-tooltip
+              :content="scope.row.isDisplay ? '取消门户展示' : '设为门户展示'"
+              placement="top"
+              :showAfter="200"
+              :hideAfter="0"
+            >
+              <span class="action-icon-wrapper" @click="handleToggleDisplay(scope.row)">
+                <el-icon class="action-icon" :class="scope.row.isDisplay ? 'hide-icon' : 'show-icon'">
+                  <component :is="scope.row.isDisplay ? Hide : View" />
+                </el-icon>
+              </span>
+            </el-tooltip>
+
             <!-- 删除 -->
             <el-tooltip
               content="删除"
@@ -256,7 +290,7 @@ import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useDictionary } from '@/hooks/useDictionary'
 import { useRouter } from 'vue-router'
-import { View, EditPen, Delete, School, Lock, Unlock, Plus } from '@element-plus/icons-vue'
+import { View, EditPen, Delete, School, Lock, Unlock, Plus, Hide, InfoFilled } from '@element-plus/icons-vue'
 import { useUserInfoStore } from '@/stores/userInfo'
 
 // 获取职称字典
@@ -274,7 +308,8 @@ const searchForm = {
   email: '',
   phone: '',
   title: '',
-  status: ''
+  status: '',
+  isDisplay: ''
 }
 
 const dialogVisible = ref(false)
@@ -394,6 +429,29 @@ const handleToggleStatus = (row: any) => {
     })
   })
 }
+
+// 切换用户门户展示状态
+const handleToggleDisplay = (row: any) => {
+  const newDisplay = !row.isDisplay
+  const displayText = newDisplay ? '展示' : '不展示'
+
+  ElMessageBox.confirm(
+    `确认将用户【${row.username}_${row.userId}】在门户页面${displayText}吗？`,
+    `门户${displayText}确认`,
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'info'
+    }
+  ).then(() => {
+    service.post('/api/toggleUserDisplay', {
+      userId: row.userId
+    }).then(() => {
+      ElMessage.success(`设置${displayText}成功`)
+      tablePageRef.value?.getList()
+    })
+  })
+}
 </script>
 
 <style lang="less" scoped>
@@ -416,6 +474,11 @@ const handleToggleStatus = (row: any) => {
     }
   }
 
+  .action-icon {
+    &.info-icon {
+      color: #409EFF;
+    }
+  }
   :deep(.el-image) {
     cursor: pointer;
     transition: transform 0.3s;

@@ -3,8 +3,10 @@
   <transition name="menu-fade">
     <div
       v-show="visible"
+      ref="menuRef"
       class="custom-context-menu"
-      :style="{ top: y + 'px', left: x + 'px' }"
+      :style="getMenuPosition"
+      @mounted="updateMenuSize"
     >
       <div class="menu-group">
         <div
@@ -72,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import {
   Refresh,
   Close,
@@ -139,6 +141,41 @@ const props = defineProps({
 // 定义组件事件
 const emit = defineEmits(['update:visible', 'command'])
 
+// 获取菜单尺寸
+const menuRef = ref<HTMLElement | null>(null)
+const menuWidth = ref(180) // 默认宽度
+const menuHeight = ref(250) // 默认高度
+
+// 计算菜单位置，处理边界问题
+const getMenuPosition = computed(() => {
+  // 获取视窗尺寸
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+
+  // 初始位置
+  let left = props.x
+  let top = props.y
+
+  // 检查右边界
+  if (left + menuWidth.value > viewportWidth) {
+    left = viewportWidth - menuWidth.value - 5 // 5px的安全边距
+  }
+
+  // 检查底部边界
+  if (top + menuHeight.value > viewportHeight) {
+    top = viewportHeight - menuHeight.value - 5 // 5px的安全边距
+  }
+
+  // 确保不会超出左边界和上边界
+  left = Math.max(5, left)
+  top = Math.max(5, top)
+
+  return {
+    left: `${left}px`,
+    top: `${top}px`
+  }
+})
+
 // 处理菜单命令
 const handleCommand = (command: string) => {
   // 根据命令类型和当前状态判断是否执行
@@ -185,15 +222,38 @@ const handleGlobalClick = () => {
   }
 }
 
+// 更新菜单尺寸
+const updateMenuSize = () => {
+  if (menuRef.value) {
+    // 获取菜单的实际尺寸
+    menuWidth.value = menuRef.value.offsetWidth
+    menuHeight.value = menuRef.value.offsetHeight
+  }
+}
+
+// 监听窗口大小变化
+const handleResize = () => {
+  // 窗口大小变化时，可能需要重新计算菜单位置
+  if (props.visible) {
+    updateMenuSize()
+  }
+}
+
 // 组件生命周期钩子
 onMounted(() => {
   // 添加全局点击事件监听
   window.addEventListener('click', handleGlobalClick)
+  // 添加窗口大小变化监听
+  window.addEventListener('resize', handleResize)
+  // 初始更新菜单尺寸
+  updateMenuSize()
 })
 
 onUnmounted(() => {
   // 移除全局点击事件监听
   window.removeEventListener('click', handleGlobalClick)
+  // 移除窗口大小变化监听
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 

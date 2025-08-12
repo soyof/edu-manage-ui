@@ -15,6 +15,16 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
+          <el-form-item label="作者">
+            <el-input v-model="form.authors" placeholder="请输入作者" clearable />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="期刊名称">
+            <el-input v-model="form.journal" placeholder="请输入期刊名称" clearable />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="发布状态">
             <el-select v-model="form.publishStatus" placeholder="请选择发布状态" clearable>
               <el-option
@@ -114,6 +124,18 @@
           </span>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="authors"
+        label="作者"
+        width="150"
+        showOverflowTooltip
+      />
+      <el-table-column
+        prop="journal"
+        label="期刊名称"
+        width="150"
+        showOverflowTooltip
+      />
       <el-table-column
         prop="publishStatus"
         label="发布状态"
@@ -254,6 +276,10 @@ interface PaperItem {
   id: number
   title: string
   titleEn: string
+  authors: string
+  authorsEn: string | null
+  journal: string | null
+  journalEn: string | null
   publishStatus: string
   paperPublishTimes: string | null
   publishTimes: string | null
@@ -268,6 +294,8 @@ interface PaperItem {
 const initialSearchForm = {
   title: '',
   titleEn: '',
+  authors: '',
+  journal: '',
   publishStatus: '',
   paperPublishTimesRange: [] as string[],
   publishTimesRange: [] as string[],

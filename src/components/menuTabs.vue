@@ -31,9 +31,10 @@
       >
         <template #label>
           <div
+            class="tab-label-container"
             @contextmenu.prevent="handleContextMenu($event, item, ids)"
           >
-            {{ item?.meta?.title }}
+            <span class="tab-title" :title="item?.meta?.title">{{ item?.meta?.title }}</span>
           </div>
         </template>
       </el-tab-pane>
@@ -217,6 +218,20 @@ const closeLeftTabs = () => {
   z-index: 1;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 5px;
+
+  .tab-label-container {
+    display: flex;
+    align-items: center;
+    max-width: 350px; /* 设置最大宽度 */
+    overflow: hidden;
+
+    .tab-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+  }
 
   :deep(.el-tabs__header) {
     margin-bottom: 0;

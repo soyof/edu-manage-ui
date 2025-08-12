@@ -20,6 +20,24 @@
             </div>
             <h1 class="title animate__animated animate__fadeIn animate__delay-1s">{{ paperData.title }}</h1>
             <h2 class="title-en animate__animated animate__fadeIn animate__delay-1s">{{ paperData.titleEn }}</h2>
+            <div class="paper-meta animate__animated animate__fadeIn animate__delay-1s">
+              <div class="meta-item authors">
+                <span class="meta-label">作者：</span>
+                <span class="meta-value">{{ paperData.authors }}</span>
+              </div>
+              <div v-if="paperData.authorsEn" class="meta-item authors-en">
+                <span class="meta-label">Authors：</span>
+                <span class="meta-value">{{ paperData.authorsEn }}</span>
+              </div>
+              <div v-if="paperData.journal" class="meta-item journal">
+                <span class="meta-label">期刊：</span>
+                <span class="meta-value">{{ paperData.journal }}</span>
+              </div>
+              <div v-if="paperData.journalEn" class="meta-item journal-en">
+                <span class="meta-label">Journal：</span>
+                <span class="meta-value">{{ paperData.journalEn }}</span>
+              </div>
+            </div>
           </div>
 
           <div class="meta-card animate__animated animate__fadeInUp animate__delay-1s">
@@ -151,6 +169,10 @@ const paperData = reactive({
   id: '',
   title: '',
   titleEn: '',
+  authors: '',
+  authorsEn: '',
+  journal: '',
+  journalEn: '',
   abstract: '',
   abstractEn: '',
   content: '',
@@ -309,10 +331,49 @@ onMounted(() => {
         .title-en {
           font-size: 20px;
           font-weight: 500;
-          margin: 8px 0 16px;
+          margin: 8px 0 12px;
           color: var(--el-text-color-regular);
           line-height: 1.4;
           font-style: italic;
+        }
+
+        .paper-meta {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 12px;
+          margin-bottom: 16px;
+          padding: 0 20px;
+
+          .meta-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+
+            &:not(:last-child)::after {
+              content: '|';
+              margin-left: 12px;
+              color: var(--el-text-color-placeholder);
+            }
+
+            .meta-label {
+              color: var(--el-text-color-secondary);
+              margin-right: 4px;
+            }
+
+            .meta-value {
+              color: var(--el-text-color-primary);
+              font-weight: 500;
+            }
+
+            &.authors, &.authors-en {
+              color: var(--el-color-primary);
+            }
+
+            &.journal, &.journal-en {
+              font-style: italic;
+            }
+          }
         }
       }
 
