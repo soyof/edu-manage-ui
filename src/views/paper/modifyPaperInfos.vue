@@ -138,24 +138,24 @@
           <el-form-item label="摘要" prop="abstract" class="content-form-item">
             <el-tabs type="border-card" class="simple-tabs">
               <el-tab-pane label="中文内容">
-                <div class="textarea-wrapper">
-                  <el-input
+                <div class="editor-wrapper">
+                  <TinyMceEditor
                     v-model="formData.abstract"
-                    type="textarea"
-                    :rows="6"
-                    placeholder="请输入中文摘要"
-                    resize="none"
+                    :placeholder="'请输入中文摘要'"
+                    :height="350"
+                    :disabled="mode === 'view'"
+                    :simpleMode="true"
                   />
                 </div>
               </el-tab-pane>
               <el-tab-pane label="英文内容">
-                <div class="textarea-wrapper">
-                  <el-input
+                <div class="editor-wrapper">
+                  <TinyMceEditor
                     v-model="formData.abstractEn"
-                    type="textarea"
-                    :rows="6"
-                    placeholder="请输入英文摘要"
-                    resize="none"
+                    :placeholder="'请输入英文摘要'"
+                    :height="350"
+                    :disabled="mode === 'view'"
+                    :simpleMode="true"
                   />
                 </div>
               </el-tab-pane>

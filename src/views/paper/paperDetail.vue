@@ -94,15 +94,11 @@
           <h3 class="section-heading">摘要</h3>
           <el-tabs type="border-card">
             <el-tab-pane label="中文摘要">
-              <div v-if="paperData.abstract" class="abstract-content">
-                {{ paperData.abstract }}
-              </div>
+              <div v-if="paperData.abstract" class="rich-text-content" v-html="paperData.abstract"></div>
               <el-empty v-else description="暂无中文摘要" />
             </el-tab-pane>
             <el-tab-pane v-if="hasEnglishContent" label="英文摘要">
-              <div v-if="paperData.abstractEn" class="abstract-content">
-                {{ paperData.abstractEn }}
-              </div>
+              <div v-if="paperData.abstractEn" class="rich-text-content" v-html="paperData.abstractEn"></div>
               <el-empty v-else description="暂无英文摘要" />
             </el-tab-pane>
           </el-tabs>
