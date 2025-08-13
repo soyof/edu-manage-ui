@@ -294,8 +294,7 @@ const handleIdPhotoSuccess = (url: string) => {
 }
 
 // 处理证件照上传错误
-const handleIdPhotoError = (error: any) => {
-  console.error('证件照上传失败:', error)
+const handleIdPhotoError = () => {
   ElMessage.error('证件照上传失败')
 }
 
@@ -316,8 +315,16 @@ const handleSubmit = async() => {
       // 根据操作类型调用不同的API
       const api = props.config.type === 'A' ? '/api/createUser' : '/api/updateUser'
 
-      // 处理表单数据（特别是标签字段）
       const submitData: Record<string, any> = { ...form.value }
+
+      // 确保清空后的选择框字段发送空字符串而不是undefined或null
+      if (submitData.title === undefined || submitData.title === null) {
+        submitData.title = ''
+      }
+
+      if (submitData.role === undefined || submitData.role === null) {
+        submitData.role = ''
+      }
 
       service.post(api, submitData).then(() => {
         ElMessage.success(props.config.type === 'A' ? '创建成功' : '更新成功')
