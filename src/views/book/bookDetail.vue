@@ -27,7 +27,6 @@
               </el-tag>
             </div>
             <h1 class="title animate__animated animate__fadeIn animate__delay-1s">{{ bookData.title }}</h1>
-            <h2 class="title-en animate__animated animate__fadeIn animate__delay-1s">{{ bookData.titleEn }}</h2>
             <div class="author-info animate__animated animate__fadeIn animate__delay-1s">
               <span class="author-label">作者：</span>
               <span class="author">{{ bookData.author }}</span>

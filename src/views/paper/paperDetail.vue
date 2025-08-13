@@ -19,7 +19,6 @@
               </el-tag>
             </div>
             <h1 class="title animate__animated animate__fadeIn animate__delay-1s">{{ paperData.title }}</h1>
-            <h2 class="title-en animate__animated animate__fadeIn animate__delay-1s">{{ paperData.titleEn }}</h2>
             <div class="paper-meta animate__animated animate__fadeIn animate__delay-1s">
               <div class="meta-item authors">
                 <span class="meta-label">作者：</span>

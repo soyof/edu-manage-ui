@@ -27,7 +27,6 @@
               </el-tag>
             </div>
             <h1 class="title animate__animated animate__fadeIn animate__delay-1s">{{ patentData.title }}</h1>
-            <h2 class="title-en animate__animated animate__fadeIn animate__delay-1s">{{ patentData.titleEn }}</h2>
           </div>
 
           <div class="meta-card animate__animated animate__fadeInUp animate__delay-1s">
