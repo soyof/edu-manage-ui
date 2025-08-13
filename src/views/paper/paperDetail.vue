@@ -24,17 +24,9 @@
                 <span class="meta-label">作者：</span>
                 <span class="meta-value">{{ paperData.authors }}</span>
               </div>
-              <div v-if="paperData.authorsEn" class="meta-item authors-en">
-                <span class="meta-label">Authors：</span>
-                <span class="meta-value">{{ paperData.authorsEn }}</span>
-              </div>
               <div v-if="paperData.journal" class="meta-item journal">
                 <span class="meta-label">期刊：</span>
                 <span class="meta-value">{{ paperData.journal }}</span>
-              </div>
-              <div v-if="paperData.journalEn" class="meta-item journal-en">
-                <span class="meta-label">Journal：</span>
-                <span class="meta-value">{{ paperData.journalEn }}</span>
               </div>
             </div>
           </div>
@@ -361,12 +353,8 @@ onMounted(() => {
               font-weight: 500;
             }
 
-            &.authors, &.authors-en {
+            &.authors {
               color: var(--el-color-primary);
-            }
-
-            &.journal, &.journal-en {
-              font-style: italic;
             }
           }
         }
