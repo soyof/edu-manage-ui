@@ -49,15 +49,19 @@
               </div>
               <div class="meta-content">
                 <div class="meta-item">
-                  <span class="label">发布时间</span>
+                  <span class="label">通知发布日期:</span>
+                  <span class="value">{{ noticeData.publishDate || '--' }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">发布时间:</span>
                   <span class="value">{{ noticeData.publishTimes || '--' }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="label">创建时间</span>
+                  <span class="label">创建时间:</span>
                   <span class="value">{{ noticeData.createdTimes }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="label">更新时间</span>
+                  <span class="label">更新时间:</span>
                   <span class="value">{{ noticeData.updatedTimes }}</span>
                 </div>
               </div>
@@ -70,15 +74,15 @@
               </div>
               <div class="meta-content">
                 <div class="meta-item">
-                  <span class="label">发布人</span>
+                  <span class="label">发布人:</span>
                   <span class="value">{{ noticeData.publishUserName || '--' }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="label">创建人</span>
+                  <span class="label">创建人:</span>
                   <span class="value">{{ noticeData.createUserName || '未知' }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="label">更新人</span>
+                  <span class="label">更新人:</span>
                   <span class="value">{{ noticeData.updateUserName || '未知' }}</span>
                 </div>
               </div>
@@ -176,6 +180,7 @@ const noticeData = reactive({
   linkUrl: '',
   publishStatus: '',
   publishTimes: '',
+  publishDate: '',
   publishUserName: '',
   createdTimes: '',
   updatedTimes: '',
@@ -442,13 +447,6 @@ onMounted(() => {
                 font-size: 14px;
                 position: relative;
                 padding-right: 10px;
-
-                &::after {
-                  content: "：";
-                  position: absolute;
-                  right: 0;
-                  top: 0;
-                }
               }
 
               .value {

@@ -66,6 +66,17 @@
             </el-radio-group>
           </el-form-item>
 
+          <!-- 发布日期 -->
+          <el-form-item label="通知发布日期" prop="publishDate">
+            <el-date-picker
+              v-model="formData.publishDate"
+              type="date"
+              placeholder="请选择通知发布日期"
+              valueFormat="YYYY-MM-DD"
+              clearable
+            />
+          </el-form-item>
+
           <!-- 文本类型的通知内容 -->
           <template v-if="isTextType">
             <!-- 通知内容 - 中文 -->
@@ -177,6 +188,7 @@ const formData = reactive<{
   linkUrl: string
   status?: number
   isTop: number
+  publishDate: string | null
 }>({
   id: '',
   title: '', // 中文标题
@@ -187,7 +199,8 @@ const formData = reactive<{
   contentEn: '', // 英文内容
   linkUrl: '', // 链接地址
   status: 0, // 状态：0-未发布，1-已发布
-  isTop: 0 // 是否置顶：0-否，1-是
+  isTop: 0, // 是否置顶：0-否，1-是
+  publishDate: new Date().toISOString().split('T')[0] // 默认为当前日期
 })
 
 // 验证URL地址格式
@@ -270,6 +283,7 @@ const fetchNoticeDetail = () => {
       formData.noticeType = noticeData.noticeType
       formData.importance = noticeData.importance
       formData.isTop = noticeData.isTop || 0
+      formData.publishDate = noticeData.publishDate || null
 
       // 根据通知类型设置对应的内容字段
       if (String(noticeData.noticeType) === '2002') {
@@ -302,7 +316,8 @@ const submitForm = () => {
       titleEn: formData.titleEn,
       noticeType: formData.noticeType,
       importance: formData.importance,
-      isTop: formData.isTop
+      isTop: formData.isTop,
+      publishDate: formData.publishDate
       // status字段不需要提交
     }
 
