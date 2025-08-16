@@ -39,6 +39,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
+          <el-form-item label="动态发布日期">
+            <el-date-picker
+              v-model="form.publishDateRange"
+              type="daterange"
+              rangeSeparator="~"
+              startPlaceholder="开始日期"
+              endPlaceholder="结束日期"
+              valueFormat="YYYY-MM-DD"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="创建人">
             <el-input v-model="form.createUserId" placeholder="请输入创建人" clearable />
           </el-form-item>
@@ -48,7 +60,7 @@
             <el-input v-model="form.updateUserId" placeholder="请输入更新人" clearable />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col v-if="false" :span="6">
           <el-form-item label="发布时间">
             <el-date-picker
               v-model="form.publishTimesRange"
@@ -60,7 +72,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col v-if="false" :span="6">
           <el-form-item label="更新时间">
             <el-date-picker
               v-model="form.updatedTimesRange"
@@ -153,6 +165,12 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="publishDate"
+        label="动态发布日期"
+        width="120"
+        showOverflowTooltip
+      />
       <el-table-column
         prop="publishUserName"
         label="发布人"
@@ -280,6 +298,7 @@ interface DynamicItem {
   content: string
   contentEn: string
   publishTimes: string | null
+  publishDate: string | null
   publishUserId: string
   publishUserName: string
   createUserId: string
@@ -298,7 +317,8 @@ const initialSearchForm = {
   createUserId: '',
   updateUserId: '',
   publishTimesRange: [] as string[],
-  updatedTimesRange: [] as string[]
+  updatedTimesRange: [] as string[],
+  publishDateRange: [] as string[]
 }
 
 // 表格页面组件引用

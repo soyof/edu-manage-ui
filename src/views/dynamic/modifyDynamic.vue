@@ -32,7 +32,10 @@
           labelWidth="100px"
           class="dynamic-form"
         >
-          <!-- 标题 -->
+          <!-- 基本信息 -->
+          <HeaderLine title="基本信息" :icon="Document" />
+
+          <!-- 动态标题 -->
           <el-form-item label="动态标题" prop="title" required>
             <el-input
               v-model="formData.title"
@@ -52,38 +55,67 @@
             />
           </el-form-item>
 
-          <!-- 动态类型 -->
-          <el-form-item label="类型" prop="dynamicType" required>
-            <el-select
-              v-model="formData.dynamicType"
-              placeholder="请选择类型"
-              style="width: 100%"
-            >
-              <el-option
-                v-for="item in dynamicTypeList"
-                :key="item.dictId"
-                :label="item.dictValue"
-                :value="item.dictId"
-              />
-            </el-select>
-          </el-form-item>
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <!-- 动态类型 -->
+              <el-form-item label="类型" prop="dynamicType" required>
+                <el-select
+                  v-model="formData.dynamicType"
+                  placeholder="请选择类型"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in dynamicTypeList"
+                    :key="item.dictId"
+                    :label="item.dictValue"
+                    :value="item.dictId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <!-- 动态发布日期 -->
+              <el-form-item label="发布日期" prop="publishDate">
+                <el-date-picker
+                  v-model="formData.publishDate"
+                  type="date"
+                  placeholder="请选择动态发布日期"
+                  valueFormat="YYYY-MM-DD"
+                  clearable
+                  style="width: 100%;"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-          <!-- 中文内容 -->
-          <el-form-item label="中文内容" prop="content" required>
-            <TinyMceEditor
-              v-model="formData.content"
-              :height="380"
-              :placeholder="'请输入中文动态内容'"
-            />
-          </el-form-item>
-
-          <!-- 英文内容 -->
-          <el-form-item label="英文内容" prop="contentEn">
-            <TinyMceEditor
-              v-model="formData.contentEn"
-              :height="380"
-              :placeholder="'请输入英文动态内容'"
-            />
+          <!-- 动态内容 -->
+          <HeaderLine title="动态内容" :icon="Reading" />
+          <el-form-item
+            label="内容"
+            prop="content"
+            required
+            class="content-form-item"
+          >
+            <el-tabs type="border-card" class="simple-tabs">
+              <el-tab-pane label="中文内容">
+                <div class="editor-wrapper">
+                  <TinyMceEditor
+                    v-model="formData.content"
+                    :height="500"
+                    :placeholder="'请输入中文动态内容'"
+                  />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="英文内容">
+                <div class="editor-wrapper">
+                  <TinyMceEditor
+                    v-model="formData.contentEn"
+                    :height="500"
+                    :placeholder="'请输入英文动态内容'"
+                  />
+                </div>
+              </el-tab-pane>
+            </el-tabs>
           </el-form-item>
         </el-form>
       </div>
@@ -95,8 +127,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Check } from '@element-plus/icons-vue'
+import { Check, Document, Reading } from '@element-plus/icons-vue'
 import TinyMceEditor from '@/components/global/tinyMceEditor.vue'
+import HeaderLine from '@/components/global/headerLine.vue'
 import service from '@/utils/services'
 import useLoading from '@/hooks/useLoading'
 import { useTabsStore } from '@/stores/menuTabs'
@@ -131,6 +164,7 @@ const formData = reactive<{
   content: string
   contentEn: string
   publishStatus?: string
+  publishDate: string | null
 }>({
   id: '',
   dynamicType: '6001', // 默认为科研动态
@@ -138,7 +172,8 @@ const formData = reactive<{
   titleEn: '', // 英文标题
   content: '', // 中文内容
   contentEn: '', // 英文内容
-  publishStatus: '0' // 状态：0-未发布，1-已发布
+  publishStatus: '0', // 状态：0-未发布，1-已发布
+  publishDate: new Date().toISOString().split('T')[0] // 默认为当前日期
 })
 
 // 表单验证规则
@@ -173,6 +208,7 @@ const getDynamicDetail = () => {
       formData.content = res.content
       formData.contentEn = res.contentEn
       formData.publishStatus = res.publishStatus
+      formData.publishDate = res.publishDate || null
     }
   }).finally(() => {
     closeLoading()
@@ -283,6 +319,88 @@ onMounted(() => {
   :deep(.el-input__wrapper),
   :deep(.el-textarea__inner) {
     border-radius: 6px;
+  }
+
+  .header-line-wrap {
+    margin-bottom: 12px;
+  }
+
+  .content-form-item {
+    :deep(.el-form-item__label) {
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .editor-wrapper {
+      width: 100%;
+    }
+
+    :deep(.simple-tabs) {
+      box-shadow: none;
+      border: none;
+      width: 100%;
+
+      .el-tabs__header {
+        background: #fff;
+        border: none;
+        margin-bottom: 4px;
+        border: 1px solid var(--el-border-color);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .el-tabs__content {
+        padding: 0;
+        border: none;
+        background: #fff;
+      }
+
+      .el-tabs__nav-wrap {
+        &::after {
+          display: none;
+        }
+      }
+
+      .el-tabs__nav {
+        border: none !important;
+      }
+
+      .el-tabs__item {
+        height: 40px;
+        line-height: 40px;
+        font-size: 15px;
+        color: #606266;
+        border: none !important;
+        position: relative;
+        transition: all 0.2s;
+
+        &.is-active {
+          color: var(--el-color-primary);
+          font-weight: 500;
+          background: transparent;
+
+          &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--el-color-primary);
+          }
+        }
+
+        &:hover {
+          color: var(--el-color-primary);
+        }
+      }
+    }
+  }
+
+  .editor-wrapper {
+    .tiny-mce-editor {
+      border-radius: 6px;
+    }
   }
 }
 </style>

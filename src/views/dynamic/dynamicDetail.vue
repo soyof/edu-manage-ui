@@ -21,61 +21,76 @@
               >
                 {{ DynamicStatus.getName(dynamicData.publishStatus) }}
               </el-tag>
+              <div v-if="dynamicData.publishDate" class="date-tag">
+                <span>{{ dynamicData.publishDate }}</span>
+              </div>
             </div>
           </div>
 
-          <!-- 元信息 - 改为新的三列布局 -->
-          <div class="info-timeline animate__animated animate__fadeIn animate__delay-1s">
+          <!-- 元信息 - 现代化信息卡片布局 -->
+          <div class="info-cards-container animate__animated animate__fadeIn animate__delay-1s">
             <!-- 创建信息 -->
-            <div class="info-column">
-              <div class="info-column-header">
-                <i class="el-icon-circle-plus-outline"></i>
-                <span>创建信息</span>
+            <div class="info-card" data-type="create">
+              <div class="info-card-icon">
+                <el-icon><DocumentAdd /></el-icon>
               </div>
-              <div class="info-column-content">
-                <div class="info-time">
-                  <i class="el-icon-date"></i>
-                  <span>{{ dynamicData.createdTimes || '--' }}</span>
-                </div>
-                <div class="info-user">
-                  <i class="el-icon-user"></i>
-                  <span>{{ dynamicData.createUserName || '--' }}</span>
+              <div class="info-card-content">
+                <div class="info-card-title">创建信息</div>
+                <div class="info-card-details">
+                  <div class="info-detail">
+                    <el-icon><Calendar /></el-icon>
+                    <span class="info-label">时间:</span>
+                    <span class="info-value">{{ dynamicData.createdTimes || '--' }}</span>
+                  </div>
+                  <div class="info-detail">
+                    <el-icon><User /></el-icon>
+                    <span class="info-label">用户:</span>
+                    <span class="info-value">{{ dynamicData.createUserName || '--' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- 如果有发布信息则显示 -->
-            <div v-if="dynamicData.publishStatus === '1'" class="info-column">
-              <div class="info-column-header">
-                <i class="el-icon-upload2"></i>
-                <span>发布信息</span>
+            <!-- 发布信息 -->
+            <div v-if="dynamicData.publishStatus === '1'" class="info-card" data-type="publish">
+              <div class="info-card-icon">
+                <el-icon><Promotion /></el-icon>
               </div>
-              <div class="info-column-content">
-                <div class="info-time">
-                  <i class="el-icon-date"></i>
-                  <span>{{ dynamicData.publishTimes || '--' }}</span>
-                </div>
-                <div class="info-user">
-                  <i class="el-icon-user"></i>
-                  <span>{{ dynamicData.publishUserName || '--' }}</span>
+              <div class="info-card-content">
+                <div class="info-card-title">发布信息</div>
+                <div class="info-card-details">
+                  <div class="info-detail">
+                    <el-icon><Calendar /></el-icon>
+                    <span class="info-label">时间:</span>
+                    <span class="info-value">{{ dynamicData.publishTimes || '--' }}</span>
+                  </div>
+                  <div class="info-detail">
+                    <el-icon><User /></el-icon>
+                    <span class="info-label">用户:</span>
+                    <span class="info-value">{{ dynamicData.publishUserName || '--' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- 更新信息 -->
-            <div class="info-column">
-              <div class="info-column-header">
-                <i class="el-icon-refresh"></i>
-                <span>更新信息</span>
+            <div class="info-card" data-type="update">
+              <div class="info-card-icon">
+                <el-icon><EditPen /></el-icon>
               </div>
-              <div class="info-column-content">
-                <div class="info-time">
-                  <i class="el-icon-date"></i>
-                  <span>{{ dynamicData.updatedTimes || '--' }}</span>
-                </div>
-                <div class="info-user">
-                  <i class="el-icon-user"></i>
-                  <span>{{ dynamicData.updateUserName || '--' }}</span>
+              <div class="info-card-content">
+                <div class="info-card-title">更新信息</div>
+                <div class="info-card-details">
+                  <div class="info-detail">
+                    <el-icon><Calendar /></el-icon>
+                    <span class="info-label">时间:</span>
+                    <span class="info-value">{{ dynamicData.updatedTimes || '--' }}</span>
+                  </div>
+                  <div class="info-detail">
+                    <el-icon><User /></el-icon>
+                    <span class="info-label">用户:</span>
+                    <span class="info-value">{{ dynamicData.updateUserName || '--' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -133,7 +148,7 @@ import { ElMessage } from 'element-plus'
 import { DynamicStatus } from '@/dic/statusConfig'
 import { useDictionary } from '@/hooks/useDictionary'
 import useLoading from '@/hooks/useLoading'
-import 'animate.css'
+import { Calendar, User, DocumentAdd, Promotion, EditPen } from '@element-plus/icons-vue'
 
 // 路由相关
 const route = useRoute()
@@ -228,6 +243,7 @@ onMounted(() => {
           word-break: break-word;
           display: -webkit-box;
           -webkit-line-clamp: 2;
+          line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -257,18 +273,26 @@ onMounted(() => {
           justify-content: flex-start;
         }
 
-        .type-tag {
+        .type-tag, .date-tag {
           padding: 0 12px;
           height: 28px;
           line-height: 28px;
           border-radius: 4px;
-          background-color: #e6f7ff;
-          color: #1890ff;
           font-size: 14px;
           font-weight: 500;
           white-space: nowrap;
           min-width: 80px;
           text-align: center;
+        }
+
+        .type-tag {
+          background-color: #e6f7ff;
+          color: #1890ff;
+        }
+
+        .date-tag {
+          background-color: #f0f9eb;
+          color: #67c23a;
         }
 
         .status-tag {
@@ -284,65 +308,109 @@ onMounted(() => {
       }
     }
 
-    // 信息时间线样式
-    .info-timeline {
+    // 现代化信息卡片容器
+    .info-cards-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 24px;
       margin-top: 32px;
 
-      .info-column {
-        background: #f9fafc;
-        border-radius: 10px;
-        padding: 16px;
+      // 信息卡片
+      .info-card {
+        position: relative;
         flex: 1;
-        min-width: 200px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        min-width: 240px;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex;
+        align-items: stretch;
+        border-top: 4px solid transparent;
+
+        &[data-type="create"] {
+          border-top-color: #409EFF;
+          .info-card-icon {
+            background: linear-gradient(135deg, #409EFF, #64b5ff);
+          }
+        }
+
+        &[data-type="publish"] {
+          border-top-color: #67C23A;
+          .info-card-icon {
+            background: linear-gradient(135deg, #67C23A, #95d475);
+          }
+        }
+
+        &[data-type="update"] {
+          border-top-color: #E6A23C;
+          .info-card-icon {
+            background: linear-gradient(135deg, #E6A23C, #f3c171);
+          }
+        }
 
         &:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+          transform: translateY(-6px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
         }
 
-        .info-column-header {
+        .info-card-icon {
           display: flex;
           align-items: center;
-          margin-bottom: 12px;
-          color: #606266;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-          padding-bottom: 8px;
+          justify-content: center;
+          padding: 0 16px;
 
-          i {
-            font-size: 18px;
-            margin-right: 8px;
-            color: #409EFF;
-          }
-
-          span {
-            font-weight: 600;
-            font-size: 15px;
+          .el-icon {
+            font-size: 24px;
+            color: white;
           }
         }
 
-        .info-column-content {
-          .info-time, .info-user {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
+        .info-card-content {
+          flex: 1;
+          padding: 16px;
 
-            i {
-              color: #909399;
-              margin-right: 8px;
-              font-size: 14px;
-              width: 16px;
-              text-align: center;
-            }
+          .info-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #303133;
+            margin-bottom: 12px;
+            position: relative;
+          }
 
-            span {
-              color: #303133;
-              font-size: 14px;
-              word-break: break-word;
+          .info-card-details {
+            .info-detail {
+              display: flex;
+              align-items: center;
+              margin-bottom: 10px;
+              padding: 6px 0;
+              border-bottom: 1px dashed rgba(0,0,0,0.05);
+
+              &:last-child {
+                margin-bottom: 0;
+                border-bottom: none;
+              }
+
+              .el-icon {
+                font-size: 16px;
+                margin-right: 8px;
+                color: #909399;
+              }
+
+              .info-label {
+                color: #909399;
+                font-size: 14px;
+                margin-right: 8px;
+                min-width: 40px;
+              }
+
+              .info-value {
+                color: #303133;
+                font-size: 14px;
+                font-weight: 500;
+                flex: 1;
+              }
             }
           }
         }
