@@ -173,7 +173,7 @@ const formData = reactive<{
   content: '', // 中文内容
   contentEn: '', // 英文内容
   publishStatus: '0', // 状态：0-未发布，1-已发布
-  publishDate: new Date().toISOString().split('T')[0] // 默认为当前日期
+  publishDate: '' // 默认为当前日期
 })
 
 // 表单验证规则
