@@ -83,7 +83,7 @@
         <!-- 摘要部分 -->
         <div class="abstract-section animate__animated animate__fadeIn animate__delay-2s">
           <h3 class="section-heading">摘要</h3>
-          <el-tabs type="border-card">
+          <el-tabs type="border-card" class="modern-tabs">
             <el-tab-pane label="中文摘要">
               <div v-if="paperData.abstract" class="rich-text-content" v-html="paperData.abstract"></div>
               <el-empty v-else description="暂无中文摘要" />
@@ -95,21 +95,10 @@
           </el-tabs>
         </div>
 
-        <!-- 原文链接 -->
-        <div v-if="paperData.originalUrl" class="original-url-section animate__animated animate__fadeIn animate__delay-3s">
-          <h3 class="section-heading">原文链接</h3>
-          <div class="link-url animate__animated animate__pulse animate__delay-3s">
-            <a :href="paperData.originalUrl" target="_blank" rel="noopener noreferrer">
-              {{ paperData.originalUrl }}
-              <el-icon class="external-icon"><TopRight /></el-icon>
-            </a>
-          </div>
-        </div>
-
         <!-- 论文内容 -->
         <div class="paper-body animate__animated animate__fadeIn animate__delay-2s">
           <h3 class="section-heading">正文内容</h3>
-          <el-tabs type="border-card">
+          <el-tabs type="border-card" class="modern-tabs">
             <el-tab-pane label="中文内容">
               <div class="content-wrapper">
                 <div
@@ -131,6 +120,17 @@
               </div>
             </el-tab-pane>
           </el-tabs>
+        </div>
+
+        <!-- 原文链接 -->
+        <div v-if="paperData.originalUrl" class="original-url-section animate__animated animate__fadeIn animate__delay-3s">
+          <h3 class="section-heading">原文链接</h3>
+          <div class="link-url animate__animated animate__pulse animate__delay-3s">
+            <a :href="paperData.originalUrl" target="_blank" rel="noopener noreferrer">
+              {{ paperData.originalUrl }}
+              <el-icon class="external-icon"><TopRight /></el-icon>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -440,6 +440,72 @@ onMounted(() => {
         line-height: 1.8;
         color: var(--el-text-color-primary);
       }
+
+      :deep(.modern-tabs) {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        border: none;
+
+        .el-tabs__header {
+          margin: 0;
+          background: linear-gradient(to right,
+            color-mix(in srgb, var(--primaryColor) 8%, white),
+            color-mix(in srgb, var(--primaryColor) 2%, white));
+          border-bottom: 1px solid color-mix(in srgb, var(--primaryColor) 15%, white);
+          padding: 0 8px;
+
+          .el-tabs__nav {
+            border: none;
+          }
+
+          .el-tabs__item {
+            height: 40px;
+            line-height: 40px;
+            font-size: 16px;
+            border: none !important;
+            padding: 0 24px;
+            margin: 0 4px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: var(--el-text-color-primary);
+
+            &.is-active {
+              font-weight: 600;
+              color: var(--primaryColor);
+              background: transparent;
+
+              &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 40%;
+                height: 3px;
+                background: var(--primaryColor);
+                border-radius: 3px 3px 0 0;
+                transition: width 0.3s ease;
+              }
+
+              &:hover::after {
+                width: 80%;
+              }
+            }
+
+            &:hover:not(.is-active) {
+              color: color-mix(in srgb, var(--primaryColor) 80%, black);
+              background: color-mix(in srgb, var(--primaryColor) 5%, white);
+              border-radius: 6px 6px 0 0;
+            }
+          }
+        }
+
+        .el-tabs__content {
+          padding: 24px;
+          background: white;
+        }
+      }
     }
 
     .original-url-section {
@@ -480,30 +546,69 @@ onMounted(() => {
     .paper-body {
       margin: 16px;
 
-      :deep(.el-tabs__header) {
-        margin: 0;
+      :deep(.modern-tabs) {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        border: none;
 
-        .el-tabs__nav {
-          border: none;
+        .el-tabs__header {
+          margin: 0;
+          background: linear-gradient(to right,
+            color-mix(in srgb, var(--primaryColor) 8%, white),
+            color-mix(in srgb, var(--primaryColor) 2%, white));
+          border-bottom: 1px solid color-mix(in srgb, var(--primaryColor) 15%, white);
+          padding: 0 8px;
+
+          .el-tabs__nav {
+            border: none;
+          }
+
+          .el-tabs__item {
+            height: 40px;
+            line-height: 40px;
+            font-size: 16px;
+            border: none !important;
+            padding: 0 24px;
+            margin: 0 4px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: var(--el-text-color-primary);
+
+            &.is-active {
+              font-weight: 600;
+              color: var(--primaryColor);
+              background: transparent;
+
+              &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 40%;
+                height: 3px;
+                background: var(--primaryColor);
+                border-radius: 3px 3px 0 0;
+                transition: width 0.3s ease;
+              }
+
+              &:hover::after {
+                width: 80%;
+              }
+            }
+
+            &:hover:not(.is-active) {
+              color: color-mix(in srgb, var(--primaryColor) 80%, black);
+              background: color-mix(in srgb, var(--primaryColor) 5%, white);
+              border-radius: 6px 6px 0 0;
+            }
+          }
         }
 
-        .el-tabs__item {
-          height: 50px;
-          line-height: 50px;
-          font-size: 16px;
-          transition: all 0.3s ease;
-
-          &.is-active {
-            font-weight: 600;
-            color: var(--primaryColor);
-            background-color: color-mix(in srgb, var(--primaryColor) 5%, white);
-          }
-
-          &:hover:not(.is-active) {
-            color: var(--primaryColor);
-            background-color: color-mix(in srgb, var(--primaryColor) 2%, white);
-            transform: translateY(-2px);
-          }
+        .el-tabs__content {
+          padding: 24px;
+          background: white;
         }
       }
 
@@ -511,10 +616,6 @@ onMounted(() => {
         min-height: 300px;
         padding: 0;
         animation: floatUp 0.5s ease-out;
-      }
-
-      :deep(.el-tabs__content) {
-        padding: 20px;
       }
 
       .rich-text-content {

@@ -38,3 +38,12 @@ tabsStore.initStore()
 
 // 挂载应用
 app.mount('#app')
+app.mixin({
+  deactivated() {
+    // 组件被缓存时，查找所有tooltip并关闭
+    const tooltips = document.querySelectorAll('.el-tooltip__popper')
+    tooltips.forEach((tooltip: any) => {
+      tooltip.style.display = 'none'
+    })
+  }
+})

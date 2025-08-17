@@ -1,6 +1,4 @@
-import { HomeFilled, Setting, User, Collection, Document, Bell, Memo, Notification, EditPen, View, UserFilled, Medal, Reading, Box, Suitcase, Tools, Trophy, InfoFilled } from '@element-plus/icons-vue'
-
-console.log(HomeFilled)
+import { HomeFilled, Setting, User, Collection, Document, Bell, Memo, Notification, EditPen, View, UserFilled, Medal, Reading, Box, Suitcase, Tools, Trophy, InfoFilled, Rank } from '@element-plus/icons-vue'
 
 export const menuIconMap = {
   'HomeFilled': HomeFilled,
@@ -20,5 +18,6 @@ export const menuIconMap = {
   'Suitcase': Suitcase,
   'Tools': Tools,
   'Trophy': Trophy,
-  'InfoFilled': InfoFilled
+  'InfoFilled': InfoFilled,
+  'Rank': Rank
 }

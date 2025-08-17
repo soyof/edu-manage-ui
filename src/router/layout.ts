@@ -19,6 +19,12 @@ export default [
         component: () => import(/* webpackChunkName: "userManage" */ '@/views/user/userManage.vue')
       },
       {
+        path: '/userSortSetting',
+        name: 'userSortSetting',
+        meta: { title: '用户排序设置', tabClosable: true, icon: 'Rank', roles: ['admin'] },
+        component: () => import(/* webpackChunkName: "userSortSetting" */ '@/views/user/userSortSetting.vue')
+      },
+      {
         path: '/dictManage',
         name: 'dictManage',
         meta: { title: '字典管理', tabClosable: true, icon: 'Collection', roles: ['admin'] },

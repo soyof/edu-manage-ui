@@ -72,16 +72,28 @@
         </el-col>
       </template>
       <template #operation>
-        <el-tooltip
-          content="新增用户"
-          placement="top"
-          :showAfter="200"
-          :hideAfter="0"
-        >
-          <ThrottleButton size="small" type="primary" @click="handleAdd">
-            <el-icon><Plus /></el-icon>
-          </ThrottleButton>
-        </el-tooltip>
+        <div class="operation-btns">
+          <el-tooltip
+            content="新增用户"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
+          >
+            <ThrottleButton size="small" type="primary" @click="handleAdd">
+              <el-icon><Plus /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+          <el-tooltip
+            content="用户排序设置"
+            placement="top"
+            :showAfter="200"
+            :hideAfter="0"
+          >
+            <ThrottleButton size="small" type="success" @click="goToSortSetting">
+              <el-icon><Rank /></el-icon>
+            </ThrottleButton>
+          </el-tooltip>
+        </div>
       </template>
 
       <el-table-column
@@ -290,7 +302,7 @@ import { ROLE_LIST } from '@/dic/dic'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useDictionary } from '@/hooks/useDictionary'
 import { useRouter } from 'vue-router'
-import { View, EditPen, Delete, School, Lock, Unlock, Plus, Hide, InfoFilled } from '@element-plus/icons-vue'
+import { View, EditPen, Delete, School, Lock, Unlock, Plus, Hide, InfoFilled, Rank } from '@element-plus/icons-vue'
 import { useUserInfoStore } from '@/stores/userInfo'
 
 // 获取职称字典
@@ -400,6 +412,11 @@ const handleSuccess = () => {
   tablePageRef.value?.getList()
 }
 
+// 跳转到用户排序设置页面
+const goToSortSetting = () => {
+  $router.push('/userSortSetting')
+}
+
 const handleToggleStatus = (row: any) => {
   // 判断是否是当前登录用户
   const currentUserId = userInfoStore.userInfo?.userId
@@ -456,6 +473,10 @@ const handleToggleDisplay = (row: any) => {
 
 <style lang="less" scoped>
 .user-manage {
+  .operation-btns {
+    display: flex;
+  }
+
   .image-error {
     display: flex;
     flex-direction: column;
