@@ -36,8 +36,20 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <!-- 文献发布时间 -->
         <el-col :span="6">
+          <el-form-item label="投稿状态">
+            <el-select v-model="form.submissionStatus" placeholder="请选择投稿状态" clearable>
+              <el-option
+                v-for="item in submissionStatusList"
+                :key="item.dictId"
+                :label="item.dictValue"
+                :value="item.dictId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <!-- 文献发布时间 -->
+        <el-col v-if="false" :span="6">
           <el-form-item label="文献发布时间">
             <el-date-picker
               v-model="form.paperPublishTimesRange"
@@ -146,6 +158,19 @@
           <el-tag :type="PaperStatus.getTagType(scope.row.publishStatus)">
             {{ PaperStatus.getName(scope.row.publishStatus) }}
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="submissionStatus"
+        label="投稿状态"
+        width="120"
+        showOverflowTooltip
+      >
+        <template #default="scope">
+          <el-tag v-if="scope.row.submissionStatus" type="info">
+            {{ getSubmissionStatusName(scope.row.submissionStatus) }}
+          </el-tag>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -265,12 +290,21 @@ import ThrottleButton from '@/components/global/throttleButton.vue'
 import TablePage from '@/components/global/tablePage.vue'
 import service from '@/utils/services'
 import { PaperStatus } from '@/dic/statusConfig'
+import { useDictInfo } from '@/hooks/useDictionary'
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
 
 // 获取管理员权限状态
 const isAdmin = userInfoStore.isAdmin
+
+// 获取投稿状态字典数据
+const { dictList: submissionStatusList, dictMapping: submissionStatusMap } = useDictInfo('paper_submission_status')
+
+// 获取投稿状态名称
+const getSubmissionStatusName = (status: string): string => {
+  return submissionStatusMap.value[status] || status
+}
 
 interface PaperItem {
   id: number
@@ -281,6 +315,7 @@ interface PaperItem {
   journal: string | null
   journalEn: string | null
   publishStatus: string
+  submissionStatus: string | null
   paperPublishTimes: string | null
   publishTimes: string | null
   publishUserName: string | null
@@ -297,6 +332,7 @@ const initialSearchForm = {
   authors: '',
   journal: '',
   publishStatus: '',
+  submissionStatus: '',
   paperPublishTimesRange: [] as string[],
   publishTimesRange: [] as string[],
   updatedTimesRange: [] as string[]

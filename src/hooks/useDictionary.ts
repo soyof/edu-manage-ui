@@ -91,7 +91,7 @@ export const useDictionary = (options: DictionaryOptions) => {
    * 判断是否为内置字典类型
    */
   const isBuiltInDict = (type: string): boolean => {
-    return ['user_title', 'notice_type', 'notice_importance', 'publish_status', 'intro_type', 'dynamic_type'].includes(type)
+    return ['user_title', 'notice_type', 'notice_importance', 'publish_status', 'intro_type', 'dynamic_type', 'paper_submission_status'].includes(type)
   }
 
   /**

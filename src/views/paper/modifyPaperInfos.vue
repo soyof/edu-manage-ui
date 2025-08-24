@@ -122,13 +122,25 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="原文地址" prop="originalUrl">
                 <el-input v-model="formData.originalUrl" placeholder="请输入原文链接地址" clearable>
                   <template #prefix>
                     <el-icon><Link /></el-icon>
                   </template>
                 </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="投稿状态" prop="submissionStatus">
+                <el-select v-model="formData.submissionStatus" placeholder="请选择投稿状态" clearable>
+                  <el-option
+                    v-for="item in submissionStatusList"
+                    :key="item.dictId"
+                    :label="item.dictValue"
+                    :value="item.dictId"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -205,11 +217,15 @@ import HeaderLine from '@/components/global/headerLine.vue'
 import service from '@/utils/services'
 import { useTabsStore } from '@/stores/menuTabs'
 import useLoading from '@/hooks/useLoading'
+import { useDictInfo } from '@/hooks/useDictionary'
 
 const route = useRoute()
 const router = useRouter()
 const tabsStore = useTabsStore()
 const { loading, changeLoading, closeLoading } = useLoading()
+
+// 获取投稿状态字典数据
+const { dictList: submissionStatusList } = useDictInfo('paper_submission_status', true)
 
 // 作者选项
 const authorOptions = ref<string[]>([])
@@ -254,7 +270,8 @@ const formData = reactive({
   paperPublishTimes: '', // 论文发布时间
   originalUrl: '', // 原文地址
   content: '', // 中文内容
-  contentEn: '' // 英文内容
+  contentEn: '', // 英文内容
+  submissionStatus: '' // 投稿状态
 })
 
 // 验证URL地址格式
@@ -341,6 +358,7 @@ const fetchPaperDetail = () => {
       formData.originalUrl = res.originalUrl
       formData.content = res.content
       formData.contentEn = res.contentEn
+      formData.submissionStatus = res.submissionStatus
       // 初始化作者列表
       initAuthorsList()
     }

@@ -17,6 +17,14 @@
               >
                 {{ PaperStatus.getName(paperData.publishStatus) }}
               </el-tag>
+              <el-tag
+                v-if="paperData.submissionStatus"
+                size="small"
+                type="info"
+                class="status-tag"
+              >
+                {{ submissionStatusName }}
+              </el-tag>
             </div>
             <h1 class="title animate__animated animate__fadeIn animate__delay-1s">{{ paperData.title }}</h1>
             <div class="paper-meta animate__animated animate__fadeIn animate__delay-1s">
@@ -144,8 +152,12 @@ import { TopRight, Calendar, User } from '@element-plus/icons-vue'
 import service from '@/utils/services'
 import useLoading from '@/hooks/useLoading'
 import { PaperStatus } from '@/dic/statusConfig'
+import { useDictInfo } from '@/hooks/useDictionary'
 
 const { changeLoading, closeLoading, loading } = useLoading()
+
+// 获取投稿状态字典
+const { dictMapping: submissionStatusMap } = useDictInfo('paper_submission_status')
 
 // 路由相关
 const route = useRoute()
@@ -172,12 +184,18 @@ const paperData = reactive({
   createdTimes: '',
   updatedTimes: '',
   createUserName: '',
-  updateUserName: ''
+  updateUserName: '',
+  submissionStatus: ''
 })
 
 // 是否有英文内容
 const hasEnglishContent = computed(() => {
   return Boolean(paperData.titleEn || paperData.abstractEn || paperData.contentEn)
+})
+
+// 获取投稿状态名称
+const submissionStatusName = computed(() => {
+  return paperData.submissionStatus ? submissionStatusMap.value[paperData.submissionStatus] : ''
 })
 
 // 动画控制
