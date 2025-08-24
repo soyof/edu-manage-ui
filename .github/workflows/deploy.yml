@@ -36,5 +36,3 @@ jobs:
           publish_dir: ./dist # 替换为您的构建输出目录
           publish_branch: deploy # 目标分支名称
           force_orphan: true # 确保 deploy 分支只包含最新构建内容
-          user_name: 'soyoo'
-          user_email: '807781817@qq.com'
