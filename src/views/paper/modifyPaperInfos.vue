@@ -110,7 +110,7 @@
             </el-col>
           </el-row>
           <el-row :gutter="24">
-            <el-col :span="6">
+            <el-col :span="12">
               <el-form-item label="文献发布时间" prop="paperPublishTimes">
                 <el-date-picker
                   v-model="formData.paperPublishTimes"
@@ -122,7 +122,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="12">
               <el-form-item label="投稿状态" prop="submissionStatus">
                 <el-select v-model="formData.submissionStatus" placeholder="请选择投稿状态" clearable>
                   <el-option
