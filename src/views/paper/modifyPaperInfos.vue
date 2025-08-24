@@ -110,7 +110,7 @@
             </el-col>
           </el-row>
           <el-row :gutter="24">
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="文献发布时间" prop="paperPublishTimes">
                 <el-date-picker
                   v-model="formData.paperPublishTimes"
@@ -123,15 +123,6 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="原文地址" prop="originalUrl">
-                <el-input v-model="formData.originalUrl" placeholder="请输入原文链接地址" clearable>
-                  <template #prefix>
-                    <el-icon><Link /></el-icon>
-                  </template>
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
               <el-form-item label="投稿状态" prop="submissionStatus">
                 <el-select v-model="formData.submissionStatus" placeholder="请选择投稿状态" clearable>
                   <el-option
@@ -141,6 +132,17 @@
                     :value="item.dictId"
                   />
                 </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item label="原文地址" prop="originalUrl">
+                <el-input v-model="formData.originalUrl" placeholder="请输入原文链接地址" clearable>
+                  <template #prefix>
+                    <el-icon><Link /></el-icon>
+                  </template>
+                </el-input>
               </el-form-item>
             </el-col>
           </el-row>

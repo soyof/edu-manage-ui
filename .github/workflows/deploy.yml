@@ -1,38 +1,39 @@
-name: Build and Deploy
+name: Build and Deploy # 工作流名称：构建与部署
 
+# 触发条件：当推送代码到master分支时自动执行此工作流
 on:
   push:
     branches: [master] # 根据您的默认分支名称调整
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  build-and-deploy: # 定义一个名为build-and-deploy的任务
+    runs-on: ubuntu-latest # 在最新版本的Ubuntu运行环境中执行
 
     steps:
-      # 1. 检出代码
+      # 1. 检出代码 - 将仓库代码克隆到GitHub Actions的运行环境中
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # 使用官方的checkout动作
         with:
-          fetch-depth: 0 # 获取所有历史记录，便于部署到其他分支
+          fetch-depth: 0 # 获取所有历史记录，便于部署到其他分支（完整克隆，不是浅克隆）
 
-      # 2. 设置 Node.js 环境（根据您的项目需求调整）
+      # 2. 设置 Node.js 环境 - 安装指定版本的Node.js
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4 # 使用官方的Node.js设置动作
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '20' # 使用Node.js 20版本
+          cache: 'npm' # 启用npm依赖缓存，提高后续运行速度
 
-      # 3. 安装依赖并构建（根据您的项目调整命令）
+      # 3. 安装依赖并构建 - 安装项目依赖并执行构建过程
       - name: Install dependencies and build
         run: |
-          npm ci
-          npm run build  # 或您使用的构建命令，如 yarn build 等
+          npm ci  # 使用clean install命令，比npm install更严格，确保一致的安装结果
+          npm run build  # 执行package.json中定义的build命令，生成静态文件到dist目录
 
-      # 4. 部署到 deploy 分支
+      # 4. 部署到 deploy 分支 - 将构建结果发布到deploy分支
       - name: Deploy to deploy branch
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v3 # 使用第三方GitHub Pages部署动作
         with:
-          personal_token: ${{ secrets.MANAGEUI_TOKEN }}
-          publish_dir: ./dist # 替换为您的构建输出目录
-          publish_branch: deploy # 目标分支名称
-          force_orphan: true # 确保 deploy 分支只包含最新构建内容
+          personal_token: ${{ secrets.MANAGEUI_TOKEN }} # 使用存储在仓库密钥中的个人访问令牌，提供写入权限
+          publish_dir: ./dist # 指定要发布的目录，通常是构建输出目录
+          publish_branch: deploy # 目标分支名称，将构建结果推送到此分支
+          force_orphan: true # 确保deploy分支只包含最新构建内容，删除历史记录
