@@ -1,0 +1,38 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ master ]  # 根据您的默认分支名称调整
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. 检出代码
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取所有历史记录，便于部署到其他分支
+
+    # 2. 设置 Node.js 环境（根据您的项目需求调整）
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    # 3. 安装依赖并构建（根据您的项目调整命令）
+    - name: Install dependencies and build
+      run: |
+        npm ci
+        npm run build  # 或您使用的构建命令，如 yarn build 等
+
+    # 4. 部署到 deploy 分支
+    - name: Deploy to deploy branch
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist  # 替换为您的构建输出目录
+        publish_branch: deploy  # 目标分支名称
+        force_orphan: true  # 确保 deploy 分支只包含最新构建内容
