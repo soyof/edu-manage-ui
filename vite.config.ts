@@ -6,6 +6,8 @@ import viteCompression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
+  // 在Vite 7中设置process.env.NODE_ENV
+  process.env.NODE_ENV = mode === 'production' ? 'production' : 'development'
   // 根据当前工作目录中的 `mode` 加载 .env 文件
   // 设置第三个参数为 '' 来加载所有环境变量，而不管是否有 `VITE_` 前缀。
   const env = loadEnv(mode, process.cwd(), '')
@@ -52,8 +54,11 @@ export default defineConfig(({ mode }) => {
     build: {
       // 根据环境变量决定是否生成sourcemap
       sourcemap: env.VITE_SOURCEMAP === 'true',
+      // 设置浏览器兼容性目标，Vite 7默认为'baseline-widely-available' 对应Chrome 107+, Firefox 104+, Safari 16.0+
+      // 如需支持更旧浏览器，可以设置为'esnext'或其他具体值
+      target: 'esnext',
       // 生产环境构建配置
-      minify: 'terser', // 使用terser作为代码压缩器
+      minify: 'terser', // 使用terser作为代码压缩器，Vite 7也支持esbuild
       terserOptions: {
         compress: {
           // 根据环境变量决定是否移除console和debugger
