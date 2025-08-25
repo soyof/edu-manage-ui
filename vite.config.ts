@@ -59,6 +59,8 @@ export default defineConfig(({ mode }) => {
       target: 'esnext',
       // 生产环境构建配置
       minify: 'terser', // 使用terser作为代码压缩器，Vite 7也支持esbuild
+      // 调整大型块的警告阈值（默认为500kb）
+      chunkSizeWarningLimit: 1200,
       terserOptions: {
         compress: {
           // 根据环境变量决定是否移除console和debugger
