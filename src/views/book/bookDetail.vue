@@ -243,7 +243,6 @@ onMounted(() => {
 
 .book-detail-container {
   position: relative;
-  padding: 20px;
   background-color: @pageBgColor;
   min-height: calc(100vh - 120px);
 
