@@ -39,6 +39,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     server: {
+      host: '0.0.0.0',
       port: 3000,
       proxy: {
         // 代理所有 /api 前缀的请求到目标服务器

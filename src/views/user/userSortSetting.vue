@@ -1,16 +1,16 @@
 <template>
-  <div class="user-sort-setting">
+  <div class="user-sort-setting animate__animated animate__fadeIn">
     <div class="sort-container">
-      <div class="title-list-section">
+      <div class="title-list-section animate__animated animate__slideInLeft">
         <div class="section-title">
-          <el-icon><Menu /></el-icon>
+          <el-icon class="animate__animated animate__heartBeat animate__delay-1s"><Menu /></el-icon>
           <span>用户职称列表</span>
         </div>
         <el-card shadow="hover" class="title-list-card">
           <div
             v-for="title in titleList"
             :key="title.dictId"
-            class="title-item"
+            class="title-item animate__animated animate__fadeIn"
             :class="{ active: currentTitle?.dictId === title.dictId }"
             @click="handleTitleSelect(title)"
           >
@@ -24,21 +24,23 @@
         </el-card>
       </div>
 
-      <div class="user-list-section">
+      <div class="user-list-section animate__animated animate__slideInRight">
         <div class="section-title">
-          <el-icon><Rank /></el-icon>
+          <el-icon class="animate__animated animate__heartBeat animate__delay-1s"><Rank /></el-icon>
           <span>{{ currentTitle ? `${currentTitle.dictValue}用户列表` : '请选择一个职称' }}</span>
         </div>
         <el-card shadow="hover" class="user-list-card">
           <template #header>
             <div class="card-header">
-              <div class="total-info">
-                共 {{ userListByTitle.length }} 名用户
+              <div class="total-info animate__animated animate__fadeIn">
+                共 <span class="user-count">{{ userListByTitle.length }}</span> 名用户
               </div>
               <div class="action-btns">
                 <ThrottleButton
                   size="small"
                   type="primary"
+                  class="save-btn"
+                  :class="{'animate__animated animate__pulse animate__infinite animate__slow': hasChanged && currentTitle}"
                   :disabled="!currentTitle || !hasChanged"
                   @click="handleSave"
                 >
@@ -58,16 +60,19 @@
           <el-empty
             v-if="!currentTitle"
             description="请先从左侧选择一个职称"
+            class="animate__animated animate__fadeIn"
           />
           <el-empty
             v-else-if="userListByTitle.length === 0"
             description="暂无用户数据"
+            class="animate__animated animate__fadeIn"
           />
           <div v-else class="user-sort-list">
             <el-alert
               type="info"
               showIcon
               :closable="false"
+              class="animate__animated animate__bounceIn"
             >
               <template #title>
                 <span>直接拖拽整个用户卡片可调整排序，<b>数字越小排序越靠前</b>，保存后将影响门户展示顺序</span>
@@ -83,7 +88,7 @@
               @end="dragEnd"
             >
               <template #item="{ element, index }">
-                <div class="user-item cursor-move">
+                <div class="user-item cursor-move animate__animated animate__fadeInUp" :style="{'animation-delay': index * 0.05 + 's'}">
                   <div class="user-order">{{ index + 1 }}</div>
                   <div class="user-avatar">
                     <el-avatar
@@ -96,8 +101,22 @@
                   <div class="user-info">
                     <div class="user-name">
                       {{ element.username }}
-                      <el-tag v-if="element.isDisplay" size="small" type="primary">门户展示</el-tag>
-                      <el-tag v-else size="small" type="info">不展示</el-tag>
+                      <el-tag
+                        v-if="element.isDisplay"
+                        size="small"
+                        type="primary"
+                        class="animate__animated animate__fadeIn"
+                      >
+                        门户展示
+                      </el-tag>
+                      <el-tag
+                        v-else
+                        size="small"
+                        type="info"
+                        class="animate__animated animate__fadeIn"
+                      >
+                        不展示
+                      </el-tag>
                     </div>
                     <div class="user-title">
                       <span class="label">职称:</span>
@@ -107,7 +126,7 @@
                   <div class="user-sort">
                     <div class="sort-value">
                       <span class="label">排序值:</span>
-                      <span>{{ element.displayOrder || '未设置' }}</span>
+                      <span class="order-value">{{ element.displayOrder || '未设置' }}</span>
                     </div>
                   </div>
                 </div>
@@ -220,6 +239,8 @@ const fetchAllUsers = () => {
 
 // 选择职称
 const handleTitleSelect = (title: UserTitle) => {
+  // 如果选择的是同一个职称，不做处理
+  if (currentTitle.value?.dictId === title.dictId) return
   currentTitle.value = title
 
   // 过滤当前职称的用户
@@ -230,14 +251,48 @@ const handleTitleSelect = (title: UserTitle) => {
       return (a.displayOrder || 9999) - (b.displayOrder || 9999)
     })
 
-  userListByTitle.value = [...filteredUsers]
-  // 保存原始排序，用于检测变更
-  originalUserOrder.value = JSON.parse(JSON.stringify(filteredUsers))
+  // 清除之前保存按钮的动画效果
+  const saveBtn = document.querySelector('.save-btn')
+  if (saveBtn) {
+    saveBtn.classList.remove('animate__animated', 'animate__pulse', 'animate__infinite', 'animate__slow')
+  }
+
+  // 添加列表切换动画效果
+  const userListSection = document.querySelector('.user-list-section')
+  if (userListSection) {
+    userListSection.classList.add('animate__animated', 'animate__fadeOut')
+    // 短暂延迟后更新数据并恢复显示
+    setTimeout(() => {
+      userListByTitle.value = [...filteredUsers]
+      // 保存原始排序，用于检测变更
+      originalUserOrder.value = JSON.parse(JSON.stringify(filteredUsers))
+
+      // 移除淡出动画，添加淡入动画
+      userListSection.classList.remove('animate__animated', 'animate__fadeOut')
+      userListSection.classList.add('animate__animated', 'animate__fadeIn')
+
+      // 动画结束后移除类
+      setTimeout(() => {
+        userListSection.classList.remove('animate__animated', 'animate__fadeIn')
+      }, 1000)
+    }, 300)
+  } else {
+    // 如果没有找到元素，则直接更新数据
+    userListByTitle.value = [...filteredUsers]
+    // 保存原始排序，用于检测变更
+    originalUserOrder.value = JSON.parse(JSON.stringify(filteredUsers))
+  }
 }
 
 // 保存排序
 const handleSave = () => {
   if (!currentTitle.value || !userListByTitle.value.length) return
+
+  // 清除保存按钮的动画效果
+  const saveBtn = document.querySelector('.save-btn')
+  if (saveBtn) {
+    saveBtn.classList.remove('animate__animated', 'animate__pulse', 'animate__infinite', 'animate__slow')
+  }
 
   // 确认保存
   ElMessageBox.confirm(
@@ -250,6 +305,14 @@ const handleSave = () => {
     }
   )
     .then(() => {
+      // 为用户卡片添加动画效果
+      const userItems = document.querySelectorAll('.user-item')
+      userItems.forEach((item, idx) => {
+        setTimeout(() => {
+          item.classList.add('animate__animated', 'animate__flipInX')
+        }, idx * 50)
+      })
+
       // 更新排序值
       const updateData = userListByTitle.value.map((user: UserInfo, index) => {
         return {
@@ -265,18 +328,46 @@ const handleSave = () => {
       })
         .then(() => {
           ElMessage.success('保存排序成功')
-          // 保存当前选中的职称ID
-          const currentTitleId = currentTitle.value?.dictId
-          // 重新获取数据后，重新选择当前职称
-          fetchAllUsers().then(() => {
-            if (currentTitleId) {
-              // 找到当前选中的职称并重新选择
-              const targetTitle = titleList.value.find(title => title.dictId === currentTitleId)
-              if (targetTitle) {
-                handleTitleSelect(targetTitle)
+
+          // 添加成功动画效果
+          setTimeout(() => {
+            // 移除之前的动画效果
+            userItems.forEach(item => {
+              item.classList.remove('animate__animated', 'animate__flipInX')
+              item.classList.add('animate__animated', 'animate__pulse')
+
+              // 1秒后移除所有动画类
+              setTimeout(() => {
+                item.classList.remove('animate__animated', 'animate__pulse')
+              }, 1000)
+            })
+
+            // 保存当前选中的职称ID
+            const currentTitleId = currentTitle.value?.dictId
+            // 重新获取数据后，重新选择当前职称
+            fetchAllUsers().then(() => {
+              if (currentTitleId) {
+                // 找到当前选中的职称并重新选择
+                const targetTitle = titleList.value.find(title => title.dictId === currentTitleId)
+                if (targetTitle) {
+                  // 直接设置当前职称，避免触发切换动画
+                  currentTitle.value = targetTitle
+
+                  // 过滤当前职称的用户
+                  const filteredUsers = allUsers.value
+                    .filter(user => user.title === targetTitle.dictId && user.isDisplay)
+                    .sort((a, b) => {
+                      // 按排序值升序排列
+                      return (a.displayOrder || 9999) - (b.displayOrder || 9999)
+                    })
+
+                  userListByTitle.value = [...filteredUsers]
+                  // 保存原始排序，用于检测变更
+                  originalUserOrder.value = JSON.parse(JSON.stringify(filteredUsers))
+                }
               }
-            }
-          })
+            })
+          }, 500)
         })
         .finally(() => {
           changeLoading(false)
@@ -286,19 +377,103 @@ const handleSave = () => {
 
 // 重置排序
 const handleReset = () => {
-  // 重置为原始排序
-  if (originalUserOrder.value && originalUserOrder.value.length) {
-    userListByTitle.value = JSON.parse(JSON.stringify(originalUserOrder.value))
+  // 清除保存按钮的动画效果
+  const saveBtn = document.querySelector('.save-btn')
+  if (saveBtn) {
+    saveBtn.classList.remove('animate__animated', 'animate__pulse', 'animate__infinite', 'animate__slow')
+  }
+
+  // 为容器添加一个轻微的抖动效果
+  const container = document.querySelector('.user-sort-list')
+  if (container) {
+    container.classList.add('animate__animated', 'animate__shakeX')
+
+    // 动画结束后移除类
+    setTimeout(() => {
+      container.classList.remove('animate__animated', 'animate__shakeX')
+
+      // 重置为原始排序
+      if (originalUserOrder.value && originalUserOrder.value.length) {
+        // 添加重置动画效果
+        const userItems = document.querySelectorAll('.user-item')
+
+        userItems.forEach((item) => {
+          item.classList.add('animate__animated', 'animate__fadeOut')
+        })
+
+        // 短暂延迟后更新数据
+        setTimeout(() => {
+          userListByTitle.value = JSON.parse(JSON.stringify(originalUserOrder.value))
+
+          // 在下一个 tick 中添加淡入动画
+          setTimeout(() => {
+            document.querySelectorAll('.user-item').forEach((item) => {
+              item.classList.remove('animate__fadeOut')
+              item.classList.add('animate__fadeIn')
+
+              // 动画结束后移除类
+              setTimeout(() => {
+                item.classList.remove('animate__animated', 'animate__fadeIn')
+              }, 1000)
+            })
+          }, 50)
+        }, 300)
+      }
+    }, 500)
+  } else {
+    // 如果没有找到容器，直接重置
+    if (originalUserOrder.value && originalUserOrder.value.length) {
+      userListByTitle.value = JSON.parse(JSON.stringify(originalUserOrder.value))
+    }
   }
 }
 
 // 拖拽事件处理
-const dragStart = () => {
-  // 拖拽开始
+interface DragEvent {
+  item: HTMLElement;
+  newIndex: number;
+  oldIndex: number;
 }
 
-const dragEnd = () => {
-  // 拖拽结束
+const dragStart = (evt: DragEvent) => {
+  // 添加拖拽开始时的动画效果
+  if (evt.item) {
+    evt.item.classList.add('animate__animated', 'animate__pulse')
+    evt.item.classList.add('sortable-dragging')
+  }
+  // 其他项目稍微淡化
+  document.querySelectorAll('.user-item').forEach((item: Element) => {
+    if (item !== evt.item && item instanceof HTMLElement) {
+      item.style.opacity = '0.6'
+    }
+  })
+}
+
+const dragEnd = (evt: DragEvent) => {
+  // 拖拽结束后移除动画类
+  if (evt.item) {
+    evt.item.classList.remove('animate__animated', 'animate__pulse')
+    evt.item.classList.remove('sortable-dragging')
+    // 添加新的位置动画效果
+    evt.item.classList.add('animate__animated', 'animate__bounceIn')
+    setTimeout(() => {
+      evt.item.classList.remove('animate__animated', 'animate__bounceIn')
+    }, 1000)
+  }
+  // 恢复所有项目的不透明度
+  document.querySelectorAll('.user-item').forEach((item: Element) => {
+    if (item instanceof HTMLElement) {
+      item.style.opacity = '1'
+    }
+  })
+
+  // 排序变更时的提示效果
+  if (hasChanged.value) {
+    const saveBtn = document.querySelector('.save-btn')
+    if (saveBtn && saveBtn instanceof HTMLElement && !saveBtn.classList.contains('animate__pulse')) {
+      saveBtn.classList.add('animate__animated', 'animate__pulse', 'animate__infinite', 'animate__slow')
+    }
+  }
 }
 
 onMounted(() => {
@@ -317,36 +492,85 @@ onMounted(() => {
   padding: 20px 12px;
   background-color: var(--el-bg-color, @pageBgColor);
   height: @contentHeight;
+  position: relative;
+  /* 添加淡出淡入动画的持续时间 */
+  .animate__fadeOut {
+    animation-duration: 0.3s !important;
+  }
+  .animate__fadeIn {
+    animation-duration: 0.5s !important;
+  }
+  /* 拖拽中的元素样式 */
+  .sortable-dragging {
+    transform: scale(1.03) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15) !important;
+    z-index: 10;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom right,
+      rgba(var(--el-color-primary-rgb), 0.05) 0%,
+      rgba(var(--el-color-primary-rgb), 0.01) 100%);
+    z-index: 0;
+  }
 
   .sort-container {
     display: flex;
-    gap: 20px;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
 
     .title-list-section {
-      width: 280px;
+      width: 300px;
       flex-shrink: 0;
 
       .section-title {
         display: flex;
         align-items: center;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 600;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
         color: var(--el-text-color-primary);
+        position: relative;
+        padding-bottom: 10px;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 40px;
+          height: 3px;
+          background: var(--el-color-primary);
+          border-radius: 3px;
+        }
 
         .el-icon {
-          margin-right: 8px;
-          color: var(--primaryColor);
-          font-size: 20px;
+          margin-right: 10px;
+          color: var(--el-color-primary);
+          font-size: 22px;
+          filter: drop-shadow(0 2px 2px rgba(var(--el-color-primary-rgb), 0.3));
         }
       }
 
       .title-list-card {
-        height: calc(@contentHeight - 80px);
+        height: calc(@contentHeight - 90px);
         overflow-y: auto;
         background-color: var(--el-bg-color-overlay);
+        border-radius: 10px;
         border: 1px solid var(--el-border-color-light);
-        box-shadow: var(--el-box-shadow-light);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
 
         &::-webkit-scrollbar {
           width: 4px;
@@ -367,22 +591,55 @@ onMounted(() => {
         }
 
         .title-item {
-          padding: 12px 16px;
-          border-radius: 6px;
-          margin-bottom: 8px;
+          padding: 14px 16px;
+          border-radius: 8px;
+          margin: 8px;
           cursor: pointer;
           transition: all 0.3s;
           background-color: var(--el-fill-color-light);
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--el-color-primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
 
           &:hover {
-            background-color: var(--el-fill-color-dark);
+            background-color: var(--el-fill-color-darker);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+            &::before {
+              opacity: 0.6;
+            }
+
+            .count-badge {
+              transform: scale(1.05);
+            }
           }
 
           &.active {
-            background-color: color-mix(in srgb, var(--el-color-primary) 15%, var(--el-bg-color));
+            background: linear-gradient(to right,
+              color-mix(in srgb, var(--el-color-primary) 15%, var(--el-bg-color)),
+              color-mix(in srgb, var(--el-color-primary) 5%, var(--el-bg-color))
+            );
             color: var(--el-color-primary);
             font-weight: 500;
             border-left: 3px solid var(--el-color-primary);
+            box-shadow: 0 6px 14px rgba(var(--el-color-primary-rgb), 0.15);
+
+            &::before {
+              opacity: 1;
+            }
           }
 
           .title-item-content {
@@ -390,18 +647,20 @@ onMounted(() => {
             align-items: center;
 
             .el-icon {
-              margin-right: 8px;
-              font-size: 18px;
+              margin-right: 10px;
+              font-size: 20px;
             }
 
             .count-badge {
               margin-left: auto;
               background-image: linear-gradient(to right, var(--el-color-primary), var(--el-color-primary-light-3));
               color: white;
-              border-radius: 10px;
-              padding: 2px 8px;
+              border-radius: 12px;
+              padding: 3px 10px;
               font-size: 12px;
-              box-shadow: 0 2px 4px rgba(var(--el-color-primary-rgb), 0.3);
+              font-weight: 600;
+              box-shadow: 0 2px 6px rgba(var(--el-color-primary-rgb), 0.35);
+              transition: all 0.3s;
             }
           }
         }
@@ -414,43 +673,84 @@ onMounted(() => {
       .section-title {
         display: flex;
         align-items: center;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 600;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
         color: var(--el-text-color-primary);
+        position: relative;
+        padding-bottom: 10px;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 40px;
+          height: 3px;
+          background: var(--el-color-primary);
+          border-radius: 3px;
+        }
 
         .el-icon {
-          margin-right: 8px;
+          margin-right: 10px;
           color: var(--el-color-primary);
-          font-size: 20px;
+          font-size: 22px;
+          filter: drop-shadow(0 2px 2px rgba(var(--el-color-primary-rgb), 0.3));
         }
       }
 
       .user-list-card {
-        height: calc(@contentHeight - 80px);
+        height: calc(@contentHeight - 90px);
         background-color: var(--el-bg-color-overlay);
+        border-radius: 10px;
         border: 1px solid var(--el-border-color-light);
-        box-shadow: var(--el-box-shadow-light);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
 
         .card-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          padding: 12px 16px;
+          border-bottom: 1px solid var(--el-border-color-light);
 
           .total-info {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--el-text-color-secondary);
+
+            .user-count {
+              color: var(--el-color-primary);
+              font-weight: 600;
+              font-size: 16px;
+            }
           }
 
           .action-btns {
             display: flex;
-            gap: 8px;
+            gap: 10px;
+
+            .save-btn {
+              background: linear-gradient(45deg, var(--el-color-primary), var(--el-color-primary-light-3));
+              border: none;
+              box-shadow: 0 3px 8px rgba(var(--el-color-primary-rgb), 0.3);
+              transition: all 0.3s;
+
+              &:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 12px rgba(var(--el-color-primary-rgb), 0.4);
+              }
+            }
           }
         }
 
         .user-sort-list {
           overflow-y: auto;
-          height: calc(@contentHeight - 180px);
+          height: calc(@contentHeight - 190px);
+          padding: 0 8px;
 
           &::-webkit-scrollbar {
             width: 6px;
@@ -470,27 +770,33 @@ onMounted(() => {
             border-radius: 3px;
           }
 
+          .el-alert {
+            margin-bottom: 16px;
+            border-radius: 8px;
+          }
+
           .draggable-container {
-            margin-top: 8px;
+            margin-top: 12px;
           }
 
           .user-item {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 12px;
             background-color: var(--el-bg-color-overlay);
             border: 1px solid var(--el-border-color-lighter);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 
             &:hover {
               background-color: var(--el-fill-color-darker);
               border-color: var(--el-border-color);
-              transform: translateY(-2px);
-              box-shadow: 0 5px 15px rgba(var(--el-color-primary-rgb), 0.1);
+              transform: translateY(-3px);
+              box-shadow: 0 8px 20px rgba(var(--el-color-primary-rgb), 0.12);
             }
 
             &::before {
@@ -500,7 +806,7 @@ onMounted(() => {
               top: 0;
               height: 100%;
               width: 4px;
-              background-color: var(--el-color-primary);
+              background: linear-gradient(to bottom, var(--el-color-primary), var(--el-color-primary-light-5));
               opacity: 0;
               transition: opacity 0.3s;
             }
@@ -516,43 +822,60 @@ onMounted(() => {
 
             &.sortable-ghost {
               opacity: 0.8;
-              background-color: var(--el-color-primary-light-8);
-              border: 1px dashed var(--el-color-primary);
+              background-color: var(--el-color-primary-light-9);
+              border: 2px dashed var(--el-color-primary);
+              box-shadow: 0 0 15px rgba(var(--el-color-primary-rgb), 0.2);
             }
 
             &.sortable-chosen {
               cursor: grabbing;
+              box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             }
 
             .user-order {
-              width: 28px;
-              height: 28px;
-              border-radius: 8px;
+              width: 32px;
+              height: 32px;
+              border-radius: 10px;
               background-image: linear-gradient(135deg, var(--el-color-primary), var(--el-color-primary-light-5));
               color: white;
               display: flex;
               align-items: center;
               justify-content: center;
-              font-size: 14px;
-              margin-right: 12px;
-              box-shadow: 0 2px 6px rgba(var(--el-color-primary-rgb), 0.3);
+              font-size: 15px;
+              font-weight: 600;
+              margin-right: 16px;
+              box-shadow: 0 3px 8px rgba(var(--el-color-primary-rgb), 0.35);
+              transition: all 0.3s;
+
+              &:hover {
+                transform: scale(1.05);
+                box-shadow: 0 4px 10px rgba(var(--el-color-primary-rgb), 0.45);
+              }
             }
 
             .user-avatar {
-              margin-right: 12px;
+              margin-right: 16px;
+
+              .el-avatar {
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                border: 2px solid rgba(var(--el-color-primary-rgb), 0.2);
+              }
             }
 
             .user-info {
               flex: 1;
 
               .user-name {
-                font-weight: 500;
-                margin-bottom: 4px;
+                font-weight: 600;
+                font-size: 15px;
+                margin-bottom: 6px;
                 display: flex;
                 align-items: center;
 
                 .el-tag {
-                  margin-left: 8px;
+                  margin-left: 10px;
+                  border-radius: 4px;
+                  padding: 0 8px;
                 }
               }
 
@@ -561,7 +884,8 @@ onMounted(() => {
                 color: var(--el-text-color-secondary);
 
                 .label {
-                  margin-right: 4px;
+                  margin-right: 5px;
+                  opacity: 0.8;
                 }
               }
             }
@@ -572,7 +896,15 @@ onMounted(() => {
                 color: var(--el-text-color-secondary);
 
                 .label {
-                  margin-right: 4px;
+                  margin-right: 5px;
+                  opacity: 0.8;
+                }
+                .order-value {
+                  font-weight: 600;
+                  color: var(--el-color-primary);
+                  background: rgba(var(--el-color-primary-rgb), 0.1);
+                  padding: 2px 8px;
+                  border-radius: 4px;
                 }
               }
             }

@@ -2,12 +2,85 @@
   <!-- https://lin-xin.github.io/example/vue-manage-system/#/dashboard -->
   <div class="layout-wrap">
     <div class="layout-top">
-      <div class="logo-wrap">
-        <div class="logo-animation-container">
-          <span class="logo-text">合成生物学研究所</span>
-          <div class="logo-particles"></div>
-          <div class="logo-glow"></div>
+      <div class="logo-wrap" :class="{ 'collapsed': isCollapsed }">
+        <div class="logo-container">
+          <!-- DNA/分子结构图标 -->
+          <div class="logo-icon">
+            <svg
+              viewBox="0 0 40 40"
+              class="dna-icon"
+            >
+              <path
+                d="M8 10 Q20 5 32 10 Q20 15 8 10"
+                class="dna-strand"
+              />
+              <path
+                d="M8 20 Q20 15 32 20 Q20 25 8 20"
+                class="dna-strand"
+              />
+              <path
+                d="M8 30 Q20 25 32 30 Q20 35 8 30"
+                class="dna-strand"
+              />
+              <circle
+                cx="12"
+                cy="10"
+                r="1.5"
+                class="dna-node"
+              />
+              <circle
+                cx="20"
+                cy="12"
+                r="1.5"
+                class="dna-node"
+              />
+              <circle
+                cx="28"
+                cy="10"
+                r="1.5"
+                class="dna-node"
+              />
+              <circle
+                cx="16"
+                cy="20"
+                r="1.5"
+                class="dna-node"
+              />
+              <circle
+                cx="24"
+                cy="20"
+                r="1.5"
+                class="dna-node"
+              />
+              <circle
+                cx="12"
+                cy="30"
+                r="1.5"
+                class="dna-node"
+              />
+              <circle
+                cx="20"
+                cy="28"
+                r="1.5"
+                class="dna-node"
+              />
+              <circle
+                cx="28"
+                cy="30"
+                r="1.5"
+                class="dna-node"
+              />
+            </svg>
+          </div>
+          <!-- 品牌文字 -->
+          <div class="logo-text-container">
+            <div class="brand-name">合成生物学</div>
+            <div class="brand-subtitle">研究所</div>
+          </div>
         </div>
+        <!-- 玻璃态装饰效果 -->
+        <div class="glass-overlay"></div>
+        <div class="floating-particles"></div>
       </div>
       <div class="other-info-wrap">
         <!-- 主题切换组件 -->
@@ -18,12 +91,17 @@
       </div>
     </div>
     <div class="layout-bottom">
-      <div class="layout-bottom-left">
+      <div class="layout-bottom-left" :class="{ 'menu-collapsed': isCollapsed }">
+        <div class="menu-collapse-btn" @click="toggleCollapse">
+          <el-icon>
+            <component :is="isCollapsed ? Expand : Fold" />
+          </el-icon>
+        </div>
         <div class="menu-wrap">
-          <MenuInfo />
+          <MenuInfo :isCollapsed="isCollapsed" />
         </div>
       </div>
-      <div class="layout-bottom-right">
+      <div class="layout-bottom-right" :class="{ 'expanded': isCollapsed }">
         <MenuTabs />
         <el-scrollbar class="content-wrap">
           <router-view v-slot="{ Component, route: routeProps }">
@@ -49,13 +127,36 @@ import UserDropdown from '@/components/userDropdown.vue'
 import themeSwitch from '@/components/themeSwitch.vue'
 import { useRoute } from 'vue-router'
 import { useTabsStore } from '@/stores/menuTabs'
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { componentWrap, clearComponentCache } from '@/utils/componentWrap'
+// Element Plus 图标
+import { Expand, Fold } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const store = useTabsStore()
 const { tabsList, refreshMap } = storeToRefs(store)
+
+// 菜单折叠状态
+const isCollapsed = ref(false)
+
+// 切换菜单折叠状态
+const toggleCollapse = () => {
+  isCollapsed.value = !isCollapsed.value
+  // 这里可以加入本地存储，记住用户的偏好
+  localStorage.setItem('menuCollapsed', isCollapsed.value.toString())
+}
+
+// 初始化菜单折叠状态
+const initCollapsedState = () => {
+  const savedState = localStorage.getItem('menuCollapsed')
+  if (savedState !== null) {
+    isCollapsed.value = savedState === 'true'
+  }
+}
+
+// 页面加载时初始化菜单状态
+initCollapsedState()
 
 // 需要缓存的组件名称列表（实际上是路径列表）
 const cachedViews = computed(() => {
@@ -118,29 +219,67 @@ watch(() => route.fullPath, () => {
 </script>
 
 <style lang="less" scoped>
-// 定义动画关键帧
-@keyframes logoGlow {
-  0% { opacity: 0.5; filter: blur(8px); }
-  50% { opacity: 0.8; filter: blur(12px); }
-  100% { opacity: 0.5; filter: blur(8px); }
+// 现代化动画关键帧
+@keyframes dnaRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
 }
 
-@keyframes logoParticleFloat {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  50% { opacity: 0.8; }
-  100% { transform: translateY(-15px) translateX(5px); opacity: 0; }
+@keyframes brandGlow {
+  0% {
+    text-shadow: 0 0 10px rgba(var(--el-color-primary-rgb), 0.3);
+    transform: translateY(0px);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(var(--el-color-primary-rgb), 0.6);
+    transform: translateY(-1px);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(var(--el-color-primary-rgb), 0.3);
+    transform: translateY(0px);
+  }
 }
 
-@keyframes logoTextPulse {
-  0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
-  50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
-  100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
+@keyframes glassShimmer {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(300%) skewX(-15deg); }
 }
 
-@keyframes logoBackgroundShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes particleFloat {
+  0% {
+    transform: translate(0, 0) scale(0.8);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(10px, -10px) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(20px, -20px) scale(0.6);
+    opacity: 0.2;
+  }
+}
+
+@keyframes morphingGradient {
+  0% {
+    background: linear-gradient(45deg,
+      rgba(var(--el-color-primary-rgb), 0.1) 0%,
+      rgba(var(--el-color-primary-rgb), 0.05) 50%,
+      transparent 100%);
+  }
+  50% {
+    background: linear-gradient(225deg,
+      rgba(var(--el-color-primary-rgb), 0.15) 0%,
+      rgba(var(--el-color-primary-rgb), 0.08) 50%,
+      transparent 100%);
+  }
+  100% {
+    background: linear-gradient(45deg,
+      rgba(var(--el-color-primary-rgb), 0.1) 0%,
+      rgba(var(--el-color-primary-rgb), 0.05) 50%,
+      transparent 100%);
+  }
 }
 
 .layout-wrap {
@@ -175,122 +314,225 @@ watch(() => route.fullPath, () => {
     .logo-wrap {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      padding: 0 20px;
       width: 220px;
       height: 100%;
-      font-size: 22px;
-      font-weight: 600;
       color: var(--logoTextColor);
-      background-color: rgba(0, 0, 0, 0.15);
       position: relative;
       overflow: hidden;
-      transition: all 0.3s;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-      .logo-animation-container {
-        position: relative;
-        display: flex;
-        align-items: center;
+      // Glassmorphism 背景
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+
+      &.collapsed {
+        width: 64px;
+        padding: 0;
         justify-content: center;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-      }
 
-      .logo-text {
-        position: relative;
-        z-index: 3;
-        animation: logoTextPulse 3s ease-in-out infinite;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        background-clip: text;
-        -webkit-background-clip: text;
-        transition: all 0.3s ease;
+        .logo-container {
+          justify-content: center;
 
-        &:hover {
-          transform: scale(1.03);
+          .logo-text-container {
+            opacity: 0;
+            transform: translateX(-20px);
+            width: 0;
+            overflow: hidden;
+          }
+
+          .logo-icon {
+            margin-right: 0;
+            margin-left: 0;
+          }
+        }
+
+        // 折叠状态下隐藏装饰效果
+        &::after {
+          opacity: 0;
+        }
+
+        .glass-overlay::before {
+          animation-play-state: paused;
+        }
+
+        .floating-particles {
+          opacity: 0;
         }
       }
 
-      .logo-glow {
-        position: absolute;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: radial-gradient(
-          circle,
-          var(--primaryColor) 0%,
-          rgba(255, 255, 255, 0) 70%
-        );
-        opacity: 0.5;
-        filter: blur(8px);
-        z-index: 1;
-        animation: logoGlow 4s ease-in-out infinite;
+      .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+        z-index: 3;
+        transition: all 0.4s ease;
+        width: 100%;
       }
 
-      .logo-particles {
+      .logo-icon {
+        width: 36px;
+        height: 36px;
+        margin-right: 12px;
+        position: relative;
+        transition: all 0.4s ease;
+
+        .dna-icon {
+          width: 100%;
+          height: 100%;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+          animation: dnaRotate 8s linear infinite;
+
+          .dna-strand {
+            fill: none;
+            stroke: var(--el-color-primary);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            opacity: 0.8;
+
+            &:nth-child(1) { animation-delay: 0s; }
+            &:nth-child(2) { animation-delay: 0.3s; }
+            &:nth-child(3) { animation-delay: 0.6s; }
+          }
+
+          .dna-node {
+            fill: var(--el-color-primary);
+            opacity: 0.9;
+
+            &:nth-child(n+4) {
+              animation: particleFloat 2s ease-in-out infinite;
+              animation-delay: calc(var(--i) * 0.2s);
+            }
+          }
+        }
+
+        &:hover .dna-icon {
+          animation-duration: 2s;
+          transform: scale(1.1);
+        }
+      }
+
+      .logo-text-container {
+        display: flex;
+        flex-direction: column;
+        transition: all 0.4s ease;
+
+        .brand-name {
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 1;
+          color: var(--logoTextColor);
+          animation: brandGlow 3s ease-in-out infinite;
+          letter-spacing: 0.5px;
+          mix-blend-mode: difference;
+          background: linear-gradient(45deg,
+            var(--logoTextColor) 30%,
+            var(--el-color-primary) 70%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .brand-subtitle {
+          font-size: 12px;
+          font-weight: 400;
+          mix-blend-mode: difference;
+          color: rgba(var(--el-color-primary-rgb), 0.8);
+          margin-top: 2px;
+          letter-spacing: 1px;
+        }
+      }
+
+            // 玻璃态光泽效果
+      .glass-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15) 0%,
+          rgba(255, 255, 255, 0.05) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        z-index: 1;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 40%;
+          height: 100%;
+          background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent);
+          animation: glassShimmer 3s ease-in-out infinite;
+          animation-delay: 2s;
+        }
+      }
+
+            // 浮动粒子效果
+      .floating-particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
         z-index: 2;
-        overflow: hidden;
 
         &::before, &::after {
           content: '';
           position: absolute;
-          width: 4px;
-          height: 4px;
+          width: 3px;
+          height: 3px;
+          background: radial-gradient(circle, var(--el-color-primary), transparent);
           border-radius: 50%;
-          background-color: rgba(255, 255, 255, 0.6);
-          box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+          animation: particleFloat 4s ease-in-out infinite;
         }
 
         &::before {
-          top: 70%;
-          left: 30%;
-          animation: logoParticleFloat 3s ease-in-out infinite;
+          top: 25%;
+          left: 15%;
+          animation-delay: 0s;
         }
 
         &::after {
-          top: 40%;
-          left: 70%;
-          width: 3px;
-          height: 3px;
-          animation: logoParticleFloat 2.5s ease-in-out infinite 0.5s;
+          top: 60%;
+          right: 20%;
+          animation-delay: 2s;
         }
       }
 
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg,
-          rgba(255, 255, 255, 0.1) 0%,
-          rgba(0, 0, 0, 0.1) 100%
-        );
-        background-size: 200% 200%;
-        animation: logoBackgroundShift 8s ease infinite;
-        opacity: 0.8;
-        z-index: 0;
-      }
-
+            // 底部装饰线
       &::after {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 1px;
-        background: rgba(255, 255, 255, 0.15);
+        bottom: 0;
+        left: 20px;
+        right: 20px;
+        height: 2px;
+        background: linear-gradient(90deg,
+          transparent,
+          var(--el-color-primary),
+          transparent);
+        opacity: 0.6;
+        animation: morphingGradient 4s ease-in-out infinite;
       }
 
       &:hover {
-        .logo-glow {
-          opacity: 0.7;
-          filter: blur(10px);
+        background: rgba(255, 255, 255, 0.12);
+
+        .logo-icon .dna-icon {
+          animation-duration: 1s;
+        }
+
+        .brand-name {
+          animation-duration: 1s;
         }
       }
     }
@@ -321,6 +563,43 @@ watch(() => route.fullPath, () => {
       position: relative;
       z-index: 1;
       overflow: hidden;
+      transition: all 0.3s ease;
+
+      &.menu-collapsed {
+        width: 64px;
+        min-width: 64px;
+      }
+
+      .menu-collapse-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--menuTextColor);
+        z-index: 10;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+          transform: scale(1.1);
+        }
+
+        .el-icon {
+          font-size: 18px;
+          transition: transform 0.3s;
+        }
+      }
 
       &::before {
         content: '';
@@ -367,6 +646,13 @@ watch(() => route.fullPath, () => {
       height: 100%;
       flex: 1;
       overflow: hidden;
+      transition: all 0.3s ease;
+
+      &.expanded {
+        width: calc(100% - 64px);
+        min-width: calc(100% - 64px);
+        max-width: calc(100% - 64px);
+      }
       .content-wrap {
         position: relative;
         width: 100%;

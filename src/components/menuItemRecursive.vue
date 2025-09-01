@@ -9,8 +9,11 @@
         </el-icon>
         <span>{{ item?.meta?.title }}</span>
       </template>
-      <!-- 递归调用自身组件，传递过滤后的子菜单列表 -->
-      <menu-item-recursive :menuList="getVisibleChildren(item.children)" />
+      <!-- 递归调用自身组件，传递过滤后的子菜单列表和折叠状态 -->
+      <menu-item-recursive
+        :menuList="getVisibleChildren(item.children)"
+        :isCollapsed="isCollapsed"
+      />
     </el-sub-menu>
 
     <!-- 无子菜单的情况 -->
@@ -41,9 +44,10 @@ interface MenuItem {
   children?: MenuItem[]
 }
 
-// 接收父组件传递的菜单数据
+// 接收父组件传递的菜单数据和折叠状态
 const props = defineProps<{
-  menuList: MenuItem[]
+  menuList: MenuItem[];
+  isCollapsed?: boolean;
 }>()
 
 const userInfoStore = useUserInfoStore()
