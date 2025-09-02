@@ -1,5 +1,5 @@
 <template>
-  <div class="user-sort-setting animate__animated animate__fadeIn">
+  <div class="user-sort-setting">
     <div class="sort-container">
       <div class="title-list-section animate__animated animate__slideInLeft">
         <div class="section-title">
