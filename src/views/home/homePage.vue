@@ -14,12 +14,11 @@
         <div class="decoration-dots"></div>
       </div>
     </div>
+    <!-- 埋点分析组件 -->
+    <AnalyticsStats v-if="isAdmin" />
 
     <!-- 数据统计组件 -->
     <DashboardStats />
-
-    <!-- 埋点分析组件 -->
-    <AnalyticsStats v-if="isAdmin" />
 
     <!-- 主要内容区域 -->
     <div class="main-content animate__animated animate__fadeIn" style="animation-delay: 0.4s;">
