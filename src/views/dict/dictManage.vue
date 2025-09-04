@@ -157,7 +157,7 @@ const handleTypeSelect = (type: DictType) => {
   // 重新获取该类型下的字典项
   const typeData = dictTreeData.value.find(item => item.dictType === type.dictType)
   if (typeData && typeData.children) {
-    dictCodeList.value = typeData.children.map((child: any) => ({ ...child })).sort((a, b) => b.sortOrder - a.sortOrder)
+    dictCodeList.value = typeData.children.map((child: any) => ({ ...child })).sort((a, b) => a.sortOrder - b.sortOrder)
   } else {
     dictCodeList.value = []
   }
