@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue'
+import { computed, reactive, onBeforeUnmount } from 'vue'
 import { useDictStore } from '@/stores/dict'
 import type { DictItem } from '@/stores/dict'
 import service from '@/utils/services'
@@ -179,16 +179,53 @@ export const useDictionary = (options: DictionaryOptions) => {
   }
 
   /**
+   * 清除当前字典类型的缓存
+   */
+  const clearCache = () => {
+    if (isBuiltInDict(dictType)) {
+      // 内置字典使用store的清除方法
+      dictStore.clearDictCache(dictType)
+    } else {
+      // 自定义字典清除本地缓存
+      if (dictCache[dictType]) {
+        dictCache[dictType] = []
+      }
+      if (dictMapCache[dictType]) {
+        dictMapCache[dictType] = {}
+      }
+    }
+  }
+
+  /**
    * 刷新字典数据
    */
   const refreshDict = () => {
-    if (isBuiltInDict(dictType)) {
-      // 内置字典先清除缓存再重新加载
-      dictStore.clearDictCache(dictType)
-    }
+    clearCache()
     // 强制重新加载
     loadDictData(true)
   }
+
+  /**
+   * 监听字典缓存清除事件
+   */
+  const handleCacheClearEvent = (event: CustomEvent) => {
+    const { dictType: clearedType } = event.detail
+    if (clearedType === dictType || clearedType === 'all') {
+      clearCache()
+    }
+  }
+
+  // 监听缓存清除事件
+  if (typeof window !== 'undefined') {
+    window.addEventListener('dict-cache-cleared', handleCacheClearEvent as (event: Event) => void)
+  }
+
+  // 组件卸载时移除事件监听器
+  onBeforeUnmount(() => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('dict-cache-cleared', handleCacheClearEvent as (event: Event) => void)
+    }
+  })
 
   // 如果设置了自动加载，在hooks创建时加载数据
   if (autoLoad) {
@@ -212,6 +249,7 @@ export const useDictionary = (options: DictionaryOptions) => {
     loadDictData,
     getDictLabel,
     refreshDict,
+    clearCache,
     isDictEmpty
   }
 }

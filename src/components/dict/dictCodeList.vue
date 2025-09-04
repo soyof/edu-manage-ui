@@ -132,7 +132,7 @@ const handleDelete = (code: DictCode) => {
     type: 'warning'
   }).then(() => {
     // 这里传入dictId作为删除标识
-    service.post('/api/dict/delete', { dictId: code.dictId })
+    service.post('/api/dict/delete', { id: code.dictId })
       .then(() => {
         ElMessage.success('删除成功')
         emit('deleted', code)

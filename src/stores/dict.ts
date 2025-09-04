@@ -98,6 +98,13 @@ export const useDictStore = defineStore('dict', {
       if (this.dictObjCache[dictType]) {
         delete this.dictObjCache[dictType]
       }
+
+      // 触发事件，通知其他模块清除缓存
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('dict-cache-cleared', {
+          detail: { dictType }
+        }))
+      }
     },
 
     // 清除所有字典缓存

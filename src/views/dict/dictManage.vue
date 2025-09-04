@@ -61,6 +61,7 @@ import { ref, reactive, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Document } from '@element-plus/icons-vue'
 import service from '@/utils/services'
+import { useDictStore } from '@/stores/dict'
 import DictTypeList from '@/components/dict/dictTypeList.vue'
 import DictCodeList from '@/components/dict/dictCodeList.vue'
 import DictForm from '@/components/dict/dictForm.vue'
@@ -70,6 +71,9 @@ import type { DictType, DictCode, TreeDictItem } from '@/types/dict'
 // 当前选中的字典类型和字典项
 const currentDictType = ref<DictType | null>(null)
 const currentDictCode = ref<DictCode | null>(null)
+
+// 字典store实例
+const dictStore = useDictStore()
 
 // 字典类型列表和字典编码列表
 const dictTypeList = ref<DictType[]>([])
@@ -162,7 +166,6 @@ const handleTypeSelect = (type: DictType) => {
 // 处理字典编码选择
 const handleCodeSelect = (code: DictCode) => {
   currentDictCode.value = code
-  console.log(code)
 
   nextTick(() => {
     // 填充字典详情表单
@@ -213,11 +216,15 @@ const handleAddItem = () => {
 
 // 处理新增字典项提交完成
 const handleItemSubmitted = () => {
+  // 清除相关字典缓存
+  clearDictCacheByType()
   loadDictTreeData()
 }
 
 // 处理字典项保存完成
 const handleItemSaved = (formInfo: DictCode) => {
+  // 清除相关字典缓存
+  clearDictCacheByType()
   loadDictTreeData().then(() => {
     // 确保重新获取最新数据后再更新当前选中项
     if (dictCodeList.value.length > 0 && formInfo.id) {
@@ -239,15 +246,31 @@ const handleItemDeleted = (code: DictCode) => {
     resetForm()
   }
 
+  // 清除相关字典缓存
+  clearDictCacheByType()
   // 刷新列表
   loadDictTreeData()
 }
 
 // 处理字典项状态变化
 const handleItemStatusChange = (code: DictCode) => {
+  // 清除相关字典缓存
+  clearDictCacheByType()
   // 如果状态变化影响到当前选中的项，则更新表单
   if (currentDictCode.value && currentDictCode.value.id === code.id) {
     handleCodeSelect(code)
+  }
+}
+
+// 清除字典缓存
+const clearDictCacheByType = () => {
+  if (currentDictType.value?.dictType) {
+    // 清除当前字典类型的缓存
+    dictStore.clearDictCache(currentDictType.value.dictType)
+
+    // 同时清除useDictionary hooks中的缓存
+    // 通过强制重新加载来更新缓存
+    console.log(`已清除字典类型 "${currentDictType.value.dictType}" 的缓存`)
   }
 }
 

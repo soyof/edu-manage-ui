@@ -16,6 +16,13 @@
 }
 
 /* Tooltip样式，跟随主题变化 */
+.el-table {
+  .el-tooltip {
+    max-width: 500px;
+    white-space: wrap;
+    word-break: break-all;
+  }
+}
 .el-tooltip {
   /* 深色主题 tooltip */
   &.is-dark {
@@ -154,6 +161,199 @@
 
 .el-select-dropdown__item.selected {
   color: var(--primaryColor);
+}
+
+/* 修复Element Plus 2.11.1版本下拉框背景色和选项样式问题 */
+.el-select__popper.el-popper {
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.el-select-dropdown {
+  background-color: #ffffff !important;
+}
+
+.el-select-dropdown__item {
+  background-color: transparent !important;
+  
+  &:hover {
+    background-color: #f5f7fa !important;
+  }
+  
+  &.is-selected {
+    color: var(--primaryColor) !important;
+    background-color: color-mix(in srgb, var(--primaryColor) 8%, white) !important;
+    font-weight: 500 !important;
+  }
+  
+  &.is-hovering {
+    background-color: #f5f7fa !important;
+  }
+}
+
+/* 修复Element Plus下拉框popper箭头的颜色，使其与整体风格一致 */
+.el-select__popper.el-popper .el-popper__arrow:before {
+  background: #ffffff !important;
+  border-color: var(--el-border-color-light) !important;
+}
+
+/* 针对不同位置的箭头设置正确的透明边框 */
+.el-select__popper.el-popper[data-popper-placement^=top] .el-popper__arrow:before {
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+.el-select__popper.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.el-select__popper.el-popper[data-popper-placement^=left] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-left-color: transparent !important;
+}
+
+.el-select__popper.el-popper[data-popper-placement^=right] .el-popper__arrow:before {
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+/* 全局修复所有Element Plus popper箭头的颜色风格一致性 */
+
+/* 1. 日期选择器 Date Picker */
+.el-picker__popper.el-popper .el-popper__arrow:before {
+  background: #ffffff !important;
+  border-color: var(--el-border-color-light) !important;
+}
+
+.el-picker__popper.el-popper[data-popper-placement^=top] .el-popper__arrow:before {
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+.el-picker__popper.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.el-picker__popper.el-popper[data-popper-placement^=left] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-left-color: transparent !important;
+}
+
+.el-picker__popper.el-popper[data-popper-placement^=right] .el-popper__arrow:before {
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+/* 2. 下拉菜单 Dropdown */
+.el-dropdown__popper.el-popper .el-popper__arrow:before {
+  background: #ffffff !important;
+  border-color: var(--el-border-color-light) !important;
+}
+
+.el-dropdown__popper.el-popper[data-popper-placement^=top] .el-popper__arrow:before {
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+.el-dropdown__popper.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.el-dropdown__popper.el-popper[data-popper-placement^=left] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-left-color: transparent !important;
+}
+
+.el-dropdown__popper.el-popper[data-popper-placement^=right] .el-popper__arrow:before {
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+/* 4. 气泡卡片 Popover */
+.el-popover.el-popper .el-popper__arrow:before {
+  background: #ffffff !important;
+  border-color: var(--el-border-color-light) !important;
+}
+
+.el-popover.el-popper[data-popper-placement^=top] .el-popper__arrow:before {
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+.el-popover.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.el-popover.el-popper[data-popper-placement^=left] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-left-color: transparent !important;
+}
+
+.el-popover.el-popper[data-popper-placement^=right] .el-popper__arrow:before {
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+/* 5. 级联选择器 Cascader */
+.el-cascader__dropdown.el-popper .el-popper__arrow:before {
+  background: #ffffff !important;
+  border-color: var(--el-border-color-light) !important;
+}
+
+.el-cascader__dropdown.el-popper[data-popper-placement^=top] .el-popper__arrow:before {
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+.el-cascader__dropdown.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.el-cascader__dropdown.el-popper[data-popper-placement^=left] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-left-color: transparent !important;
+}
+
+.el-cascader__dropdown.el-popper[data-popper-placement^=right] .el-popper__arrow:before {
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+/* 6. 自动完成 Autocomplete */
+.el-autocomplete-suggestion.el-popper .el-popper__arrow:before {
+  background: #ffffff !important;
+  border-color: var(--el-border-color-light) !important;
+}
+
+.el-autocomplete-suggestion.el-popper[data-popper-placement^=top] .el-popper__arrow:before {
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+.el-autocomplete-suggestion.el-popper[data-popper-placement^=bottom] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.el-autocomplete-suggestion.el-popper[data-popper-placement^=left] .el-popper__arrow:before {
+  border-bottom-color: transparent !important;
+  border-left-color: transparent !important;
+}
+
+.el-autocomplete-suggestion.el-popper[data-popper-placement^=right] .el-popper__arrow:before {
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+/* 7. 通用 Popper 兜底样式 - 确保所有未被覆盖的popper都有一致的样式 */
+.el-popper:not(.is-dark):not(.el-tooltip__popper) .el-popper__arrow:before {
+  background: #ffffff !important;
+  border-color: var(--el-border-color-light) !important;
 }
 
 /* 开关样式 */
