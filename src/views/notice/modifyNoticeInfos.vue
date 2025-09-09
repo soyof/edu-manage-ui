@@ -183,9 +183,9 @@ const formData = reactive<{
   titleEn: string
   noticeType: string | number
   importance: string | number
-  content?: string | null
-  contentEn?: string | null
-  linkUrl?: string | null
+  content: string
+  contentEn: string
+  linkUrl: string
   status?: number
   isTop: number
   publishDate: string | null
@@ -217,12 +217,12 @@ const validateUrl = (_rule: any, value: string, callback: any) => {
     } else {
       callback(new Error('请输入http或https开头的有效网址'))
     }
-  } catch (e) {
+  } catch {
     // 如果没有协议，尝试添加协议再验证
     try {
       new URL('http://' + value)
       callback()
-    } catch (e) {
+    } catch {
       callback(new Error('请输入有效的网址格式'))
     }
   }
@@ -284,9 +284,9 @@ const fetchNoticeDetail = () => {
       formData.importance = noticeData.importance
       formData.isTop = noticeData.isTop || 0
       formData.publishDate = noticeData.publishDate || null
-      formData.content = noticeData.content || null
-      formData.contentEn = noticeData.contentEn || null
-      formData.linkUrl = noticeData.linkUrl || null
+      formData.content = noticeData.content || ''
+      formData.contentEn = noticeData.contentEn || ''
+      formData.linkUrl = noticeData.linkUrl || ''
       formData.status = noticeData.status
     }
   }).finally(() => {
@@ -310,9 +310,9 @@ const submitForm = () => {
       importance: formData.importance,
       isTop: formData.isTop,
       publishDate: formData.publishDate,
-      content: formData.content || null,
-      contentEn: formData.contentEn || null,
-      linkUrl: formData.linkUrl || null
+      content: formData.content || '',
+      contentEn: formData.contentEn || '',
+      linkUrl: formData.linkUrl || ''
     }
 
     changeLoading(true)
