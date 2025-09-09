@@ -135,8 +135,8 @@ interface NoticeData {
   titleEn: string
   noticeType: string | number
   importance: string | number
-  content: string
-  contentEn: string
+  content?: string
+  contentEn?: string
   linkUrl?: string
   status: number
   isTop: number
@@ -183,9 +183,9 @@ const formData = reactive<{
   titleEn: string
   noticeType: string | number
   importance: string | number
-  content: string
-  contentEn: string
-  linkUrl: string
+  content?: string | null
+  contentEn?: string | null
+  linkUrl?: string | null
   status?: number
   isTop: number
   publishDate: string | null
@@ -284,17 +284,9 @@ const fetchNoticeDetail = () => {
       formData.importance = noticeData.importance
       formData.isTop = noticeData.isTop || 0
       formData.publishDate = noticeData.publishDate || null
-
-      // 根据通知类型设置对应的内容字段
-      if (String(noticeData.noticeType) === '2002') {
-      // 文本类型
-        formData.content = noticeData.content
-        formData.contentEn = noticeData.contentEn
-      } else {
-      // 超链接类型
-        formData.linkUrl = noticeData.linkUrl || noticeData.content // 兼容旧数据
-      }
-
+      formData.content = noticeData.content || null
+      formData.contentEn = noticeData.contentEn || null
+      formData.linkUrl = noticeData.linkUrl || null
       formData.status = noticeData.status
     }
   }).finally(() => {
@@ -317,18 +309,10 @@ const submitForm = () => {
       noticeType: formData.noticeType,
       importance: formData.importance,
       isTop: formData.isTop,
-      publishDate: formData.publishDate
-      // status字段不需要提交
-    }
-
-    // 根据通知类型处理提交的字段
-    if (String(formData.noticeType) === '2002') {
-      // 文本类型，提交富文本内容
-      params.content = formData.content
-      params.contentEn = formData.contentEn
-    } else {
-      // 超链接类型，提交链接地址到content字段
-      params.content = formData.linkUrl
+      publishDate: formData.publishDate,
+      content: formData.content || null,
+      contentEn: formData.contentEn || null,
+      linkUrl: formData.linkUrl || null
     }
 
     changeLoading(true)
