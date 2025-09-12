@@ -93,7 +93,7 @@ const resourceStats = computed(() => [
 
 <style scoped lang="less">
 .category-card {
-  border-radius: 32px;
+  border-radius: 16px;
   overflow: hidden;
   background: linear-gradient(135deg,
     rgba(255, 255, 255, 0.25) 0%,
@@ -103,7 +103,6 @@ const resourceStats = computed(() => [
     0 12px 40px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
   border: none;
-  margin-bottom: 24px;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   &:hover {
@@ -124,27 +123,42 @@ const resourceStats = computed(() => [
       bottom: 0;
       width: 6px;
       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      border-radius: 32px 0 0 32px;
+      border-radius: 16px 0 0 16px;
       z-index: 1;
     }
+  }
+
+  :deep(.el-card__header) {
+    background: #ffffff;
+    border: none;
+    padding: 16px 20px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #e9ecef;
   }
 
   .card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-weight: 600;
-    color: var(--el-text-color-primary);
-    font-size: 16px;
+    position: relative;
+    z-index: 1;
+
+    span {
+      font-weight: 600;
+      font-size: 15px;
+      color: #1ABC9C;
+      letter-spacing: 0.3px;
+    }
 
     .el-icon {
       color: var(--el-text-color-secondary);
       cursor: help;
-      font-size: 18px;
+      font-size: 16px;
       transition: color 0.3s ease;
 
       &:hover {
-        color: var(--el-color-primary);
+        color: #1ABC9C;
       }
     }
   }

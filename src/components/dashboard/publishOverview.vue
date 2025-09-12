@@ -101,7 +101,7 @@ const publishRatio = computed(() => {
   margin-bottom: 24px;
 
   .overview-card {
-    border-radius: 32px;
+    border-radius: 16px;
     overflow: hidden;
     background: linear-gradient(135deg,
       rgba(255, 255, 255, 0.25) 0%,
@@ -111,23 +111,46 @@ const publishRatio = computed(() => {
       0 12px 40px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.6);
     border: none;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    &:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 8px 32px rgba(103, 194, 58, 0.2);
+    }
+
+    :deep(.el-card__header) {
+      background: #ffffff;
+      border: none;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid #e9ecef;
+    }
 
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
-      font-size: 16px;
+      position: relative;
+      z-index: 1;
+
+      span {
+        font-weight: 600;
+        font-size: 15px;
+        color: #67C23A;
+        letter-spacing: 0.3px;
+      }
 
       .el-icon {
         color: var(--el-text-color-secondary);
         cursor: help;
-        font-size: 18px;
+        font-size: 16px;
         transition: color 0.3s ease;
 
         &:hover {
-          color: var(--el-color-primary);
+          color: #67C23A;
         }
       }
     }

@@ -5,10 +5,10 @@
       <el-card class="overview-card">
         <template #header>
           <div class="card-header">
-            <div class="header-title">
-              <el-icon><TrendCharts /></el-icon>
-              <span>访问统计概览</span>
-            </div>
+            <span>访问统计概览</span>
+            <el-tooltip content="展示系统访问量统计数据">
+              <el-icon><QuestionFilled /></el-icon>
+            </el-tooltip>
           </div>
         </template>
         <div class="overview-metrics">
@@ -50,7 +50,7 @@
 import { ref, onMounted, computed } from 'vue'
 import service from '@/utils/services'
 import {
-  TrendCharts, View, Calendar, DataBoard, DataLine
+  View, Calendar, DataBoard, DataLine, QuestionFilled
 } from '@element-plus/icons-vue'
 
 // 数据接口定义
@@ -104,31 +104,45 @@ onMounted(() => {
       border-radius: 16px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+      &:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.15),
+          0 8px 32px rgba(155, 89, 182, 0.2);
+      }
 
       :deep(.el-card__header) {
-        background: linear-gradient(135deg,
-          color-mix(in srgb, var(--el-color-primary) 10%, var(--el-bg-color)) 0%,
-          color-mix(in srgb, var(--el-color-primary) 5%, var(--el-bg-color)) 100%);
-        color: var(--el-text-color-primary);
+        background: #ffffff;
+        border: none;
         padding: 16px 20px;
-        border-bottom: 1px solid color-mix(in srgb, var(--el-color-primary) 20%, var(--el-border-color-light));
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid #e9ecef;
 
         .card-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          position: relative;
+          z-index: 1;
 
-          .header-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+          span {
             font-weight: 600;
-            font-size: 14px;
-            color: var(--el-color-primary);
+            font-size: 15px;
+            color: #9B59B6;
+            letter-spacing: 0.3px;
+          }
 
-            .el-icon {
-              font-size: 16px;
-              color: var(--el-color-primary);
+          .el-icon {
+            color: var(--el-text-color-secondary);
+            cursor: help;
+            font-size: 16px;
+            transition: color 0.3s ease;
+
+            &:hover {
+              color: #9B59B6;
             }
           }
         }
@@ -136,24 +150,24 @@ onMounted(() => {
 
       :deep(.el-card__body) {
         background: var(--el-bg-color);
-        padding: 20px;
+        padding: 16px;
       }
 
-      .overview-metrics {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
+        .overview-metrics {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 16px;
 
-        .metric-item {
-          display: flex;
-          align-items: center;
-          padding: 20px;
-          background: var(--el-bg-color-page);
-          border-radius: 12px;
-          border: 1px solid var(--el-border-color-light);
-          transition: all 0.3s ease;
-          position: relative;
-          overflow: hidden;
+          .metric-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: var(--el-bg-color-page);
+            border-radius: 10px;
+            border: 1px solid var(--el-border-color-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
 
           &::before {
             content: '';
@@ -195,32 +209,32 @@ onMounted(() => {
             }
           }
 
-          .metric-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--el-text-color-primary);
-            margin-right: 12px;
-          }
-
-          .metric-label {
-            font-size: 14px;
-            color: var(--el-text-color-secondary);
-            flex: 1;
-          }
-
-          .metric-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-
-            .el-icon {
-              font-size: 20px;
+            .metric-value {
+              font-size: 24px;
+              font-weight: 700;
+              color: var(--el-text-color-primary);
+              margin-right: 10px;
             }
-          }
+
+            .metric-label {
+              font-size: 13px;
+              color: var(--el-text-color-secondary);
+              flex: 1;
+            }
+
+            .metric-icon {
+              width: 36px;
+              height: 36px;
+              border-radius: 8px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.3s ease;
+
+              .el-icon {
+                font-size: 18px;
+              }
+            }
 
           &.total .metric-icon {
             background: rgba(64, 158, 255, 0.1);
@@ -253,26 +267,33 @@ onMounted(() => {
     .visit-overview {
       .overview-card {
         .overview-metrics {
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 12px;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 10px;
 
           .metric-item {
             flex-direction: column;
             text-align: center;
-            padding: 16px;
+            padding: 12px;
 
             .metric-value {
-              font-size: 24px;
+              font-size: 20px;
               margin-right: 0;
-              margin-bottom: 4px;
+              margin-bottom: 3px;
             }
 
             .metric-label {
-              margin-bottom: 8px;
+              margin-bottom: 6px;
+              font-size: 12px;
             }
 
             .metric-icon {
-              margin-top: 8px;
+              margin-top: 6px;
+              width: 32px;
+              height: 32px;
+
+              .el-icon {
+                font-size: 16px;
+              }
             }
           }
         }
