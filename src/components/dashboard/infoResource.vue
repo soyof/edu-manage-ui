@@ -64,8 +64,9 @@ const props = defineProps<{
 
 // 计算发布百分比
 const getPublishPercentage = (statKey: keyof DashboardStats): number => {
+  if (!props.dashboardStats) return 0
   const stat = props.dashboardStats[statKey]
-  if (!stat || stat.total === 0) return 0
+  if (!stat || typeof stat !== 'object' || stat.total === 0) return 0
   const published = stat.published || 0
   return Math.round((published / stat.total) * 100)
 }
@@ -75,16 +76,16 @@ const infoStats = computed(() => [
   {
     key: 'noticeStats',
     name: '通知公告',
-    total: props.dashboardStats.noticeStats.total || 0,
-    published: props.dashboardStats.noticeStats.published || 0,
+    total: props.dashboardStats?.noticeStats?.total || 0,
+    published: props.dashboardStats?.noticeStats?.published || 0,
     percentage: getPublishPercentage('noticeStats'),
     color: '#9B59B6'
   },
   {
     key: 'recruitStats',
     name: '招聘信息',
-    total: props.dashboardStats.recruitStats.total || 0,
-    published: props.dashboardStats.recruitStats.published || 0,
+    total: props.dashboardStats?.recruitStats?.total || 0,
+    published: props.dashboardStats?.recruitStats?.published || 0,
     percentage: getPublishPercentage('recruitStats'),
     color: '#3498DB'
   }

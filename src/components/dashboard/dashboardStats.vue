@@ -127,8 +127,8 @@ const fetchDashboardStats = () => {
 }
 
 // 组件生命周期
-onMounted(async() => {
-  await fetchDashboardStats()
+onMounted(() => {
+  fetchDashboardStats()
 })
 </script>
 

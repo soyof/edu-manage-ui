@@ -70,24 +70,26 @@ const props = defineProps<{
 // 总发布统计计算属性
 const totalPublished = computed(() => {
   const stats = props.dashboardStats
-  return (stats.noticeStats.published || 0) +
-         (stats.paperStats.published || 0) +
-         (stats.patentStats.published || 0) +
-         (stats.bookStats.published || 0) +
-         (stats.recruitStats.published || 0) +
-         (stats.instrumentStats.published || 0) +
-         (stats.toolStats.published || 0)
+  if (!stats) return 0
+  return (stats.noticeStats?.published || 0) +
+         (stats.paperStats?.published || 0) +
+         (stats.patentStats?.published || 0) +
+         (stats.bookStats?.published || 0) +
+         (stats.recruitStats?.published || 0) +
+         (stats.instrumentStats?.published || 0) +
+         (stats.toolStats?.published || 0)
 })
 
 const totalUnpublished = computed(() => {
   const stats = props.dashboardStats
-  return (stats.noticeStats.unpublished || 0) +
-         (stats.paperStats.unpublished || 0) +
-         (stats.patentStats.unpublished || 0) +
-         (stats.bookStats.unpublished || 0) +
-         (stats.recruitStats.unpublished || 0) +
-         (stats.instrumentStats.unpublished || 0) +
-         (stats.toolStats.unpublished || 0)
+  if (!stats) return 0
+  return (stats.noticeStats?.unpublished || 0) +
+         (stats.paperStats?.unpublished || 0) +
+         (stats.patentStats?.unpublished || 0) +
+         (stats.bookStats?.unpublished || 0) +
+         (stats.recruitStats?.unpublished || 0) +
+         (stats.instrumentStats?.unpublished || 0) +
+         (stats.toolStats?.unpublished || 0)
 })
 
 const publishRatio = computed(() => {

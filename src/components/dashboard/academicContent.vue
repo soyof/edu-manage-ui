@@ -64,8 +64,9 @@ const props = defineProps<{
 
 // 计算发布百分比
 const getPublishPercentage = (statKey: keyof DashboardStats): number => {
+  if (!props.dashboardStats) return 0
   const stat = props.dashboardStats[statKey]
-  if (!stat || stat.total === 0) return 0
+  if (!stat || typeof stat !== 'object' || stat.total === 0) return 0
   const published = stat.published || 0
   return Math.round((published / stat.total) * 100)
 }
@@ -75,24 +76,24 @@ const academicStats = computed(() => [
   {
     key: 'paperStats',
     name: '学术论文',
-    total: props.dashboardStats.paperStats.total || 0,
-    published: props.dashboardStats.paperStats.published || 0,
+    total: props.dashboardStats?.paperStats?.total || 0,
+    published: props.dashboardStats?.paperStats?.published || 0,
     percentage: getPublishPercentage('paperStats'),
     color: '#409EFF'
   },
   {
     key: 'patentStats',
     name: '专利成果',
-    total: props.dashboardStats.patentStats.total || 0,
-    published: props.dashboardStats.patentStats.published || 0,
+    total: props.dashboardStats?.patentStats?.total || 0,
+    published: props.dashboardStats?.patentStats?.published || 0,
     percentage: getPublishPercentage('patentStats'),
     color: '#67C23A'
   },
   {
     key: 'bookStats',
     name: '学术著作',
-    total: props.dashboardStats.bookStats.total || 0,
-    published: props.dashboardStats.bookStats.published || 0,
+    total: props.dashboardStats?.bookStats?.total || 0,
+    published: props.dashboardStats?.bookStats?.published || 0,
     percentage: getPublishPercentage('bookStats'),
     color: '#E6A23C'
   }

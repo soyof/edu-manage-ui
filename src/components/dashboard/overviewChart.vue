@@ -50,19 +50,25 @@ let overviewChart: echarts.ECharts | null = null
 
 // 计算数据
 const totalPublished = computed(() => {
+  if (!props.dashboardStats) return 0
   return Object.values(props.dashboardStats).reduce((sum, stat) => {
+    if (!stat || typeof stat !== 'object') return sum
     return sum + (stat.published || stat.active || 0)
   }, 0)
 })
 
 const totalUnpublished = computed(() => {
+  if (!props.dashboardStats) return 0
   return Object.values(props.dashboardStats).reduce((sum, stat) => {
+    if (!stat || typeof stat !== 'object') return sum
     return sum + (stat.unpublished || 0)
   }, 0)
 })
 
 const totalOffline = computed(() => {
+  if (!props.dashboardStats) return 0
   return Object.values(props.dashboardStats).reduce((sum, stat) => {
+    if (!stat || typeof stat !== 'object') return sum
     return sum + (stat.offline || stat.inactive || 0)
   }, 0)
 })
@@ -70,6 +76,12 @@ const totalOffline = computed(() => {
 // 初始化图表
 const initChart = () => {
   if (!overviewChartRef.value) return
+
+  // 如果图表已存在，先销毁
+  if (overviewChart) {
+    overviewChart.dispose()
+    overviewChart = null
+  }
 
   overviewChart = echarts.init(overviewChartRef.value)
 

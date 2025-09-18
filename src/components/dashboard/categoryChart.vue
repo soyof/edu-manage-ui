@@ -140,6 +140,12 @@ const displayStats = computed((): StatItem[] => {
 const initChart = () => {
   if (!categoryChartRef.value) return
 
+  // 如果图表已存在，先销毁
+  if (categoryChart) {
+    categoryChart.dispose()
+    categoryChart = null
+  }
+
   categoryChart = echarts.init(categoryChartRef.value)
 
   const categoryData = displayStats.value.map(stat => ({

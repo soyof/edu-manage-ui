@@ -64,8 +64,9 @@ const props = defineProps<{
 
 // 计算发布百分比
 const getPublishPercentage = (statKey: keyof DashboardStats): number => {
+  if (!props.dashboardStats) return 0
   const stat = props.dashboardStats[statKey]
-  if (!stat || stat.total === 0) return 0
+  if (!stat || typeof stat !== 'object' || stat.total === 0) return 0
   const published = stat.published || 0
   return Math.round((published / stat.total) * 100)
 }
@@ -75,16 +76,16 @@ const resourceStats = computed(() => [
   {
     key: 'instrumentStats',
     name: '仪器设备',
-    total: props.dashboardStats.instrumentStats.total || 0,
-    published: props.dashboardStats.instrumentStats.published || 0,
+    total: props.dashboardStats?.instrumentStats?.total || 0,
+    published: props.dashboardStats?.instrumentStats?.published || 0,
     percentage: getPublishPercentage('instrumentStats'),
     color: '#F39C12'
   },
   {
     key: 'toolStats',
     name: '开源工具',
-    total: props.dashboardStats.toolStats.total || 0,
-    published: props.dashboardStats.toolStats.published || 0,
+    total: props.dashboardStats?.toolStats?.total || 0,
+    published: props.dashboardStats?.toolStats?.published || 0,
     percentage: getPublishPercentage('toolStats'),
     color: '#1ABC9C'
   }
