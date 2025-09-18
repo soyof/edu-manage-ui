@@ -74,8 +74,8 @@
           </div>
           <!-- 品牌文字 -->
           <div class="logo-text-container">
-            <div class="brand-name">合成生物学</div>
-            <div class="brand-subtitle">研究所</div>
+            <div class="brand-name" data-text="合成生物学">合成生物学</div>
+            <div class="brand-subtitle" data-text="研究所">研究所</div>
           </div>
         </div>
         <!-- 玻璃态装饰效果 -->
@@ -282,6 +282,33 @@ watch(() => route.fullPath, () => {
   }
 }
 
+// 新增的动画关键帧
+@keyframes dnaFlow {
+  0% {
+    stroke-dasharray: 0 10;
+    opacity: 0.7;
+  }
+  50% {
+    stroke-dasharray: 5 5;
+    opacity: 1;
+  }
+  100% {
+    stroke-dasharray: 10 0;
+    opacity: 0.7;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
 .layout-wrap {
   width: 100vw;
   height: 100vh;
@@ -323,10 +350,21 @@ watch(() => route.fullPath, () => {
       overflow: hidden;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-      // Glassmorphism 背景
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      // 优化背景增强文字可见性
+      background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(64, 158, 255, 0.05) 100%
+      );
+      backdrop-filter: blur(15px) saturate(1.2);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+
+      // 添加更强的立体感和对比度
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.1),
+        0 0 20px rgba(64, 158, 255, 0.1);
 
       &.collapsed {
         width: 64px;
@@ -374,44 +412,95 @@ watch(() => route.fullPath, () => {
       }
 
       .logo-icon {
-        width: 36px;
-        height: 36px;
-        margin-right: 12px;
+        width: 40px;
+        height: 40px;
+        margin-right: 16px;
         position: relative;
-        transition: all 0.4s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
         .dna-icon {
           width: 100%;
           height: 100%;
-          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-          animation: dnaRotate 8s linear infinite;
-
+          filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.2));
+          animation: dnaRotate 10s linear infinite;
           .dna-strand {
             fill: none;
-            stroke: var(--el-color-primary);
-            stroke-width: 1.5;
+            stroke: var(--primaryColor, #409eff);
+            stroke-width: 2;
             stroke-linecap: round;
-            opacity: 0.8;
+            opacity: 0.9;
+            transition: all 0.3s ease;
 
-            &:nth-child(1) { animation-delay: 0s; }
-            &:nth-child(2) { animation-delay: 0.3s; }
-            &:nth-child(3) { animation-delay: 0.6s; }
+            // 添加发光效果
+            filter: drop-shadow(0 0 3px var(--primaryColor, #409eff));
+
+            &:nth-child(1) {
+              animation: dnaFlow 4s ease-in-out infinite;
+              animation-delay: 0s;
+            }
+            &:nth-child(2) {
+              animation: dnaFlow 4s ease-in-out infinite;
+              animation-delay: 1.3s;
+            }
+            &:nth-child(3) {
+              animation: dnaFlow 4s ease-in-out infinite;
+              animation-delay: 2.6s;
+            }
           }
 
           .dna-node {
-            fill: var(--el-color-primary);
-            opacity: 0.9;
+            fill: var(--primaryColor, #409eff);
+            opacity: 1;
+            transition: all 0.3s ease;
+
+            // 添加节点发光效果
+            filter: drop-shadow(0 0 4px var(--primaryColor, #409eff));
 
             &:nth-child(n+4) {
-              animation: particleFloat 2s ease-in-out infinite;
-              animation-delay: calc(var(--i) * 0.2s);
+              animation: particleFloat 3s ease-in-out infinite;
+              animation-delay: calc(var(--i, 0) * 0.3s);
             }
           }
         }
 
-        &:hover .dna-icon {
-          animation-duration: 2s;
-          transform: scale(1.1);
+        // 添加背景光环效果
+        &::before {
+          content: '';
+          position: absolute;
+          top: -4px;
+          left: -4px;
+          right: -4px;
+          bottom: -4px;
+          background: radial-gradient(circle,
+            rgba(64, 158, 255, 0.1) 0%,
+            rgba(64, 158, 255, 0.05) 50%,
+            transparent 100%
+          );
+          border-radius: 50%;
+          opacity: 0.8;
+          animation: breathe 3s ease-in-out infinite;
+        }
+
+        &:hover {
+          .dna-icon {
+            animation-duration: 3s;
+            transform: scale(1.15);
+
+            .dna-strand {
+              stroke-width: 2.5;
+              opacity: 1;
+              filter: drop-shadow(0 0 6px var(--primaryColor, #409eff));
+            }
+
+            .dna-node {
+              filter: drop-shadow(0 0 8px var(--primaryColor, #409eff));
+            }
+          }
+
+          &::before {
+            opacity: 1;
+            transform: scale(1.2);
+          }
         }
       }
 
@@ -420,29 +509,109 @@ watch(() => route.fullPath, () => {
         flex-direction: column;
         transition: all 0.4s ease;
 
+        // 统一的品牌文字样式 - 高清晰度方案
+        .brand-name,
+        .brand-subtitle {
+          position: relative;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          color: #ffffff;
+          transition: all 0.4s ease;
+
+          // 避免模糊的高清晰度文字阴影方案
+          text-shadow:
+            0 0 1px rgba(0, 0, 0, 0.8),
+            0 1px 3px rgba(0, 0, 0, 0.6),
+            0 0 8px rgba(255, 255, 255, 0.4),
+            0 0 16px var(--primaryColor, #409eff),
+            0 0 24px rgba(64, 158, 255, 0.3);
+
+          // 添加锐化滤镜确保清晰度
+          filter: contrast(1.1) brightness(1.05);
+
+          // 使用伪元素创建渐变效果而不影响文字清晰度
+          &::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+              rgba(255, 255, 255, 0.8) 0%,
+              rgba(255, 255, 255, 0.6) 30%,
+              var(--primaryColor, #409eff) 70%,
+              rgba(255, 255, 255, 0.7) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.25;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+
+            // 如果不支持background-clip，则隐藏
+            @supports not (-webkit-background-clip: text) {
+              display: none;
+            }
+          }
+
+          // 添加额外的高对比度轮廓确保清晰度
+          &::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: transparent;
+            -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.3);
+            z-index: -2;
+            pointer-events: none;
+          }
+
+          // 悬停时增强效果
+          &:hover {
+            color: #ffffff;
+            text-shadow:
+              0 0 1px rgba(0, 0, 0, 0.9),
+              0 1px 4px rgba(0, 0, 0, 0.7),
+              0 0 12px rgba(255, 255, 255, 0.6),
+              0 0 20px var(--primaryColor, #409eff),
+              0 0 32px rgba(64, 158, 255, 0.4);
+
+            filter: contrast(1.2) brightness(1.1);
+
+            &::before {
+              opacity: 0.5;
+            }
+          }
+        }
+
         .brand-name {
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 700;
-          line-height: 1;
-          color: var(--logoTextColor);
-          animation: brandGlow 3s ease-in-out infinite;
-          letter-spacing: 0.5px;
-          mix-blend-mode: difference;
-          background: linear-gradient(45deg,
-            var(--logoTextColor) 30%,
-            var(--el-color-primary) 70%);
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
+          line-height: 1.1;
+          letter-spacing: 0.8px;
+          margin-bottom: 2px;
+
+          // 高分辨率显示优化
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
         }
 
         .brand-subtitle {
           font-size: 12px;
-          font-weight: 400;
-          mix-blend-mode: difference;
-          color: rgba(var(--el-color-primary-rgb), 0.8);
-          margin-top: 2px;
-          letter-spacing: 1px;
+          font-weight: 500;
+          line-height: 1.2;
+          letter-spacing: 2px;
+          opacity: 0.95;
+
+          // 高分辨率显示优化
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
         }
       }
 
