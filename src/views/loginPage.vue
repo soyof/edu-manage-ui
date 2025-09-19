@@ -162,7 +162,7 @@
       <div class="login-form-container">
         <!-- 登录表单部分保持不变 -->
         <div class="login-header">
-          <h1 class="title">合成生物研究所</h1>
+          <h1 class="title">合成生物学研究所</h1>
           <p class="subtitle">管理系统</p>
         </div>
         <el-form

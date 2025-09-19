@@ -5,7 +5,8 @@
       v-show="visible"
       ref="menuRef"
       class="custom-context-menu"
-      :style="getMenuPosition"
+      :class="`menu-${getMenuPosition.direction || 'bottom-right'}`"
+      :style="{ left: getMenuPosition.left, top: getMenuPosition.top }"
       @mounted="updateMenuSize"
     >
       <div class="menu-group">
@@ -16,7 +17,6 @@
         >
           <el-icon class="menu-icon"><Refresh /></el-icon>
           <span>刷新当前</span>
-          <span v-if="isActiveTab" class="shortcut">F5</span>
         </div>
       </div>
 
@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import {
   Refresh,
   Close,
@@ -145,34 +145,87 @@ const emit = defineEmits(['update:visible', 'command'])
 const menuRef = ref<HTMLElement | null>(null)
 const menuWidth = ref(180) // 默认宽度
 const menuHeight = ref(250) // 默认高度
+const isPositionCalculated = ref(false) // 标记位置是否已计算
 
 // 计算菜单位置，处理边界问题
 const getMenuPosition = computed(() => {
+  // 如果菜单不可见，返回初始位置
+  if (!props.visible) {
+    return {
+      left: `${props.x}px`,
+      top: `${props.y}px`
+    }
+  }
+
   // 获取视窗尺寸
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
+
+  // 安全边距
+  const SAFE_MARGIN = 10
 
   // 初始位置
   let left = props.x
   let top = props.y
 
-  // 检查右边界
-  if (left + menuWidth.value > viewportWidth) {
-    left = viewportWidth - menuWidth.value - 5 // 5px的安全边距
+  // 智能位置调整 - 优先考虑最佳显示位置
+
+  // 计算四个方向的可用空间
+  const spaceRight = viewportWidth - props.x - SAFE_MARGIN
+  const spaceLeft = props.x - SAFE_MARGIN
+  const spaceBottom = viewportHeight - props.y - SAFE_MARGIN
+  const spaceTop = props.y - SAFE_MARGIN
+
+  // 水平方向调整
+  let horizontalDirection = 'right'
+  if (menuWidth.value <= spaceRight) {
+    // 右侧空间足够，正常显示
+    left = props.x
+    horizontalDirection = 'right'
+  } else if (menuWidth.value <= spaceLeft) {
+    // 右侧空间不够，但左侧空间足够，显示在左侧
+    left = props.x - menuWidth.value
+    horizontalDirection = 'left'
+  } else {
+    // 两侧空间都不够，选择空间较大的一侧
+    if (spaceRight >= spaceLeft) {
+      left = Math.max(SAFE_MARGIN, viewportWidth - menuWidth.value - SAFE_MARGIN)
+      horizontalDirection = 'right'
+    } else {
+      left = SAFE_MARGIN
+      horizontalDirection = 'left'
+    }
   }
 
-  // 检查底部边界
-  if (top + menuHeight.value > viewportHeight) {
-    top = viewportHeight - menuHeight.value - 5 // 5px的安全边距
+  // 垂直方向调整
+  let verticalDirection = 'bottom'
+  if (menuHeight.value <= spaceBottom) {
+    // 下方空间足够，正常显示
+    top = props.y
+    verticalDirection = 'bottom'
+  } else if (menuHeight.value <= spaceTop) {
+    // 下方空间不够，但上方空间足够，显示在上方
+    top = props.y - menuHeight.value
+    verticalDirection = 'top'
+  } else {
+    // 上下空间都不够，选择空间较大的一侧
+    if (spaceBottom >= spaceTop) {
+      top = Math.max(SAFE_MARGIN, viewportHeight - menuHeight.value - SAFE_MARGIN)
+      verticalDirection = 'bottom'
+    } else {
+      top = SAFE_MARGIN
+      verticalDirection = 'top'
+    }
   }
 
   // 确保不会超出左边界和上边界
-  left = Math.max(5, left)
-  top = Math.max(5, top)
+  left = Math.max(SAFE_MARGIN, left)
+  top = Math.max(SAFE_MARGIN, top)
 
   return {
     left: `${left}px`,
-    top: `${top}px`
+    top: `${top}px`,
+    direction: `${verticalDirection}-${horizontalDirection}`
   }
 })
 
@@ -226,8 +279,18 @@ const handleGlobalClick = () => {
 const updateMenuSize = () => {
   if (menuRef.value) {
     // 获取菜单的实际尺寸
-    menuWidth.value = menuRef.value.offsetWidth
-    menuHeight.value = menuRef.value.offsetHeight
+    const rect = menuRef.value.getBoundingClientRect()
+    menuWidth.value = rect.width || menuRef.value.offsetWidth
+    menuHeight.value = rect.height || menuRef.value.offsetHeight
+    isPositionCalculated.value = true
+  }
+}
+
+// 强制更新菜单位置
+const forceUpdatePosition = async() => {
+  if (props.visible && menuRef.value) {
+    await nextTick()
+    updateMenuSize()
   }
 }
 
@@ -238,6 +301,23 @@ const handleResize = () => {
     updateMenuSize()
   }
 }
+
+// 监听菜单可见性变化
+watch(() => props.visible, async(newVisible) => {
+  if (newVisible) {
+    // 菜单显示时，重置位置计算标记并更新尺寸
+    isPositionCalculated.value = false
+    await nextTick()
+    await forceUpdatePosition()
+  }
+})
+
+// 监听坐标变化
+watch([() => props.x, () => props.y], async() => {
+  if (props.visible) {
+    await forceUpdatePosition()
+  }
+})
 
 // 组件生命周期钩子
 onMounted(() => {
@@ -283,6 +363,7 @@ onUnmounted(() => {
   overflow: hidden;
   border: 1px solid var(--el-border-color-light);
   backdrop-filter: blur(8px);
+  transform-origin: top left;
 
   /* 暗色主题适配 */
   .dark & {
@@ -303,6 +384,23 @@ onUnmounted(() => {
     .dark & {
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     }
+  }
+
+  /* 根据显示方向调整变换原点 */
+  &.menu-top-left {
+    transform-origin: bottom right;
+  }
+
+  &.menu-top-right {
+    transform-origin: bottom left;
+  }
+
+  &.menu-bottom-left {
+    transform-origin: top right;
+  }
+
+  &.menu-bottom-right {
+    transform-origin: top left;
   }
 }
 
@@ -388,21 +486,6 @@ onUnmounted(() => {
   span {
     flex: 1;
     font-weight: 500;
-  }
-
-  .shortcut {
-    flex: none;
-    font-size: 12px;
-    color: var(--el-text-color-secondary);
-    margin-left: 8px;
-    opacity: 0.8;
-    padding: 2px 4px;
-    border-radius: 4px;
-    background-color: var(--el-fill-color-light);
-
-    .dark & {
-      background-color: var(--el-fill-color);
-    }
   }
 
   &:hover {

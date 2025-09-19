@@ -4,6 +4,7 @@ import layout from './layout'
 import pinia from '@/stores'
 import { useTabsStore } from '@/stores/menuTabs'
 import { routerBeforeEach } from '@/utils/permission'
+import { setTitleFromRoute } from '@/utils/documentTitle'
 
 let store: any = null
 
@@ -15,6 +16,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Layout',
+    meta: { title: '首页' },
     component: () => import(/* webpackChunkName: "Layout" */ '../views/layout.vue'),
     children: layout
   },
@@ -27,6 +29,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/notFound',
     name: 'NotFound',
+    meta: { title: '页面未找到' },
     component: () => import(/* webpackChunkName: "notFound" */ '../views/notFound.vue')
   },
   { path: '/:pathMatch(.*)*', redirect: '/notFound' }
@@ -51,4 +54,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, _from) => {
   store?.addTabList(to)
   store?.changeCurTabInfo(to.fullPath)
+  // 动态设置页面标题
+  setTitleFromRoute(to)
 })
